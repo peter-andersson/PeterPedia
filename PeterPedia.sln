@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeterPedia.Client.Book", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TVSerier", "src\Client.Episodes\PeterPedia.Client.Episodes.csproj", "{7E0C9DEF-3A21-4322-9E2D-F2C649C28E30}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeterPedia.Client.Movie", "src\Client.Movie\PeterPedia.Client.Movie.csproj", "{E3D4E131-17FB-4B13-98A5-67EF8BA905EC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -82,6 +84,18 @@ Global
 		{7E0C9DEF-3A21-4322-9E2D-F2C649C28E30}.Release|x64.Build.0 = Release|Any CPU
 		{7E0C9DEF-3A21-4322-9E2D-F2C649C28E30}.Release|x86.ActiveCfg = Release|Any CPU
 		{7E0C9DEF-3A21-4322-9E2D-F2C649C28E30}.Release|x86.Build.0 = Release|Any CPU
+		{E3D4E131-17FB-4B13-98A5-67EF8BA905EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3D4E131-17FB-4B13-98A5-67EF8BA905EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3D4E131-17FB-4B13-98A5-67EF8BA905EC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E3D4E131-17FB-4B13-98A5-67EF8BA905EC}.Debug|x64.Build.0 = Debug|Any CPU
+		{E3D4E131-17FB-4B13-98A5-67EF8BA905EC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E3D4E131-17FB-4B13-98A5-67EF8BA905EC}.Debug|x86.Build.0 = Debug|Any CPU
+		{E3D4E131-17FB-4B13-98A5-67EF8BA905EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3D4E131-17FB-4B13-98A5-67EF8BA905EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3D4E131-17FB-4B13-98A5-67EF8BA905EC}.Release|x64.ActiveCfg = Release|Any CPU
+		{E3D4E131-17FB-4B13-98A5-67EF8BA905EC}.Release|x64.Build.0 = Release|Any CPU
+		{E3D4E131-17FB-4B13-98A5-67EF8BA905EC}.Release|x86.ActiveCfg = Release|Any CPU
+		{E3D4E131-17FB-4B13-98A5-67EF8BA905EC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -92,5 +106,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{5E8825BC-D33E-4771-BBAA-9737CDAF1B4E} = {DB323946-B3C3-4145-853E-A21DBA0A4E0D}
 		{7E0C9DEF-3A21-4322-9E2D-F2C649C28E30} = {DB323946-B3C3-4145-853E-A21DBA0A4E0D}
+		{E3D4E131-17FB-4B13-98A5-67EF8BA905EC} = {DB323946-B3C3-4145-853E-A21DBA0A4E0D}
 	EndGlobalSection
 EndGlobal

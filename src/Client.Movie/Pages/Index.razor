@@ -1,0 +1,18 @@
+﻿@page "/"
+
+<h2>Watchlist</h2>
+
+@if (Movies == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (Movies.Count == 0)
+{
+    <p>Nothing to watch, add some new movies!</p>
+}
+else
+{
+    <div class="col-12">
+    <MovieTable Movies="@Movies"></MovieTable>
+</div>
+}

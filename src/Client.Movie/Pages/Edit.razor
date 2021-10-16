@@ -1,0 +1,41 @@
+﻿@page "/edit/{id:int}"
+@page "/edit/{id:int}/{returnUrl?}"
+
+<h2>Edit movie</h2>
+
+<EditForm class="row align-items-center" Model="@Movie" OnSubmit="@Save">
+    <div class="mb-3">
+        <label class="control-label">Title</label>
+        <InputText class="form-control" type="text" @bind-Value="@Movie.Title"></InputText>
+    </div>
+    <div class="mb-3">
+        <label class="control-label">OriginalTitle: @Movie.OriginalTitle</label>
+    </div>
+    <div class="mb-3">
+        <label class="control-label">OriginalLanguage: @Movie.OriginalLanguage</label>
+    </div>
+    <div class="mb-3">
+        <label class="control-label">ReleaseDate: @Movie.ReleaseDate?.ToString("dd MMM yyyy")</label>
+    </div>
+    <div class="mb-3">
+        <label class="control-label">RunTime: @Movie.RunTime</label>
+    </div>
+    <div class="mb-3">
+        <label class="control-label" for="watchdate">Watch date</label>
+        <InputDate CssClass="form-control" @bind-Value="@Movie.WatchedDate" @bind-Value:format="dd MMM yyyy">
+        </InputDate>
+    </div>
+    <div class="row mb-3">
+        <div class="col-auto">
+            <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-success" disabled=@IsTaskRunning>Save</button>
+        </div>
+    </div>
+</EditForm>
+<hr />
+<div class="row ">
+    <a class="col-sm-2 text-info" href="@Movie.TheMovieDbUrl.ToString()" target="_blank">View on TMDb</a>
+    <a class="col-sm-2 text-info" href="@Movie.ImdbUrl.ToString()" target="_blank">View on IMDB</a>
+</div>

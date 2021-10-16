@@ -1,0 +1,31 @@
+﻿@page "/movies"
+
+<h2>All movies</h2>
+
+@if (MovieList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <EditForm class="row align-items-center" EditContext="@SearchContext" OnSubmit="@LoadAllMovies">
+    <div class="col-auto w-75">
+        <label class="visually-hidden" for="search">Filter by title</label>
+        <InputText id="search" class="form-control" @bind-Value="CurrentSearch" placeholder="Filter by title" />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary ms-2">Search</button>
+    </div>
+</EditForm>
+    <div class="row">
+        <div class="col-12">
+            <MovieTable Movies="@MovieList" ReturnUrl="/movies"></MovieTable>
+
+            <div class="pagination">
+                <button class="btn btn-primary" @onclick=@(() => NavigateToPage(NavigatePage.First)) disabled="@IsPreviousButtonDisabled">First</button>
+                <button class="btn btn-primary ms-2" @onclick=@(() => NavigateToPage(NavigatePage.Previous)) disabled="@IsPreviousButtonDisabled">Previous</button>
+                <button class="btn btn-primary ms-2" @onclick=@(() => NavigateToPage(NavigatePage.Next)) disabled="@IsNextButtonDisabled">Next</button>
+            </div>
+        </div>
+    </div>
+}
