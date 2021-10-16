@@ -1,0 +1,46 @@
+﻿@page "/"
+
+<h2>Episodes</h2>
+
+@if (SelectedShow != null)
+{
+    <div class="col-12 mb-3">
+    <h3>
+        @SelectedShow.Title
+        <button class="btn btn-info float-end" @onclick="@(() => Display(null))">Return to list</button>
+    </h3>
+    <p>Status: @SelectedShow.Status</p>
+</div>
+    @foreach (var season in SelectedShow.Seasons.OrderBy(s => s.SeasonNumber))
+    {
+        if (!season.IsAllWatched && (season.Episodes.Count > 0))
+        {
+            <SeasonView Show="@SelectedShow" Season="@season" DisplayAllEpisodes="false"></SeasonView>
+        }
+    }
+}
+else if (Shows == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (Shows.Count > 0)
+{
+    <div class="col-12">
+    <div class="list-group list-group-flush">
+        @foreach (var show in Shows)
+            {
+                if (show.UnwatchedEpisodeCount > 0)
+                {
+                    <button type="button" class="list-group-item list-group-item-action text-nowrap text-left text-dark" @onclick="() => Display(show)">
+                        @show.Title <span class="badge bg-primary float-end">@show.UnwatchedEpisodeCount</span>
+                        <span class="visually-hidden">unwatched episodes</span>
+                    </button>
+                }
+            }
+        </div>
+    </div>
+}
+else
+{
+    <h3>No more episodes to watch</h3>
+}

@@ -1,0 +1,33 @@
+<div class="col-12">
+    <h3 class="mb-3">
+        Season @Season.SeasonNumber
+        @if (Season.IsAllWatched)
+        {
+            <button class="btn btn-primary float-end" @onclick="@(async () => await UnwatchSeason())" disabled="@IsTaskRunning">Not watched</button>
+        }
+        else
+        {
+            <button class="btn btn-primary float-end" @onclick="@(async() => await WatchSeason())" disabled="@IsTaskRunning">Watched</button>
+        }
+    </h3>
+    <ul class="list-group list-group-flush mb-3">
+        @if (IsTaskRunning)
+        {
+            <p>Processing season...</p>
+        }
+        else
+        {
+            @foreach (var episode in Season.Episodes.OrderBy(e => e.EpisodeNumber))
+            {
+                if (DisplayAllEpisodes)
+                {
+                    <EpisodeView Show="@Show" Episode="@episode"></EpisodeView>
+                }
+                else if ((episode.Watched == false) && (episode.AirDate != null) && (episode.AirDate <= DateTime.UtcNow))
+                {
+                    <EpisodeView Show="@Show" Episode="@episode"></EpisodeView>
+                }
+            }
+        }
+    </ul>
+</div>
