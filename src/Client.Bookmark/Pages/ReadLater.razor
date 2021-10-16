@@ -1,0 +1,23 @@
+﻿@page "/"
+<div class="flex flex-row gap-2 p-1">
+    <div class="flex-grow">
+        <input type="text" class="w-full" placeholder="Enter URL to add" />
+    </div>
+    <div class="flow-auto">
+        <button class="btn btn-blue">Add</button>
+    </div>
+</div>
+<div class="divide-y-1 divide-black">
+    @foreach (var item in @Items)
+    {
+        <div class="flex flex-row gap-2 p-1">
+            <div class="flex-grow">
+                <a href="@item.Url" class="inline-block w-full">@item.Url</a>
+            </div>
+            <div class="flow-auto">
+                <button class="btn btn-blue">Remove</button>
+            </div>
+        </div>
+        <hr />
+    }
+</div>
