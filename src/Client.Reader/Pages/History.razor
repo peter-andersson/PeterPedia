@@ -1,0 +1,38 @@
+﻿@page "/history"
+
+<h2>Read articles</h2>
+
+<hr />
+<div class="row">
+    <div class="col-auto">
+        <a class="btn btn-primary" href="rss">Unread</a>
+    </div>
+</div>
+<hr />
+
+@if (Articles is not null && (Articles.Count > 0))
+{
+    <div class="row mt-2">
+    <table class="table table-dark table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Read</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var article in Articles)
+                {
+                    <tr>
+                        <td><a href="@article.Url" class="text-white" target="_blank">@article.Title</a></td>
+                        <td>@article.ReadDate?.ToString("d MMM yyyy HH:mm:ss")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <p><em>Nothing here, please read some articles first</em></p>
+}

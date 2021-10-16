@@ -1,0 +1,22 @@
+﻿@page "/subscription/edit/{id:int}"
+
+<h2>Edit subscription</h2>
+
+<EditForm class="row align-items-center" Model="@Subscription" OnSubmit="@Save">
+    <div class="mb-3">
+        <label class="control-label">Title</label>
+        <InputText class="form-control" type="text" @bind-Value="@Subscription.Title"></InputText>
+    </div>
+    <div class="mb-3">
+        <label class="control-label">Update interval in minutes(5 to 60)</label>
+        <InputNumber class="form-control" @bind-Value="@Subscription.UpdateIntervalMinute"></InputNumber>
+    </div>
+    <div class="row mb-3">
+        <div class="col-auto">
+            <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-success" disabled=@IsTaskRunning>Save</button>
+        </div>
+    </div>
+</EditForm>

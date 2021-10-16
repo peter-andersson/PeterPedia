@@ -1,0 +1,39 @@
+﻿<div class="card text-white bg-primary mt-2">
+    @if (!IsTaskRunning)
+    {
+        <div class="card-header">
+            <div class="delete-button">
+                <button class="btn btn-sm btn-danger" @onclick="async () => await Delete()">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+        </div>
+    }
+    <div class="card-body" @onclick="async () => await Delete()">
+        @if (IsTaskRunning)
+        {
+            <h5 class="card-title">Removing...</h5>
+            <p class="card-text">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Removing...</span>
+            </div>
+        </div>
+        </p>
+        }
+        else
+        {
+            <h5 class="card-title">@Article.Title.Substring(0, Math.Min(Article.Title.Length, 100))</h5>
+            <p class="card-text">@Article.Content</p>
+            <small>
+                <a class="stretched-link open-feed text-white" target="_blank" href="@Article.Url">@Article.Url</a>
+            </small>
+        }
+    </div>
+    @if (!IsTaskRunning)
+    {
+        <div class="card-footer">
+            <small>@Article.PublishDate.ToString("d MMM yyyy HH:mm:ss")</small>
+        </div>
+    }
+</div>
