@@ -26,11 +26,11 @@ namespace PeterPedia.Server.Tests
         [Fact]
         public async Task Get_WithoutItemsShouldReturnEmptyList()
         {
-            var options = new DbContextOptionsBuilder<LPDAContext>()
+            var options = new DbContextOptionsBuilder<PeterPediaContext>()
                 .UseInMemoryDatabase(databaseName: $"{ nameof(ReadListControllerTests) }.{ nameof(Get_WithoutItemsShouldReturnEmptyList) }")
                 .Options;
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 ReadListController controller = new ReadListController(_logger, context);
 
@@ -48,11 +48,11 @@ namespace PeterPedia.Server.Tests
         [Fact]
         public async Task Get_WithItemsShouldReturnListWithItems()
         {
-            var options = new DbContextOptionsBuilder<LPDAContext>()
+            var options = new DbContextOptionsBuilder<PeterPediaContext>()
                 .UseInMemoryDatabase(databaseName: $"{ nameof(ReadListControllerTests) }.{ nameof(Get_WithItemsShouldReturnListWithItems) }")
                 .Options;
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 context.ReadListItems.Add(new ReadListEF
                 {
@@ -71,7 +71,7 @@ namespace PeterPedia.Server.Tests
                 context.SaveChanges();
             }
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 ReadListController controller = new ReadListController(_logger, context);
 
@@ -92,11 +92,11 @@ namespace PeterPedia.Server.Tests
         [InlineData("test")]
         public async Task Add_WithInvalidDataShouldReturnBadRequest(string url)
         {
-            var options = new DbContextOptionsBuilder<LPDAContext>()
+            var options = new DbContextOptionsBuilder<PeterPediaContext>()
                 .UseInMemoryDatabase(databaseName: $"{ nameof(ReadListControllerTests) }.{ nameof(Add_WithInvalidDataShouldReturnBadRequest) }")
                 .Options;
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 ReadListController controller = new ReadListController(_logger, context);
 
@@ -120,11 +120,11 @@ namespace PeterPedia.Server.Tests
         [InlineData("https://norran.se")]
         public async Task Add_WithValidDataShouldAddItem(string url)
         {
-            var options = new DbContextOptionsBuilder<LPDAContext>()
+            var options = new DbContextOptionsBuilder<PeterPediaContext>()
                 .UseInMemoryDatabase(databaseName: $"{ nameof(ReadListControllerTests) }.{ nameof(Add_WithValidDataShouldAddItem) }")
                 .Options;
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 ReadListController controller = new ReadListController(_logger, context);
 
@@ -154,11 +154,11 @@ namespace PeterPedia.Server.Tests
         [Fact]
         public async Task Add_SameItemTwiceShouldReturnConfliceted()
         {
-            var options = new DbContextOptionsBuilder<LPDAContext>()
+            var options = new DbContextOptionsBuilder<PeterPediaContext>()
                 .UseInMemoryDatabase(databaseName: $"{ nameof(ReadListControllerTests) }.{ nameof(Add_SameItemTwiceShouldReturnConfliceted) }")
                 .Options;
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 context.ReadListItems.Add(new ReadListEF
                 {
@@ -177,7 +177,7 @@ namespace PeterPedia.Server.Tests
                 context.SaveChanges();
             }
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 ReadListController controller = new ReadListController(_logger, context);
 
@@ -197,11 +197,11 @@ namespace PeterPedia.Server.Tests
         [Fact]
         public async Task GetOpen_NotFoundShouldReturn404()
         {
-            var options = new DbContextOptionsBuilder<LPDAContext>()
+            var options = new DbContextOptionsBuilder<PeterPediaContext>()
                                         .UseInMemoryDatabase(databaseName: $"{ nameof(ReadListControllerTests) }.{ nameof(GetOpen_NotFoundShouldReturn404) }")
                                         .Options;
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 ReadListController controller = new ReadListController(_logger, context);
 
@@ -216,11 +216,11 @@ namespace PeterPedia.Server.Tests
         [Fact]
         public async Task GetOpen_ItemFoundShouldRemoveItemAndRedirectToUrl()
         {
-            var options = new DbContextOptionsBuilder<LPDAContext>()
+            var options = new DbContextOptionsBuilder<PeterPediaContext>()
                                         .UseInMemoryDatabase(databaseName: $"{ nameof(ReadListControllerTests) }.{ nameof(GetOpen_ItemFoundShouldRemoveItemAndRedirectToUrl) }")
                                         .Options;
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 context.ReadListItems.Add(new ReadListEF
                 {
@@ -239,7 +239,7 @@ namespace PeterPedia.Server.Tests
                 context.SaveChanges();
             }
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 ReadListController controller = new ReadListController(_logger, context);
 
@@ -258,11 +258,11 @@ namespace PeterPedia.Server.Tests
         [Fact]
         public async Task Delete_NotFoundShouldReturn404()
         {
-            var options = new DbContextOptionsBuilder<LPDAContext>()
+            var options = new DbContextOptionsBuilder<PeterPediaContext>()
                                         .UseInMemoryDatabase(databaseName: $"{ nameof(ReadListControllerTests) }.{ nameof(Delete_NotFoundShouldReturn404) }")
                                         .Options;
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 ReadListController controller = new ReadListController(_logger, context);
 
@@ -277,11 +277,11 @@ namespace PeterPedia.Server.Tests
         [Fact]
         public async Task Delete_ItemFoundShouldRemoveItem()
         {
-            var options = new DbContextOptionsBuilder<LPDAContext>()
+            var options = new DbContextOptionsBuilder<PeterPediaContext>()
                                         .UseInMemoryDatabase(databaseName: $"{ nameof(ReadListControllerTests) }.{ nameof(Delete_ItemFoundShouldRemoveItem) }")
                                         .Options;
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 context.ReadListItems.Add(new ReadListEF
                 {
@@ -300,7 +300,7 @@ namespace PeterPedia.Server.Tests
                 context.SaveChanges();
             }
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 ReadListController controller = new ReadListController(_logger, context);
 

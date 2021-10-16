@@ -26,11 +26,11 @@ namespace PeterPedia.Server.Tests
         [Fact]
         public async Task Get_WithoutArticlesShouldReturnEmptyList()
         {
-            var options = new DbContextOptionsBuilder<LPDAContext>()
+            var options = new DbContextOptionsBuilder<PeterPediaContext>()
                 .UseInMemoryDatabase(databaseName: $"{ nameof(ArticleControllerTests) }.{ nameof(Get_WithoutArticlesShouldReturnEmptyList) }")
                 .Options;
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 ArticleController controller = new ArticleController(_logger, context);
 
@@ -48,11 +48,11 @@ namespace PeterPedia.Server.Tests
         [Fact]
         public async Task Get_WithArticlesShouldReturnSubscriptionListWithArticles()
         {
-            var options = new DbContextOptionsBuilder<LPDAContext>()
+            var options = new DbContextOptionsBuilder<PeterPediaContext>()
                 .UseInMemoryDatabase(databaseName: $"{ nameof(ArticleControllerTests) }.{ nameof(Get_WithArticlesShouldReturnSubscriptionListWithArticles) }")
                 .Options;
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 context.Subscriptions.Add(new SubscriptionEF
                 {
@@ -79,7 +79,7 @@ namespace PeterPedia.Server.Tests
                 context.SaveChanges();
             }
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 ArticleController controller = new ArticleController(_logger, context);
 
@@ -98,11 +98,11 @@ namespace PeterPedia.Server.Tests
         [Fact]
         public async Task GetHistory_WithoutArticlesShouldReturnEmptyList()
         {
-            var options = new DbContextOptionsBuilder<LPDAContext>()
+            var options = new DbContextOptionsBuilder<PeterPediaContext>()
                 .UseInMemoryDatabase(databaseName: $"{ nameof(ArticleControllerTests) }.{ nameof(GetHistory_WithoutArticlesShouldReturnEmptyList) }")
                 .Options;
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 ArticleController controller = new ArticleController(_logger, context);
 
@@ -120,11 +120,11 @@ namespace PeterPedia.Server.Tests
         [Fact]
         public async Task GetHistory_WithArticlesShouldReturnArticleList()
         {
-            var options = new DbContextOptionsBuilder<LPDAContext>()
+            var options = new DbContextOptionsBuilder<PeterPediaContext>()
                 .UseInMemoryDatabase(databaseName: $"{ nameof(ArticleControllerTests) }.{ nameof(GetHistory_WithArticlesShouldReturnArticleList) }")
                 .Options;
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 context.Subscriptions.Add(new SubscriptionEF
                 {
@@ -153,7 +153,7 @@ namespace PeterPedia.Server.Tests
                 context.SaveChanges();
             }
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 ArticleController controller = new ArticleController(_logger, context);
 
@@ -171,11 +171,11 @@ namespace PeterPedia.Server.Tests
         [Fact]
         public async Task GetStats_WithoutArticlesShouldReturn0()
         {
-            var options = new DbContextOptionsBuilder<LPDAContext>()
+            var options = new DbContextOptionsBuilder<PeterPediaContext>()
                             .UseInMemoryDatabase(databaseName: $"{ nameof(ArticleControllerTests) }.{ nameof(GetStats_WithoutArticlesShouldReturn0) }")
                             .Options;
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 ArticleController controller = new ArticleController(_logger, context);
 
@@ -193,11 +193,11 @@ namespace PeterPedia.Server.Tests
         [Fact]
         public async Task GetStats_WithArticlesShouldReturnTheArticleCount()
         {
-            var options = new DbContextOptionsBuilder<LPDAContext>()
+            var options = new DbContextOptionsBuilder<PeterPediaContext>()
                             .UseInMemoryDatabase(databaseName: $"{ nameof(ArticleControllerTests) }.{ nameof(GetStats_WithArticlesShouldReturnTheArticleCount) }")
                             .Options;
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 context.Subscriptions.Add(new SubscriptionEF
                 {
@@ -224,7 +224,7 @@ namespace PeterPedia.Server.Tests
                 context.SaveChanges();
             }
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 ArticleController controller = new ArticleController(_logger, context);
 
@@ -242,11 +242,11 @@ namespace PeterPedia.Server.Tests
         [Fact]
         public async Task GetRead_ArticleNotFoundShouldReturn404()
         {
-            var options = new DbContextOptionsBuilder<LPDAContext>()
+            var options = new DbContextOptionsBuilder<PeterPediaContext>()
                                         .UseInMemoryDatabase(databaseName: $"{ nameof(ArticleControllerTests) }.{ nameof(GetRead_ArticleNotFoundShouldReturn404) }")
                                         .Options;
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 ArticleController controller = new ArticleController(_logger, context);
 
@@ -261,11 +261,11 @@ namespace PeterPedia.Server.Tests
         [Fact]
         public async Task GetRead_ArticleFoundShouldMarkArticleAsReadAndReturnOk()
         {
-            var options = new DbContextOptionsBuilder<LPDAContext>()
+            var options = new DbContextOptionsBuilder<PeterPediaContext>()
                                         .UseInMemoryDatabase(databaseName: $"{ nameof(ArticleControllerTests) }.{ nameof(GetRead_ArticleFoundShouldMarkArticleAsReadAndReturnOk) }")
                                         .Options;
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 context.Subscriptions.Add(new SubscriptionEF
                 {
@@ -284,7 +284,7 @@ namespace PeterPedia.Server.Tests
                 context.SaveChanges();
             }
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 ArticleController controller = new ArticleController(_logger, context);
 
@@ -303,11 +303,11 @@ namespace PeterPedia.Server.Tests
         [Fact]
         public async Task GetOpen_ArticleNotFoundShouldReturn404()
         {
-            var options = new DbContextOptionsBuilder<LPDAContext>()
+            var options = new DbContextOptionsBuilder<PeterPediaContext>()
                                         .UseInMemoryDatabase(databaseName: $"{ nameof(ArticleControllerTests) }.{ nameof(GetOpen_ArticleNotFoundShouldReturn404) }")
                                         .Options;
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 ArticleController controller = new ArticleController(_logger, context);
 
@@ -322,11 +322,11 @@ namespace PeterPedia.Server.Tests
         [Fact]
         public async Task GetOpen_ArticleFoundShouldMarkArticleAsReadAndRedirectToUrl()
         {
-            var options = new DbContextOptionsBuilder<LPDAContext>()
+            var options = new DbContextOptionsBuilder<PeterPediaContext>()
                                         .UseInMemoryDatabase(databaseName: $"{ nameof(ArticleControllerTests) }.{ nameof(GetOpen_ArticleFoundShouldMarkArticleAsReadAndRedirectToUrl) }")
                                         .Options;
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 context.Subscriptions.Add(new SubscriptionEF
                 {
@@ -346,7 +346,7 @@ namespace PeterPedia.Server.Tests
                 context.SaveChanges();
             }
 
-            using (var context = new LPDAContext(options))
+            using (var context = new PeterPediaContext(options))
             {
                 ArticleController controller = new ArticleController(_logger, context);
 
