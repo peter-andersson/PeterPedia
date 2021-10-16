@@ -74,7 +74,7 @@ namespace PeterPedia.Server
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "LPDA.Api v1"));
 
-            app.UseBlazorFrameworkFiles();
+            /*app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();
 
             app.UseRouting();
@@ -84,6 +84,71 @@ namespace PeterPedia.Server
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
                 endpoints.MapFallbackToFile("index.html");
+            });*/
+            app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/Book"), first =>
+            {
+                first.UseBlazorFrameworkFiles("/Book");
+                first.UseStaticFiles();
+                first.UseStaticFiles("/Book");
+
+                first.UseRouting();
+                first.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllers();
+                    endpoints.MapFallbackToFile("Book/{*path:nonfile}", "Book/index.html");
+                });
+            });
+
+            app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/Bookmark"), first =>
+            {
+                first.UseBlazorFrameworkFiles("/Bookmark");
+                first.UseStaticFiles();
+
+                first.UseRouting();
+                first.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllers();
+                    endpoints.MapFallbackToFile("Bookmark/{*path:nonfile}", "Bookmark/index.html");
+                });
+            });
+
+            app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/Episodes"), first =>
+            {
+                first.UseBlazorFrameworkFiles("/Episodes");
+                first.UseStaticFiles();
+
+                first.UseRouting();
+                first.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllers();
+                    endpoints.MapFallbackToFile("Episodes/{*path:nonfile}", "Episodes/index.html");
+                });
+            });
+
+            app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/Movie"), first =>
+            {
+                first.UseBlazorFrameworkFiles("/Movie");
+                first.UseStaticFiles();
+
+                first.UseRouting();
+                first.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllers();
+                    endpoints.MapFallbackToFile("Movie/{*path:nonfile}", "Movie/index.html");
+                });
+            });
+
+            app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/Reader"), first =>
+            {
+                first.UseBlazorFrameworkFiles("/Reader");
+                first.UseStaticFiles();
+
+                first.UseRouting();
+                first.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllers();
+                    endpoints.MapFallbackToFile("Reader/{*path:nonfile}", "Reader/index.html");
+                });
             });
         }
     }

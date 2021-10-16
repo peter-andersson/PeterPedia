@@ -5,6 +5,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <StaticWebAssetBasePath>Bookmark</StaticWebAssetBasePath>
   </PropertyGroup>
 
   <ItemGroup>
