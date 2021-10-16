@@ -1,0 +1,15 @@
+﻿@page "/delete/{id:int}/{returnUrl?}"
+
+<h2>Delete book</h2>
+<div class="form-group">
+    <label class="control-label">Title: @Title</label>
+</div>
+<p class="text-danger">Do you really want to delete this book? This action cannot be undone.</p>
+<div class="row">
+    <div class="col-auto">
+        <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-danger" @onclick="@(async () => await DeleteBook())" disabled=@IsTaskRunning>Delete</button>
+    </div>
+</div>

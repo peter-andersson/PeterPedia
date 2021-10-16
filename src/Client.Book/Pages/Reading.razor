@@ -1,0 +1,10 @@
+﻿@page "/"
+
+<h2>Currently reading</h2>
+
+<div class="card-group">
+    @foreach (var book in BookList)
+    {
+        <BookView Book=@book ReturnUrl="/"></BookView>
+    }
+</div>

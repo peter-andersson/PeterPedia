@@ -1,0 +1,10 @@
+<div class="card text-white bg-secondary book me-2 mb-2">
+    <div class="card-body">
+        <h5 class="card-title">@Book.Title</h5>
+        <p class="card-text">@string.Join(", ", Book.Authors)</p>
+    </div>
+    <div class="card-footer">
+        <a href="/delete/@Book.Id/@ReturnUrl" class="btn btn-danger"><i class="bi bi-trash"></i>Remove</a>
+        <a href="/edit/@Book.Id/@ReturnUrl" class="btn btn-primary float-end"><i class="bi bi-pencil"></i> Edit</a>
+    </div>
+</div>
