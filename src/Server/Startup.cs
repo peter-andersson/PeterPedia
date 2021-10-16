@@ -74,81 +74,79 @@ namespace PeterPedia.Server
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "LPDA.Api v1"));
 
-            /*app.UseBlazorFrameworkFiles();
-            app.UseStaticFiles();
-
-            app.UseRouting();
-
-            app.UseEndpoints(endpoints =>
+            app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/Book"), book =>
             {
-                endpoints.MapRazorPages();
-                endpoints.MapControllers();
-                endpoints.MapFallbackToFile("index.html");
-            });*/
-            app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/Book"), first =>
-            {
-                first.UseBlazorFrameworkFiles("/Book");
-                first.UseStaticFiles();
-                first.UseStaticFiles("/Book");
+                book.UseBlazorFrameworkFiles("/Book");
+                book.UseStaticFiles();
 
-                first.UseRouting();
-                first.UseEndpoints(endpoints =>
+                book.UseRouting();
+                book.UseEndpoints(endpoints =>
                 {
                     endpoints.MapControllers();
                     endpoints.MapFallbackToFile("Book/{*path:nonfile}", "Book/index.html");
                 });
             });
 
-            app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/Bookmark"), first =>
+            app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/Bookmark"), bookmark =>
             {
-                first.UseBlazorFrameworkFiles("/Bookmark");
-                first.UseStaticFiles();
+                bookmark.UseBlazorFrameworkFiles("/Bookmark");
+                bookmark.UseStaticFiles();
 
-                first.UseRouting();
-                first.UseEndpoints(endpoints =>
+                bookmark.UseRouting();
+                bookmark.UseEndpoints(endpoints =>
                 {
                     endpoints.MapControllers();
                     endpoints.MapFallbackToFile("Bookmark/{*path:nonfile}", "Bookmark/index.html");
                 });
             });
 
-            app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/Episodes"), first =>
+            app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/Episodes"), episodes =>
             {
-                first.UseBlazorFrameworkFiles("/Episodes");
-                first.UseStaticFiles();
+                episodes.UseBlazorFrameworkFiles("/Episodes");
+                episodes.UseStaticFiles();
 
-                first.UseRouting();
-                first.UseEndpoints(endpoints =>
+                episodes.UseRouting();
+                episodes.UseEndpoints(endpoints =>
                 {
                     endpoints.MapControllers();
                     endpoints.MapFallbackToFile("Episodes/{*path:nonfile}", "Episodes/index.html");
                 });
             });
 
-            app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/Movie"), first =>
+            app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/Movie"), movie =>
             {
-                first.UseBlazorFrameworkFiles("/Movie");
-                first.UseStaticFiles();
+                movie.UseBlazorFrameworkFiles("/Movie");
+                movie.UseStaticFiles();
 
-                first.UseRouting();
-                first.UseEndpoints(endpoints =>
+                movie.UseRouting();
+                movie.UseEndpoints(endpoints =>
                 {
                     endpoints.MapControllers();
                     endpoints.MapFallbackToFile("Movie/{*path:nonfile}", "Movie/index.html");
                 });
             });
 
-            app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/Reader"), first =>
+            app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/Reader"), reader =>
             {
-                first.UseBlazorFrameworkFiles("/Reader");
-                first.UseStaticFiles();
+                reader.UseBlazorFrameworkFiles("/Reader");
+                reader.UseStaticFiles();
 
-                first.UseRouting();
-                first.UseEndpoints(endpoints =>
+                reader.UseRouting();
+                reader.UseEndpoints(endpoints =>
                 {
                     endpoints.MapControllers();
                     endpoints.MapFallbackToFile("Reader/{*path:nonfile}", "Reader/index.html");
                 });
+            });
+
+            app.UseStaticFiles();
+            app.UseRouting();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapRazorPages();
+                endpoints.MapControllers();
+                // endpoints.MapFallbackToFile("index.html");
             });
         }
     }

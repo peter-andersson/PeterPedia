@@ -1,0 +1,22 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PeterPedia</title>
+
+    <link rel="stylesheet" href="~/css/app.min.css" />
+</head>
+
+<body class="bg-black text-green-600">
+    <div>
+        <main role="main" class="container mx-auto md:w-2/5 xl:w-1/5 w-full p-5">
+            @RenderBody()
+        </main>
+    </div>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

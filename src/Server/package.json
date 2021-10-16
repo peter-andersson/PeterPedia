@@ -1,5 +1,5 @@
 {
-  "name": "peterPedia.client.bookmark",
+  "name": "peterpedia.server",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -13,8 +13,5 @@
     "postcss": "^8.3.9",
     "postcss-cli": "^9.0.1",
     "tailwindcss": "^2.2.16"
-  },
-  "dependencies": {
-    "@tailwindcss/forms": "^0.3.4"
   }
 }

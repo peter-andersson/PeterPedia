@@ -6,7 +6,6 @@
     using System.Net.Http;
     using System.Net.Http.Json;
     using System.Threading.Tasks;
-    using Blazored.Toast;
     using Blazored.Toast.Services;
 
     public class BookService
