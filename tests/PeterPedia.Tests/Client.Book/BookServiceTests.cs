@@ -11,7 +11,7 @@ using Moq.Protected;
 using Blazored.Toast;
 using Blazored.Toast.Services;
 
-namespace PeterPedia.Client.Book.Tests
+namespace PeterPedia.Tests.Client.Book
 {
     public class BookServiceTests
     {

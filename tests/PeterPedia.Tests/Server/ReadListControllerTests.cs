@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using PeterPedia.Shared;
 using System.Linq;
 
-namespace PeterPedia.Server.Tests
+namespace PeterPedia.Tests.Server
 {
     public class ReadListControllerTests
     {

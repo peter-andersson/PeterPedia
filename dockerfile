@@ -32,7 +32,7 @@ COPY ./src ./src
 RUN dotnet build -c Release --no-restore
 
 # Test
-RUN dotnet test
+RUN dotnet test --no-restore
 
 # Publish
 FROM build AS publish
