@@ -81,23 +81,6 @@ namespace PeterPedia.Server.Controllers
             return Ok();
         }
 
-        [HttpGet("open/{articleId}")]
-        public async Task<IActionResult> Open(int articleId)
-        {
-            _logger.LogDebug($"GetArticleAsync ArticleId: {articleId}");
-            var article = await _dbContext.Articles.FindAsync(articleId).ConfigureAwait(false);
-
-            if (article is null)
-            {
-                return NotFound();
-            }
-
-            article.ReadDate = DateTime.UtcNow;
-            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
-
-            return Redirect(article.Url);
-        }
-
         private static Article ConvertToArticle(ArticleEF articleEF)
         {
             if (articleEF is null)

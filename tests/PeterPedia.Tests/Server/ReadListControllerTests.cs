@@ -195,67 +195,6 @@ namespace PeterPedia.Tests.Server
         }
 
         [Fact]
-        public async Task GetOpen_NotFoundShouldReturn404()
-        {
-            var options = new DbContextOptionsBuilder<PeterPediaContext>()
-                                        .UseInMemoryDatabase(databaseName: $"{ nameof(ReadListControllerTests) }.{ nameof(GetOpen_NotFoundShouldReturn404) }")
-                                        .Options;
-
-            using (var context = new PeterPediaContext(options))
-            {
-                ReadListController controller = new ReadListController(_logger, context);
-
-                var result = await controller.Open(0);
-                var notFoundResult = result as NotFoundResult;
-
-                Assert.NotNull(notFoundResult);
-                Assert.Equal(404, notFoundResult.StatusCode);
-            }
-        }
-
-        [Fact]
-        public async Task GetOpen_ItemFoundShouldRemoveItemAndRedirectToUrl()
-        {
-            var options = new DbContextOptionsBuilder<PeterPediaContext>()
-                                        .UseInMemoryDatabase(databaseName: $"{ nameof(ReadListControllerTests) }.{ nameof(GetOpen_ItemFoundShouldRemoveItemAndRedirectToUrl) }")
-                                        .Options;
-
-            using (var context = new PeterPediaContext(options))
-            {
-                context.ReadListItems.Add(new ReadListEF
-                {
-                    Id = 1,
-                    Url = "https://google.se",
-                    Added = DateTime.Now,
-                });
-
-                context.ReadListItems.Add(new ReadListEF
-                {
-                    Id = 2,
-                    Url = "https://norran.se",
-                    Added = DateTime.Now,
-                });
-
-                context.SaveChanges();
-            }
-
-            using (var context = new PeterPediaContext(options))
-            {
-                ReadListController controller = new ReadListController(_logger, context);
-
-                var result = await controller.Open(1);
-                var redirectResult = result as RedirectResult;
-
-                Assert.NotNull(redirectResult);
-                Assert.False(redirectResult.Permanent);
-                Assert.Equal("https://google.se", redirectResult.Url);
-
-                var item = context.ReadListItems.Where(r => r.Id == 1).SingleOrDefault();
-                Assert.Null(item);
-            }
-        }
-
-        [Fact]
         public async Task Delete_NotFoundShouldReturn404()
         {
             var options = new DbContextOptionsBuilder<PeterPediaContext>()

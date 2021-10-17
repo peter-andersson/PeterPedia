@@ -39,24 +39,6 @@ namespace PeterPedia.Server.Controllers
             return Ok(result);
         }
 
-        [HttpGet("open/{id:int}")]
-        public async Task<IActionResult> Open(int id)
-        {
-            _logger.LogDebug($"Open id: {id}");
-            var item = await _dbContext.ReadListItems.FindAsync(id).ConfigureAwait(false);
-
-            if (item is null)
-            {
-                return NotFound();
-            }
-
-            _dbContext.ReadListItems.Remove(item);
-
-            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
-
-            return Redirect(item.Url);
-        }
-
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] ReadListItem item)
         {
