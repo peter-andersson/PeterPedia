@@ -1,16 +1,13 @@
-using System;
-using System.Net.Http;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Text;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Blazored.Toast;
-
 namespace PeterPedia.Client.Bookmark
 {
+    using System;
+    using System.Net.Http;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+    using Microsoft.Extensions.DependencyInjection;
+    using Blazored.Toast;
+    using PeterPedia.Client.Bookmark.Services;
+
     public class Program
     {
         public static async Task Main(string[] args)
@@ -22,8 +19,7 @@ namespace PeterPedia.Client.Bookmark
 
             builder.Services.AddBlazoredToast();
 
-            // TODO: Service for booksmarks and read later 
-            // builder.Services.AddScoped<RSSService>();
+            builder.Services.AddScoped<ReadListService>();
 
             await builder.Build().RunAsync();
         }

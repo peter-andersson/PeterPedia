@@ -10,38 +10,36 @@ using System.Net;
 using Moq.Protected;
 using Blazored.Toast;
 using Blazored.Toast.Services;
+using PeterPedia.Client.Bookmark.Services;
 
-namespace PeterPedia.Tests.Client.Book
+namespace PeterPedia.Tests.Client.Bookmark
 {
-    public class BookServiceTests
+    public class ReadListServiceTests
     {
         private readonly string baseAddress = "https://example.com/";
 
         private readonly IToastService _toastService;
 
-        public BookServiceTests()
+        public ReadListServiceTests()
         {
             _toastService = new Mock<IToastService>().Object;
         }
 
         [Fact]
-        public async Task FetchAuthor_ShouldCallApi()
+        public async Task FetchData_ShouldCallApi()
         {
-            // ARRANGE
             var handlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
             handlerMock
                .Protected()
-               // Setup the PROTECTED method to mock
                .Setup<Task<HttpResponseMessage>>(
                   "SendAsync",
                   ItExpr.IsAny<HttpRequestMessage>(),
                   ItExpr.IsAny<CancellationToken>()
                )
-               // prepare the expected response of the mocked http call
                .ReturnsAsync(new HttpResponseMessage()
                {
                    StatusCode = HttpStatusCode.OK,
-                   Content = new StringContent("[{\"id\":1,\"name\": \"Peter Andersson\"}]"),
+                   Content = new StringContent("[{\"id\":1,\"url\":\"https://lpda.se\",\"added\":\"2021-01-01T00:00:00Z\"}]"),
                })
                .Verifiable();
 
@@ -51,21 +49,21 @@ namespace PeterPedia.Tests.Client.Book
                 BaseAddress = new Uri(baseAddress),
             };
 
-            var subjectUnderTest = new BookService(httpClient, _toastService);
+            var subjectUnderTest = new ReadListService(httpClient, _toastService);
 
             // ACT
-            await subjectUnderTest.FetchAuthor();
+            await subjectUnderTest.FetchData();
 
             // ASSERT
-            Assert.NotNull(subjectUnderTest.Authors);
-            Assert.Single(subjectUnderTest.Authors);
-            var author = subjectUnderTest.Authors[0];
-            Assert.NotNull(author);
-            Assert.Equal(1, author.Id);
-            Assert.Equal("Peter Andersson", author.Name);
+            Assert.NotNull(subjectUnderTest.Items);
+            Assert.Single(subjectUnderTest.Items);
+            var item = subjectUnderTest.Items[0];
+            Assert.NotNull(item);
+            Assert.Equal(1, item.Id);
+            Assert.Equal("https://lpda.se", item.Url);
 
             // also check the 'http' call was like we expected it
-            var expectedUri = new Uri($"{baseAddress}api/Author");
+            var expectedUri = new Uri($"{baseAddress}api/ReadList");
 
             handlerMock.Protected().Verify(
                "SendAsync",
