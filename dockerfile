@@ -18,8 +18,7 @@ COPY src/Server/*.csproj ./src/Server/
 COPY src/Shared/*.csproj ./src/Shared/
 
 # Copy test projects
-COPY tests/Client.Book.Tests/*.csproj ./tests/Client.Book.Tests/
-COPY tests/Server.Tests/*.csproj ./tests/Server.Tests/
+COPY tests/PeterPedia.Tests/*.csproj ./tests/PeterPedia.Tests/
 
 # Restore
 RUN dotnet restore
