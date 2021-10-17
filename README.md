@@ -1,7 +1,9 @@
 # PeterPedia
 A collection of simple apps I use
 
-[![.NET](https://github.com/peter-andersson/PeterPedia/actions/workflows/dotnet.yml/badge.svg)](https://github.com/peter-andersson/PeterPedia/actions/workflows/dotnet.yml)
+[![Build and test](https://github.com/peter-andersson/PeterPedia/actions/workflows/Build%20and%20test.yml/badge.svg)](https://github.com/peter-andersson/PeterPedia/actions/workflows/Build%20and%20test.yml)
+[![Build and Publish Docker Image](https://github.com/peter-andersson/PeterPedia/actions/workflows/Build%20and%20Publish%20Docker%20Image.yml/badge.svg)](https://github.com/peter-andersson/PeterPedia/actions/workflows/Build%20and%20Publish%20Docker%20Image.yml)
+[![CodeQL](https://github.com/peter-andersson/PeterPedia/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/peter-andersson/PeterPedia/actions/workflows/codeql-analysis.yml)
 
 ## Apps
 - Book - Tracking read books and books I want to read.
