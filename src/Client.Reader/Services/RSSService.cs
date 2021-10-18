@@ -162,7 +162,7 @@ namespace PeterPedia.Client.Reader.Services
                 return false;
             }
 
-            using var response = await _http.GetAsync($"api/article/read/{id}");
+            using var response = await _http.GetAsync($"/api/article/read/{id}");
 
             if (response.IsSuccessStatusCode)
             {
