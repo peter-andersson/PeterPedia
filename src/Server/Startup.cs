@@ -87,16 +87,16 @@ namespace PeterPedia.Server
                 });
             });
 
-            app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/Bookmark"), bookmark =>
+            app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/ReadList"), bookmark =>
             {
-                bookmark.UseBlazorFrameworkFiles("/Bookmark");
+                bookmark.UseBlazorFrameworkFiles("/ReadList");
                 bookmark.UseStaticFiles();
 
                 bookmark.UseRouting();
                 bookmark.UseEndpoints(endpoints =>
                 {
                     endpoints.MapControllers();
-                    endpoints.MapFallbackToFile("Bookmark/{*path:nonfile}", "Bookmark/index.html");
+                    endpoints.MapFallbackToFile("ReadList/{*path:nonfile}", "ReadList/index.html");
                 });
             });
 

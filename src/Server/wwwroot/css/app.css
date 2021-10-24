@@ -1,3 +1,7 @@
 ﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.app-link {
+    @apply text-xl text-green-800;
+}

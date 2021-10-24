@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Client.Book/PeterPedia.Client.Book.csproj" />
-    <ProjectReference Include="..\Client.Bookmark/PeterPedia.Client.Bookmark.csproj" />    
+    <ProjectReference Include="..\Client.ReadList/PeterPedia.Client.ReadList.csproj" />    
     <ProjectReference Include="..\Client.Episodes/PeterPedia.Client.Episodes.csproj" />
     <ProjectReference Include="..\Client.Movie/PeterPedia.Client.Movie.csproj" />
     <ProjectReference Include="..\Client.Reader/PeterPedia.Client.Reader.csproj" />  

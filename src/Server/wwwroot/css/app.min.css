@@ -682,9 +682,9 @@ video {
   padding-right: 1rem;
 }
 
-.text-4xl {
-  font-size: 2.25rem;
-  line-height: 2.5rem;
+.text-6xl {
+  font-size: 3.75rem;
+  line-height: 1;
 }
 
 .text-green-600 {
@@ -703,6 +703,13 @@ video {
   --tw-ring-color: rgba(59, 130, 246, 0.5);
   --tw-ring-offset-shadow: 0 0 #0000;
   --tw-ring-shadow: 0 0 #0000;
+}
+
+.app-link {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  --tw-text-opacity: 1;
+  color: rgba(6, 95, 70, var(--tw-text-opacity));
 }
 
 @media (min-width: 640px) {

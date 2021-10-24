@@ -1,10 +1,10 @@
-﻿namespace PeterPedia.Client.Bookmark.Pages
+﻿namespace PeterPedia.Client.ReadList.Pages
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using PeterPedia.Shared;
     using Microsoft.AspNetCore.Components;
-    using PeterPedia.Client.Bookmark.Services;
+    using PeterPedia.Client.ReadList.Services;
     using System;
     using Microsoft.AspNetCore.Components.Web;
 
@@ -34,7 +34,7 @@
             }
         }
 
-        public async Task InputKeyDown(KeyboardEventArgs e)
+        public async Task InputKeyUp(KeyboardEventArgs e)
         {
             if (e.Code == "Enter" || e.Code == "NumpadEnter" || e.Code == "Return")
             {

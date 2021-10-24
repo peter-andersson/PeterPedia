@@ -1,4 +1,4 @@
-namespace PeterPedia.Client.Bookmark
+namespace PeterPedia.Client.ReadList
 {
     using System;
     using System.Net.Http;
@@ -6,7 +6,7 @@ namespace PeterPedia.Client.Bookmark
     using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
     using Microsoft.Extensions.DependencyInjection;
     using Blazored.Toast;
-    using PeterPedia.Client.Bookmark.Services;
+    using PeterPedia.Client.ReadList.Services;
 
     public class Program
     {

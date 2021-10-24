@@ -10,7 +10,7 @@ using System.Net;
 using Moq.Protected;
 using Blazored.Toast;
 using Blazored.Toast.Services;
-using PeterPedia.Client.Bookmark.Services;
+using PeterPedia.Client.ReadList.Services;
 
 namespace PeterPedia.Tests.Client.Bookmark
 {

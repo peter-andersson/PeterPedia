@@ -1,4 +1,4 @@
-﻿namespace PeterPedia.Client.Bookmark.Services
+﻿namespace PeterPedia.Client.ReadList.Services
 {
     using PeterPedia.Shared;
     using System.Collections.Generic;
