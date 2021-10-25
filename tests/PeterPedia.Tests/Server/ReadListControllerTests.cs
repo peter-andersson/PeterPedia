@@ -11,6 +11,10 @@ using PeterPedia.Server.Data.Models;
 using System.Collections.Generic;
 using PeterPedia.Shared;
 using System.Linq;
+using System.Net.Http;
+using Moq.Protected;
+using System.Threading;
+using System.Net;
 
 namespace PeterPedia.Tests.Server
 {
@@ -30,9 +34,11 @@ namespace PeterPedia.Tests.Server
                 .UseInMemoryDatabase(databaseName: $"{ nameof(ReadListControllerTests) }.{ nameof(Get_WithoutItemsShouldReturnEmptyList) }")
                 .Options;
 
+            var mockFactory = new Mock<IHttpClientFactory>();
+
             using (var context = new PeterPediaContext(options))
             {
-                ReadListController controller = new ReadListController(_logger, context);
+                ReadListController controller = new ReadListController(_logger, context, mockFactory.Object);
 
                 var result = await controller.Get();
                 var okResult = result as OkObjectResult;
@@ -51,6 +57,8 @@ namespace PeterPedia.Tests.Server
             var options = new DbContextOptionsBuilder<PeterPediaContext>()
                 .UseInMemoryDatabase(databaseName: $"{ nameof(ReadListControllerTests) }.{ nameof(Get_WithItemsShouldReturnListWithItems) }")
                 .Options;
+
+            var mockFactory = new Mock<IHttpClientFactory>();
 
             using (var context = new PeterPediaContext(options))
             {
@@ -73,7 +81,7 @@ namespace PeterPedia.Tests.Server
 
             using (var context = new PeterPediaContext(options))
             {
-                ReadListController controller = new ReadListController(_logger, context);
+                ReadListController controller = new ReadListController(_logger, context, mockFactory.Object);
 
                 var result = await controller.Get();
                 var okResult = result as OkObjectResult;
@@ -96,9 +104,11 @@ namespace PeterPedia.Tests.Server
                 .UseInMemoryDatabase(databaseName: $"{ nameof(ReadListControllerTests) }.{ nameof(Add_WithInvalidDataShouldReturnBadRequest) }")
                 .Options;
 
+            var mockFactory = new Mock<IHttpClientFactory>();
+
             using (var context = new PeterPediaContext(options))
             {
-                ReadListController controller = new ReadListController(_logger, context);
+                ReadListController controller = new ReadListController(_logger, context, mockFactory.Object);
 
                 ReadListItem item = new ReadListItem()
                 {
@@ -116,17 +126,38 @@ namespace PeterPedia.Tests.Server
         }
 
         [Theory]
-        [InlineData("http://google.com")]
-        [InlineData("https://norran.se")]
-        public async Task Add_WithValidDataShouldAddItem(string url)
+        [InlineData("http://google.com", "Google")]
+        [InlineData("https://norran.se", "Norran")]
+        public async Task Add_WithValidDataShouldAddItem(string url, string title)
         {
             var options = new DbContextOptionsBuilder<PeterPediaContext>()
                 .UseInMemoryDatabase(databaseName: $"{ nameof(ReadListControllerTests) }.{ nameof(Add_WithValidDataShouldAddItem) }")
                 .Options;
 
+            var mockFactory = new Mock<IHttpClientFactory>();
+
+            var handlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+            handlerMock
+               .Protected()
+               .Setup<Task<HttpResponseMessage>>(
+                  "SendAsync",
+                  ItExpr.IsAny<HttpRequestMessage>(),
+                  ItExpr.IsAny<CancellationToken>()
+               )
+               .ReturnsAsync(new HttpResponseMessage()
+               {
+                   StatusCode = HttpStatusCode.OK,
+                   Content = new StringContent($"<html><head><title>{title}</title></head><body></body></html>"),
+               })
+               .Verifiable();
+
+            // use real http client with mocked handler here
+            var httpClient = new HttpClient(handlerMock.Object);
+            mockFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(httpClient);
+
             using (var context = new PeterPediaContext(options))
             {
-                ReadListController controller = new ReadListController(_logger, context);
+                ReadListController controller = new ReadListController(_logger, context, mockFactory.Object);
 
                 ReadListItem item = new ReadListItem()
                 {
@@ -148,6 +179,8 @@ namespace PeterPedia.Tests.Server
                 var dbItem = await context.ReadListItems.SingleOrDefaultAsync(r => r.Url == item.Url);
                 Assert.NotNull(dbItem);
                 Assert.Equal(addedItem.Id, dbItem.Id);
+                Assert.NotNull(addedItem.Title);
+                Assert.Equal(addedItem.Title, title);
             }
         }
 
@@ -157,6 +190,8 @@ namespace PeterPedia.Tests.Server
             var options = new DbContextOptionsBuilder<PeterPediaContext>()
                 .UseInMemoryDatabase(databaseName: $"{ nameof(ReadListControllerTests) }.{ nameof(Add_SameItemTwiceShouldReturnConfliceted) }")
                 .Options;
+
+            var mockFactory = new Mock<IHttpClientFactory>();
 
             using (var context = new PeterPediaContext(options))
             {
@@ -179,7 +214,7 @@ namespace PeterPedia.Tests.Server
 
             using (var context = new PeterPediaContext(options))
             {
-                ReadListController controller = new ReadListController(_logger, context);
+                ReadListController controller = new ReadListController(_logger, context, mockFactory.Object);
 
                 ReadListItem item = new ReadListItem()
                 {
@@ -201,9 +236,11 @@ namespace PeterPedia.Tests.Server
                                         .UseInMemoryDatabase(databaseName: $"{ nameof(ReadListControllerTests) }.{ nameof(Delete_NotFoundShouldReturn404) }")
                                         .Options;
 
+            var mockFactory = new Mock<IHttpClientFactory>();
+
             using (var context = new PeterPediaContext(options))
             {
-                ReadListController controller = new ReadListController(_logger, context);
+                ReadListController controller = new ReadListController(_logger, context, mockFactory.Object);
 
                 var result = await controller.Delete(0);
                 var notFoundResult = result as NotFoundResult;
@@ -219,6 +256,8 @@ namespace PeterPedia.Tests.Server
             var options = new DbContextOptionsBuilder<PeterPediaContext>()
                                         .UseInMemoryDatabase(databaseName: $"{ nameof(ReadListControllerTests) }.{ nameof(Delete_ItemFoundShouldRemoveItem) }")
                                         .Options;
+
+            var mockFactory = new Mock<IHttpClientFactory>();
 
             using (var context = new PeterPediaContext(options))
             {
@@ -241,7 +280,7 @@ namespace PeterPedia.Tests.Server
 
             using (var context = new PeterPediaContext(options))
             {
-                ReadListController controller = new ReadListController(_logger, context);
+                ReadListController controller = new ReadListController(_logger, context, mockFactory.Object);
 
                 var result = await controller.Delete(1);
                 var okResult = result as OkResult;

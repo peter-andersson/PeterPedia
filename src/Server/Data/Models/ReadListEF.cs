@@ -8,6 +8,8 @@ namespace PeterPedia.Server.Data.Models
     {
         public int Id { get; set; }
 
+        public string? Title { get; set; }
+
         public string Url { get; set; } = null!;
 
         public DateTime Added { get; set; }

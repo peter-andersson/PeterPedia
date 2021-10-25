@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using PeterPedia.Server.Data;
 using PeterPedia.Shared;
 using PeterPedia.Server.Data.Models;
+using System.Net.Http;
+using HtmlAgilityPack;
 
 namespace PeterPedia.Server.Controllers
 {
@@ -17,11 +19,13 @@ namespace PeterPedia.Server.Controllers
     {
         private readonly ILogger<ReadListController> _logger;
         private readonly PeterPediaContext _dbContext;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public ReadListController(ILogger<ReadListController> logger, PeterPediaContext dbContext)
+        public ReadListController(ILogger<ReadListController> logger, PeterPediaContext dbContext, IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
             _dbContext = dbContext;
+            _httpClientFactory = httpClientFactory;
         }
 
         [HttpGet]
@@ -65,10 +69,13 @@ namespace PeterPedia.Server.Controllers
                 return Conflict();
             }
 
+            item.Title = await LoadTitleFromPage(item.Url);
+
             var dbItem = new ReadListEF()
             {
                 Added = DateTime.UtcNow,
                 Url = item.Url,
+                Title = item.Title,
             };
 
             _dbContext.ReadListItems.Add(dbItem);
@@ -96,6 +103,37 @@ namespace PeterPedia.Server.Controllers
             return Ok();
         }
 
+        private async Task<string?> LoadTitleFromPage(string url)
+        {
+            string? result = null;
+
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                _logger.LogError($"'{nameof(url)}' cannot be null or whitespace.", nameof(url));
+                return result;
+            }
+
+            try
+            {
+                using var httpClient = _httpClientFactory.CreateClient();
+
+                HttpResponseMessage response = await httpClient.GetAsync(url);
+                string html = await response.Content.ReadAsStringAsync();
+
+                var doc = new HtmlDocument();
+                doc.LoadHtml(html);
+                var titleNode = doc.DocumentNode.SelectSingleNode("//head/title");
+                result = titleNode.InnerText;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Failed to load title from article URL.");
+                return result;
+            }
+
+            return result;
+        }
+
         private static ReadListItem ConvertToItem(ReadListEF itemEF)
         {
             if (itemEF is null)
@@ -107,7 +145,8 @@ namespace PeterPedia.Server.Controllers
             {
                 Id = itemEF.Id,
                 Added = itemEF.Added,
-                Url = itemEF.Url
+                Url = itemEF.Url,
+                Title = itemEF.Title
             };
 
             return readListItem;

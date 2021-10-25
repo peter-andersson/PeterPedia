@@ -1,7 +1,8 @@
 ﻿@page "/"
 <div class="flex flex-row gap-2 p-1">
     <div class="flex-grow">
-        <input id="add-item" type="text" class="w-full bg-gray-500 text-black" placeholder="Enter URL to add" @bind-value="Url" @ref="Input" @onkeyup="@InputKeyUp" />
+        <input id="add-item" type="text" class="w-full bg-gray-500 text-black" placeholder="Enter URL to add"
+            @bind-value="Url" @ref="Input" @onkeyup="@InputKeyUp" />
     </div>
     <div class="flow-auto">
         <button class="btn btn-green" @onclick="Add">Add</button>
@@ -12,7 +13,9 @@
     {
         <div class="flex flex-row gap-2 p-1">
             <div class="flex-grow">
-                <a href="@item.Url" class="inline-block w-full" @onclick="@(() => Delete(item.Id))">@item.Url</a>
+                <a href="@item.Url" class="inline-block w-full" @onclick="@(() => Delete(item.Id))">
+                    @(item.Title ?? item.Url)
+                </a>
             </div>
             <div class="flow-auto">
                 <button class="btn btn-red" @onclick="@(() => Delete(item.Id))">Remove</button>
