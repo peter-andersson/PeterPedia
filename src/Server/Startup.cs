@@ -11,6 +11,7 @@ using PeterPedia.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using PeterPedia.Server.Services;
 using System.Net.Http;
+using Microsoft.Extensions.FileProviders;
 
 namespace PeterPedia.Server
 {
@@ -49,10 +50,12 @@ namespace PeterPedia.Server
                     x.GetRequiredService<IHttpClientFactory>()
                 ));
 
-            services.AddHostedService<ConsumeRemoveArticleService>();
-            services.AddHostedService<ConsumeRefreshArticleService>();
-            services.AddHostedService<ConsumeShowUpdateService>();
+            // services.AddHostedService<ConsumeRemoveArticleService>();
+            // services.AddHostedService<ConsumeRefreshArticleService>();
+            // services.AddHostedService<ConsumeShowUpdateService>();
+            services.AddHostedService<ConsumeVideoService>();
 
+            services.AddScoped<VideoService>();
             services.AddScoped<RemoveArticleService>();
             services.AddScoped<RefreshArticleService>();
             services.AddScoped<IShowUpdateService, ShowUpdateService>();
@@ -140,13 +143,19 @@ namespace PeterPedia.Server
             });
 
             app.UseStaticFiles();
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Configuration["VideoPath"] ?? "/video"),
+                RequestPath = "/video"
+            });
+
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
-                // endpoints.MapFallbackToFile("index.html");
             });
         }
     }

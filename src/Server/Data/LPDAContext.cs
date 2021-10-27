@@ -29,6 +29,8 @@ namespace PeterPedia.Server.Data
 
         public DbSet<ReadListEF> ReadListItems { get; set; } = null!;
 
+        public DbSet<VideoEF> Videos { get; set; } = null!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             if (modelBuilder is null)
@@ -45,6 +47,7 @@ namespace PeterPedia.Server.Data
             modelBuilder.Entity<SeasonEF>();
             modelBuilder.Entity<EpisodeEF>();
             modelBuilder.Entity<ReadListEF>();
+            modelBuilder.Entity<VideoEF>();
 
             modelBuilder
                 .Entity<BookEF>()
