@@ -9,8 +9,8 @@ else
     <h1 class="text-xl ml-5">@Video.Title</h1>
     <h2 class="text-sm ml-5">Duration: @Video.Duration.ToString(@"hh\:mm\:ss")</h2>
 
-    <div class="w-full mt-3">
-        <video class="ml-5" controls>
+    <div class="w-full pr-5 md:w-1/2 h-auto mt-3">
+        <video class="ml-5 w-auto" controls>
             <source src="@Video.Url" type="@Video.Type">
             Your browser does not support the video tag.
         </video>
