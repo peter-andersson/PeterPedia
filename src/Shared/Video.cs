@@ -9,6 +9,7 @@ namespace PeterPedia.Shared
         {
             Title = string.Empty;
             Url = string.Empty;
+            Type = string.Empty;
         }
 
         public int Id { get; set; }

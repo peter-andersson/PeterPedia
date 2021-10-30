@@ -9,6 +9,7 @@ using PeterPedia.Shared;
 using PeterPedia.Server.Data.Models;
 using Microsoft.Extensions.Configuration;
 using System.IO;
+using PeterPedia.Server.Services;
 
 namespace PeterPedia.Server.Controllers
 {
@@ -19,12 +20,14 @@ namespace PeterPedia.Server.Controllers
         private readonly ILogger<VideoController> _logger;
         private readonly PeterPediaContext _dbContext;
         private readonly IConfiguration _configuration;
+        private readonly IFileService _fileService;
 
-        public VideoController(ILogger<VideoController> logger, PeterPediaContext dbContext, IConfiguration configuration)
+        public VideoController(ILogger<VideoController> logger, PeterPediaContext dbContext, IConfiguration configuration, IFileService fileService)
         {
             _logger = logger;
             _dbContext = dbContext;
             _configuration = configuration;
+            _fileService = fileService;
         }
 
         [HttpGet]
@@ -56,7 +59,7 @@ namespace PeterPedia.Server.Controllers
 
             try
             {
-                System.IO.File.Delete(item.AbsolutePath);
+                _fileService.Delete(item.AbsolutePath);
 
                 _dbContext.Videos.Remove(item);
 

@@ -1,11 +1,8 @@
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Linq;
 using Microsoft.OpenApi.Models;
 using PeterPedia.Server.Data;
 using Microsoft.EntityFrameworkCore;
@@ -50,15 +47,16 @@ namespace PeterPedia.Server
                     x.GetRequiredService<IHttpClientFactory>()
                 ));
 
-            // services.AddHostedService<ConsumeRemoveArticleService>();
-            // services.AddHostedService<ConsumeRefreshArticleService>();
-            // services.AddHostedService<ConsumeShowUpdateService>();
+            services.AddHostedService<ConsumeRemoveArticleService>();
+            services.AddHostedService<ConsumeRefreshArticleService>();
+            services.AddHostedService<ConsumeShowUpdateService>();
             services.AddHostedService<ConsumeVideoService>();
 
             services.AddScoped<VideoService>();
             services.AddScoped<RemoveArticleService>();
             services.AddScoped<RefreshArticleService>();
             services.AddScoped<IShowUpdateService, ShowUpdateService>();
+            services.AddScoped<IFileService, FileService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

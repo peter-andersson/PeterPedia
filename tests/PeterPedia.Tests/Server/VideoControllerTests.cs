@@ -13,6 +13,7 @@ using PeterPedia.Shared;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Microsoft.Extensions.Configuration;
+using PeterPedia.Server.Services;
 
 namespace PeterPedia.Tests.Server
 {
@@ -20,9 +21,12 @@ namespace PeterPedia.Tests.Server
     {
         private readonly ILogger<VideoController> _logger;
 
+        private readonly Mock<IFileService> _fileServiceMock;
+
         public VideoControllerTests()
         {
             _logger = Mock.Of<ILogger<VideoController>>();
+            _fileServiceMock = new Mock<IFileService>();
         }
 
         [Fact]
@@ -110,6 +114,8 @@ namespace PeterPedia.Tests.Server
 
                 var item = context.Videos.Where(r => r.Id == 1).SingleOrDefault();
                 Assert.Null(item);
+
+                _fileServiceMock.Verify(m => m.Delete(It.IsAny<string>()));
             }
         }
 
@@ -130,7 +136,7 @@ namespace PeterPedia.Tests.Server
                 .AddInMemoryCollection(inMemorySettings)
                 .Build();
 
-            return new VideoController(_logger, context, configuration);
+            return new VideoController(_logger, context, configuration, _fileServiceMock.Object);
         }
 
         private void AddTestData(DbContextOptions<PeterPediaContext> options)
