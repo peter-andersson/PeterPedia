@@ -11,10 +11,6 @@ using PeterPedia.Server.Data.Models;
 using System.Collections.Generic;
 using PeterPedia.Shared;
 using System.Linq;
-using System.Net.Http;
-using Moq.Protected;
-using System.Threading;
-using System.Net;
 using System.Runtime.CompilerServices;
 using Microsoft.Extensions.Configuration;
 
@@ -74,6 +70,7 @@ namespace PeterPedia.Tests.Server
                 Assert.Equal("/video/test/file.mp4", video.Url);
                 Assert.Equal("file", video.Title);
                 Assert.Equal(TimeSpan.FromMinutes(30), video.Duration);
+                Assert.Equal("video/mp4", video.Type);
             }
         }
 

@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#main {
+    display: grid;
+    grid-template-rows: 40px auto;
+    gap: 10px;
+}
+
+#header {
+    grid-row: 1;
+}
+
+#content {
+    grid-row: 2;
+}
+
+.btn {
+    @apply font-bold py-2 px-4 rounded;
+}
+
+.btn-red {
+    @apply bg-red-500 text-white;
+}
+
+.btn-red:hover {
+    @apply bg-red-700;
+}
+
+#blazor-error-ui {
+    display: none;
+    @apply absolute top-0 left-0;
+}

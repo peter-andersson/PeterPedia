@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json.Serialization;
 
 namespace PeterPedia.Shared
 {
@@ -16,6 +17,9 @@ namespace PeterPedia.Shared
 
         public string Url { get; set; }
 
+        public string Type { get; set; }
+
+        [JsonConverter(typeof(JsonTimeSpanConverter))]
         public TimeSpan Duration { get; set; }
     }
 }

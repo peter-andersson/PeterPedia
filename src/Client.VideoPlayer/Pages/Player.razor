@@ -1,0 +1,20 @@
+@page "/player/{id:int}"
+
+@if (Video is null)
+{
+    <h1>Video not found</h1>
+}
+else
+{
+    <h1 class="text-xl ml-5">@Video.Title</h1>
+    <h2 class="text-sm ml-5">Duration: @Video.Duration.ToString(@"hh\:mm\:ss")</h2>
+
+    <div class="w-full mt-3">
+        <video class="ml-5" controls>
+            <source src="@Video.Url" type="@Video.Type">
+            Your browser does not support the video tag.
+        </video>
+
+        <button class="btn btn-red mt-3 ml-5" @onclick="Delete">Remove</button>
+    </div>
+}

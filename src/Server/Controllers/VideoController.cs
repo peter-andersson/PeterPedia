@@ -54,9 +54,20 @@ namespace PeterPedia.Server.Controllers
                 return NotFound();
             }
 
-            _dbContext.Videos.Remove(item);
+            try
+            {
+                System.IO.File.Delete(item.AbsolutePath);
 
-            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
+                _dbContext.Videos.Remove(item);
+
+                await _dbContext.SaveChangesAsync().ConfigureAwait(false);
+            }
+            catch (IOException ioe)
+            {
+                _logger.LogError(ioe, "Failed to delete video.");
+
+                return StatusCode(500);
+            }
 
             return Ok();
         }
@@ -73,6 +84,7 @@ namespace PeterPedia.Server.Controllers
                 Id = itemEF.Id,
                 Title = itemEF.Title,
                 Duration = itemEF.Duration,
+                Type = itemEF.Type,
             };
 
             var basePath = _configuration["VideoPath"] ?? "/video";
