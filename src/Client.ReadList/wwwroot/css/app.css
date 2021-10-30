@@ -37,3 +37,8 @@
 .btn-red:hover {
     @apply bg-red-700;
 }
+
+#blazor-error-ui {
+    display: none;
+    @apply absolute top-0 left-0;
+}
