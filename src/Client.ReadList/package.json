@@ -1,5 +1,5 @@
 {
-  "name": "peterPedia.client.readlist",
+  "name": "peterpedia.client.readlist",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -12,7 +12,7 @@
     "autoprefixer": "^10.3.7",
     "postcss": "^8.3.9",
     "postcss-cli": "^9.0.1",
-    "tailwindcss": "^2.2.16"
+    "tailwindcss": "^2.2.19"
   },
   "dependencies": {
     "@tailwindcss/forms": "^0.3.4"
