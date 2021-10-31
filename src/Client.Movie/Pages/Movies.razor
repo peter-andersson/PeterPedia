@@ -8,18 +8,21 @@
 }
 else
 {
+<div class="col-12 w-auto">
     <EditForm class="row align-items-center" EditContext="@SearchContext" OnSubmit="@LoadAllMovies">
-    <div class="col-auto w-75">
-        <label class="visually-hidden" for="search">Filter by title</label>
-        <InputText id="search" class="form-control" @bind-Value="CurrentSearch" placeholder="Filter by title" />
-    </div>
-    <div class="col-auto">
-        <button type="submit" class="btn btn-primary ms-2">Search</button>
-    </div>
-</EditForm>
+        <div class="col-12 col-sm-10">
+            <label class="visually-hidden" for="search">Filter by title</label>
+            <InputText id="search" class="form-control" @bind-Value="CurrentSearch" placeholder="Filter by title" />
+        </div>
+        <div class="col-12 col-sm-2 pt-2 pt-sm-0">
+            <button type="submit" class="btn btn-primary w-100">Search</button>
+        </div>
+    </EditForm>
+</div>    
+
     <div class="row">
         <div class="col-12">
-            <MovieTable Movies="@MovieList" ReturnUrl="/movies"></MovieTable>
+            <MovieTable Movies="@MovieList" ReturnUrl="movies"></MovieTable>
 
             <div class="pagination">
                 <button class="btn btn-primary" @onclick=@(() => NavigateToPage(NavigatePage.First)) disabled="@IsPreviousButtonDisabled">First</button>

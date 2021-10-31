@@ -24,7 +24,7 @@
 
         protected override async Task OnInitializedAsync()
         {
-            ReturnUrl = ReturnUrl ?? "/";
+            ReturnUrl = ReturnUrl ?? "";
 
             IsTaskRunning = false;
             var movie = await MovieService.Get(Id);
