@@ -126,6 +126,9 @@ namespace PeterPedia.Server.Controllers
                 bookEF.Authors.Add(author);
             }
 
+            bookEF.State = (int)book.State;
+            bookEF.Title = book.Title;
+
             _dbContext.Books.Update(bookEF);
             await _dbContext.SaveChangesAsync().ConfigureAwait(false);
             _logger.LogDebug("Book updated");
