@@ -53,7 +53,7 @@
         {
             await BookService.FetchData();
 
-            ReturnUrl = ReturnUrl ?? "/";
+            ReturnUrl = ReturnUrl ?? "";
 
             Book book = null;
 
