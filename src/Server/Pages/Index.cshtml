@@ -1,13 +1,29 @@
 @page
 @model PeterPedia.Server.Pages.IndexModel
 
-<div class="flex flex-col divide-y-2 divide-gray-500 divide-solid mx-auto">
-    <h1 class="text-6xl">PeterPedia</h1>
-    <a href="/Book" class="app-link">Book tracking</a>
-    <a href="/Movie" class="app-link">Movie tracking</a>
-    <a href="/Reader" class="app-link">RSS Reader</a>
-    <a href="/ReadList" class="app-link">Read later list</a>
-    <a href="/Episodes" class="app-link">TV Episodes</a>
-    <a href="/VideoPlayer" class="app-link">Videos</a>
-    <a href="/swagger" class="app-link">API</a>
+<div class="d-flex flex-column justify-content-center align-items-center mt-5">
+    <h1 class="display-1 text-success">PeterPedia</h1>
+    <ul class="nav flex-column mt-2">
+        <li class="nav-item">
+            <a href="/Book" class="link-success fs-1">Book tracking</a>
+        </li>
+        <li class="nav-item">
+            <a href="/Movie" class="link-success fs-1">Movie tracking</a>
+        </li>
+        <li class="nav-item">
+            <a href="/Reader" class="link-success fs-1">RSS Reader</a>
+        </li>
+        <li class="nav-item">
+            <a href="/ReadList" class="link-success fs-1">Read later list</a>
+        </li>
+        <li class="nav-item">
+            <a href="/Episodes" class="link-success fs-1">TV Episodes</a>
+        </li>
+        <li class="nav-item">
+            <a href="/VideoPlayer" class="link-success fs-1">Videos</a>
+        </li>
+        <li class="nav-item border-top mt-2 pt-2">
+            <a href="/swagger" class="link-success fs-6">API</a>
+        </li>
+    </ul>
 </div>
