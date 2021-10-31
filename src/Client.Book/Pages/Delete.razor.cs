@@ -26,7 +26,7 @@
             IsTaskRunning = false;
             var book = await BookService.Get(Id);
 
-            ReturnUrl = ReturnUrl ?? "/";
+            ReturnUrl = ReturnUrl ?? "";
 
             if (book is null)
             {

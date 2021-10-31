@@ -4,19 +4,21 @@
 
 <div class="col-12 w-auto">
     <EditForm class="row align-items-center" EditContext="@SearchContext" OnSubmit="@LoadDisplayBooks">
-        <div class="col-auto w-75">
+        <div class="col-12 col-sm-10">
             <label class="visually-hidden" for="search">Filter by title</label>
             <InputText id="search" class="form-control" @bind-Value="CurrentSearch" placeholder="Filter by title" />
         </div>
-        <div class="col-auto">
-            <button type="submit" class="btn btn-primary">Search</button>
+        <div class="col-12 col-sm-2 pt-2 pt-sm-0">
+            <button type="submit" class="btn btn-primary w-100">Search</button>
         </div>
     </EditForm>
 </div>
 
 <div class="card-group mt-5">
-    @foreach (var book in BookList)
-    {
-        <BookView Book=@book ReturnUrl="read"></BookView>
-    }
+    <div class="row">
+        @foreach (var book in BookList)
+        {
+            <BookView Book=@book ReturnUrl="read"></BookView>
+        }
+    </div>
 </div>

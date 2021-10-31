@@ -1,13 +1,9 @@
 ﻿namespace PeterPedia.Client.Book.Pages
 {
     using Microsoft.AspNetCore.Components;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using PeterPedia.Shared;
     using PeterPedia.Client.Book.Services;
-    using Microsoft.AspNetCore.Components.Forms;
 
     public partial class Statistics : ComponentBase
     {

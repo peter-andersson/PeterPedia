@@ -8,11 +8,6 @@
     display: none;
 }
 
-.book {
-    max-width: 400px;
-    min-width: 400px;
-}
-
 .blazored-typeahead__result {
     color: #000;
 }
