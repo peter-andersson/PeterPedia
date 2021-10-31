@@ -19,7 +19,7 @@ function createDirectory(dir) {
     fs.mkdirSync(dir, {recursive: true});
 }
 
-const projects = ["src/Client.Book", "src/Client.Episodes", "src/Client.Movie", "src/Client.ReadList", "src/Client.Reader", "src/Client.VideoPlayer", "src/Server"]
+const projects = ["src/Server"]
 
 projects.forEach(function (project) {
     let dir = project + "/wwwroot/css";
