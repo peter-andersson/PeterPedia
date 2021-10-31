@@ -1,0 +1,23 @@
+{
+  "name": "peterpedia",
+  "version": "1.0.0",
+  "description": "Collection of simple apps",
+  "scripts": {
+    "test": "dotnet test",
+    "build": "dotnet build",
+    "lib": "node .scripts/lib.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/peter-andersson/PeterPedia.git"
+  },
+  "author": "Peter Andersson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/peter-andersson/PeterPedia/issues"
+  },
+  "homepage": "https://github.com/peter-andersson/PeterPedia#readme",
+  "dependencies": {
+    "bootstrap": "^5.1.3"
+  }
+}
