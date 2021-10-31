@@ -2,11 +2,12 @@
 
 <BlazoredToasts Position="ToastPosition.BottomRight" Timeout="5" />
 
-<div class="flex flex-col">
-    <div class="flex-auto">
-        <div class="flex justify-center items-center">
-            <h1 class="text-4xl">Reading list</h1>
-        </div>        
+<div class="container-fluid">
+    <NavMenu />
+
+    <div class="main mt-3">
+        <div class="content px-4">
+            @Body
+        </div>
     </div>
-    <div class="flex-grow">@Body</div>
 </div>

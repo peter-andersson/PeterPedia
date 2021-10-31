@@ -6,7 +6,7 @@
     using Microsoft.AspNetCore.Components;
     using PeterPedia.Client.ReadList.Services;
     using System;
-    using Microsoft.AspNetCore.Components.Web;
+    using Microsoft.AspNetCore.Components.Forms;
 
     public partial class ReadLater : ComponentBase
     {
@@ -15,12 +15,16 @@
 
         public List<ReadListItem> Items { get; set; } = new List<ReadListItem>();
 
-        public string Url { get; set; }
+        public string Url { get; set; } = string.Empty;
+
+        private EditContext AddContext;
 
         private ElementReference Input;
 
         protected override async Task OnInitializedAsync()
         {
+            AddContext = new EditContext(Url);
+
             await ReadListService.FetchData();
 
             Items = ReadListService.Items;
@@ -31,16 +35,6 @@
             if (Input.Id is not null)
             {
                 await Input.FocusAsync();
-            }
-        }
-
-        public async Task InputKeyUp(KeyboardEventArgs e)
-        {
-            if (e.Code == "Enter" || e.Code == "NumpadEnter" || e.Code == "Return")
-            {
-                await Add();
-
-                StateHasChanged();
             }
         }
 

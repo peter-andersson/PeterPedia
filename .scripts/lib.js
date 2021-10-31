@@ -1,32 +1,35 @@
 const fs = require("fs");
 
-function copyBootstrapCss(dest) {
-    const src = "node_modules/bootstrap/dist/css/bootstrap.min.css";
+const bootstrapBase = "node_modules/bootstrap/dist";
+const cssDest = "src/Server/wwwroot/css";
+const jsDest = "src/Server/wwwroot/js";
 
+function copyBootstrapCss() {
+    let src = bootstrapBase + "/css/bootstrap.min.css";
+    let dest = cssDest + "/bootstrap.min.css";
+    console.log(`Copy file ${src} to ${dest}`);
+    fs.copyFileSync(src, dest);
+
+    src = bootstrapBase + "/css/bootstrap.min.css.map";
+    dest = cssDest + "/bootstrap.min.css.map";
     console.log(`Copy file ${src} to ${dest}`);
     fs.copyFileSync(src, dest);
 }
 
-function copyBootstrapJs(dest)  {
-    const src = "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js";
+function copyBootstrapJs()  {
+    let src = bootstrapBase + "/js/bootstrap.bundle.min.js";
+    let dest = jsDest + "/bootstrap.bundle.min.js";
+    console.log(`Copy file ${src} to ${dest}`);
+    fs.copyFileSync(src, dest);
 
+    src = bootstrapBase + "/js/bootstrap.bundle.min.js.map";
+    dest = jsDest + "/bootstrap.bundle.min.js.map";
     console.log(`Copy file ${src} to ${dest}`);
     fs.copyFileSync(src, dest);
 }
 
-function createDirectory(dir) {
-    console.log(`Create directory ${dir}`);
-    fs.mkdirSync(dir, {recursive: true});
-}
+console.log("Copy css");
+copyBootstrapCss();
 
-const projects = ["src/Server"]
-
-projects.forEach(function (project) {
-    let dir = project + "/wwwroot/css";
-    createDirectory(dir);
-    copyBootstrapCss(dir + "/bootstrap.min.css");
-
-    dir = project + "/wwwroot/js";
-    createDirectory(dir);
-    copyBootstrapJs(dir + "/bootstrap.bundle.min.js");
-});
+console.log("Copy js");
+copyBootstrapJs();
