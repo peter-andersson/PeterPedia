@@ -13,7 +13,6 @@ WORKDIR /src
 # Copy project files
 COPY PeterPedia.sln .
 COPY src/Client.Book/*.csproj ./src/Client.Book/
-COPY src/Client.ReadList/*.csproj ./src/Client.ReadList/
 COPY src/Client.Episodes/*.csproj ./src/Client.Episodes/
 COPY src/Client.Movie/*.csproj ./src/Client.Movie/
 COPY src/Client.Reader/*.csproj ./src/Client.Reader/
