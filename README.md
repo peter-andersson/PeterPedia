@@ -7,7 +7,7 @@ A collection of simple apps I use
 
 ## Apps
 - Book - Tracking read books and books I want to read.
-- Bookmark - Bookmark mangement and reading list.
 - Episodes - Tracking unwatched TV episodes. Using data from themoviedb.org
 - Movie - Tracking watched movies. Using data from themoviedb.org
 - Reader - RSS reader.
+- VideoPlayer - Playback of video files.
