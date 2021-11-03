@@ -84,10 +84,10 @@ namespace PeterPedia.Client.Episodes.Services
 
             if (response.IsSuccessStatusCode)
             {
-                _toast.ShowSuccess("Show added");
-
                 var show = await response.Content.ReadFromJsonAsync<Show>();
                 Shows.Add(show);
+
+                _toast.ShowSuccess($"Show {show.Title} added");
 
                 return true;
             }
@@ -112,7 +112,7 @@ namespace PeterPedia.Client.Episodes.Services
 
             if (response.IsSuccessStatusCode)
             {
-                _toast.ShowSuccess("Show deleted");
+                _toast.ShowSuccess($"Show {show.Title} deleted");
 
                 Shows.Remove(show);
 
@@ -145,7 +145,7 @@ namespace PeterPedia.Client.Episodes.Services
 
             if (response.IsSuccessStatusCode)
             {
-                _toast.ShowSuccess("Show saved");
+                _toast.ShowSuccess($"Show  {show.Title} saved");
 
                 var serverShow = await _http.GetFromJsonAsync<Show>($"/api/TV/{show.Id}");
 
@@ -190,7 +190,7 @@ namespace PeterPedia.Client.Episodes.Services
 
                         show.Calculate();
 
-                        _toast.ShowSuccess("Marked season as watched.");
+                        _toast.ShowSuccess($"{show.Title} - Season {season.SeasonNumber} watched.");
 
                         return true;
                     }
@@ -233,7 +233,7 @@ namespace PeterPedia.Client.Episodes.Services
 
                         show.Calculate();
 
-                        _toast.ShowSuccess("Marked season as unwatched.");
+                        _toast.ShowSuccess($"{show.Title} - Season {season.SeasonNumber} unwatched.");
 
                         return true;
                     }
@@ -275,7 +275,7 @@ namespace PeterPedia.Client.Episodes.Services
 
                             show.Calculate();
 
-                            _toast.ShowSuccess("Marked episode as watched.");
+                            _toast.ShowSuccess($"{show.Title} - S{season.SeasonNumber}E{episode.EpisodeNumber} watched.");
 
                             return true;
                         }
@@ -318,7 +318,7 @@ namespace PeterPedia.Client.Episodes.Services
 
                             show.Calculate();
 
-                            _toast.ShowSuccess("Marked episode as unwatched.");
+                            _toast.ShowSuccess($"{show.Title} - S{season.SeasonNumber}E{episode.EpisodeNumber} unwatched.");
 
                             return true;
                         }

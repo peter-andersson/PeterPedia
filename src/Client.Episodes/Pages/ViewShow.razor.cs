@@ -1,28 +1,31 @@
 ﻿using Microsoft.AspNetCore.Components;
 using PeterPedia.Client.Episodes.Services;
 using PeterPedia.Shared;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Linq;
 
 namespace PeterPedia.Client.Episodes.Pages
 {
-    public partial class Episodes : ComponentBase
+    public partial class ViewShow : ComponentBase
     {
         [Inject]
         private TVService TVService { get; set; }
 
-        public List<Show> Shows { get; set; }
+        [Inject]
+        private NavigationManager NavManager { get; set; }
+
+        [Parameter]
+        public int Id { get; set; }
+
+        private Show Show;
 
         protected override async Task OnInitializedAsync()
         {
             await TVService.FetchData();
 
-            Shows = TVService.Shows.Where(s => s.UnwatchedEpisodeCount > 0).OrderBy(m => m.Title).ToList();
+            Show = await TVService.Get(Id);
 
             TVService.RefreshRequested += Refresh;
         }
-
         private void Refresh()
         {
             StateHasChanged();
