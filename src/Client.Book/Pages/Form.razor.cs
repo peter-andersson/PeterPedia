@@ -21,7 +21,7 @@
         [Parameter]
         public string ReturnUrl { get; set; }
 
-        private IList<Author> SelectedAuthor;
+        private IList<Author> SelectedAuthor = new List<Author>();
 
         private Book Book;
 

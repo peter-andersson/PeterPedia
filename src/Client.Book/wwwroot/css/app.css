@@ -7,16 +7,3 @@
     z-index: 1000;
     display: none;
 }
-
-.blazored-typeahead__result {
-    color: #000;
-}
-
-.blazored-typeahead__notfound {
-    color: #000;
-}
-
-.blazored-typeahead__input-icon {
-    background-color: #fff;
-    color: #000;
-}

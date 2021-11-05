@@ -1,44 +1,54 @@
 ﻿@page "/add"
 @page "/edit/{id:int}/{returnUrl?}"
 
-<h2>@Title</h2>
+@if (Book is null)
+{
+    <h2>Loading...</h2>
+}
+else
+{
+    <h2>@Title</h2>
 
-<div class="mb-3">
-    <label class="form-label">Title</label>
-    <input class="form-control" type="text" @bind="@Book.Title" />
-</div>
-<div class="mb-3">
-    <label for="inputState" class="form-label">State</label>
-    <select id="inputState" class="form-select" @bind="@Book.State">
-        <option value="@BookState.WantToRead">Want to read</option>
-        <option value="@BookState.Reading">Reading</option>
-        <option value="@BookState.Read">Read</option>
-    </select>
-</div>
-<div class="mb-3">
-    <label class="form-label">Select author</label>
-    <BlazoredTypeahead class="form-select" SearchMethod="GetAuthor" @bind-Values="SelectedAuthor" EnableDropDown="true"
-        Disabled="false" placeholder="" MinimumLength="2" AddItemOnEmptyResultMethod="ItemAddedMethod">
-        <SelectedTemplate Context="author">
-            @author.Name
-        </SelectedTemplate>
-        <HelpTemplate>
-            Please enter a minimum of 2 characters to perform a search.
-        </HelpTemplate>
-        <NotFoundTemplate Context="searchText">
-            Add "@searchText" as a new author <br />
-            The newly added author will be selected after being added.
-        </NotFoundTemplate>
-        <ResultTemplate Context="author">
-            @author.Name
-        </ResultTemplate>
-    </BlazoredTypeahead>
-</div>
-<div class="row mb-3">
-    <div class="col-auto">
-        <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+    <div class="bg-light text-dark p-5">
+        <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input class="form-control" type="text" @bind="@Book.Title" />
+        </div>
+        <div class="mb-3">
+            <label for="inputState" class="form-label">State</label>
+            <select id="inputState" class="form-select" @bind="@Book.State">
+                <option value="@BookState.WantToRead">Want to read</option>
+                <option value="@BookState.Reading">Reading</option>
+                <option value="@BookState.Read">Read</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Select author</label>
+            <BlazoredTypeahead class="form-select" SearchMethod="GetAuthor" @bind-Values="SelectedAuthor"
+            EnableDropDown="true" Disabled="false" placeholder="" MinimumLength="2"
+            AddItemOnEmptyResultMethod="ItemAddedMethod">
+                <SelectedTemplate Context="author">
+                    @author.Name
+                </SelectedTemplate>
+                <HelpTemplate>
+                    Please enter a minimum of 2 characters to perform a search.
+                </HelpTemplate>
+                <NotFoundTemplate Context="searchText">
+                    Add "@searchText" as a new author <br />
+                    The newly added author will be selected after being added.
+                </NotFoundTemplate>
+                <ResultTemplate Context="author">
+                    @author.Name
+                </ResultTemplate>
+            </BlazoredTypeahead>
+        </div>
+        <div class="row mb-3">
+            <div class="col-auto">
+                <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-success" disabled=@IsTaskRunning @onclick="Save">Save</button>
+            </div>
+        </div>
     </div>
-    <div class="col-auto">
-        <button type="submit" class="btn btn-success" disabled=@IsTaskRunning @onclick="Save">Save</button>
-    </div>
-</div>
+}
