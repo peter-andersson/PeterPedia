@@ -6,15 +6,19 @@
 }
 else
 {
-    <h1 class="text-xl ml-5">@Video.Title</h1>
-    <h2 class="text-sm ml-5">Duration: @Video.Duration.ToString(@"hh\:mm\:ss")</h2>
+    <h3>@Video.Title</h3>
+    <h5>Duration: @Video.Duration.ToString(@"hh\:mm\:ss")</h5>
 
-    <div class="w-full pr-5 md:w-1/2 h-auto mt-3">
-        <video class="ml-5 w-auto" controls>
+    <div class="row">
+        <video class="w-50 ratio ratio-16x9" controls>
             <source src="@Video.Url" type="@Video.Type">
             Your browser does not support the video tag.
         </video>
+    </div>
+    <div class="row">
+        <div class="col">
+            <button class="btn btn-danger mt-2" @onclick="Delete">Remove</button>
+        </div>
 
-        <button class="btn btn-red mt-3 ml-5" @onclick="Delete">Remove</button>
     </div>
 }

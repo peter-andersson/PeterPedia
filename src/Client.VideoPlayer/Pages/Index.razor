@@ -1,18 +1,18 @@
 ﻿@page "/"
 
-<table class="table-fixed border-collapse w-screen">
+<table class="table table-dark table-striped table-hover">
     <thead>
         <tr>
-            <th class="w-4/5 border-b border-gray-500 text-left pl-1">Title</th>
-            <th class="w-1/5 border-b border-gray-500">Duration</th>
+            <th>Title</th>
+            <th>Duration</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in @Videos)
         {
             <tr>
-                <td class="border-t border-b border-gray-500 pl-1"><a href="player/@item.Id">@item.Title</a></td>
-                <td class="border-t border-b border-gray-500 text-center">@item.Duration.ToString(@"hh\:mm\:ss")</td>
+                <td><a class="text-white" href="player/@item.Id">@item.Title</a></td>
+                <td>@item.Duration.ToString(@"hh\:mm\:ss")</td>
             </tr>
         }
     </tbody>
