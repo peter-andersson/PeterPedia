@@ -1,0 +1,41 @@
+@page "{id:int?}"
+@model PeterPedia.Server.Pages.EditModel
+
+<form class="row mt-2" method="post" autocomplete="off">
+    <input type="hidden" class="form-control" id="LinkId" asp-for="Link.Id">
+    <div class="mb-3">
+        <label for="LinkTitle" class="form-label">Title</label>
+        <input type="text" class="form-control" id="LinkTitle" placeholder="Title" asp-for="Link.Title">
+    </div>
+    <div class="mb-3">
+        <label for="LinkUrl" class="form-label">Url</label>
+        <input type="text" class="form-control" id="LinkUrl" placeholder="Url" asp-for="Link.Url">
+    </div>
+    <div class="mb-3">
+        <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+</form>
+<hr />
+<table class="table table-dark table-striped table-hoover">
+
+    <head>
+        <tr>
+            <th>Title</th>
+            <th>Url</th>
+            <th></th>
+        </tr>
+    </head>
+    <tbody>
+        @foreach (var link in Model.Links)
+        {
+            <tr>
+                <td>@link.Title</td>
+                <td>@link.Url</td>
+                <td>
+                    <a class="link-light me-2" asp-page="edit" asp-route-id="@link.Id">Edit</a>
+                    <a class="link-danger" asp-page="edit" asp-route-id="@link.Id" asp-page-handler="Delete">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

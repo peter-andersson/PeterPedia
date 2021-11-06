@@ -1,26 +1,11 @@
 @page
 @model PeterPedia.Server.Pages.IndexModel
 
-<div class="d-flex flex-column justify-content-center align-items-center mt-5">
-    <h1 class="display-1 text-success">PeterPedia</h1>
-    <ul class="nav flex-column mt-2">
-        <li class="nav-item">
-            <a href="/Book" class="link-success fs-1">Book tracking</a>
-        </li>
-        <li class="nav-item">
-            <a href="/Movie" class="link-success fs-1">Movie tracking</a>
-        </li>
-        <li class="nav-item">
-            <a href="/Reader" class="link-success fs-1">RSS Reader</a>
-        </li>
-        <li class="nav-item">
-            <a href="/Episodes" class="link-success fs-1">TV Episodes</a>
-        </li>
-        <li class="nav-item">
-            <a href="/VideoPlayer" class="link-success fs-1">Videos</a>
-        </li>
-        <li class="nav-item border-top mt-2 pt-2">
-            <a href="/swagger" class="link-success fs-6">API</a>
-        </li>
-    </ul>
+<div class="row mt-2">
+    @foreach (var link in Model.Links)
+    {
+        <div class="col-12 col-md-6 col-xxl-4">
+            <a class="fs-2 link-light" href="@link.Url">@link.Title</a>
+        </div>
+    }
 </div>
