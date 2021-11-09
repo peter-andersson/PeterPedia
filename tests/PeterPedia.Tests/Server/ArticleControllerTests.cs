@@ -58,6 +58,8 @@ namespace PeterPedia.Tests.Server
                 {
                     Id = 1,
                     Title = "Test",
+                    Url = "http://127.0.0.1",
+                    Hash = new byte[0],
                 });
 
                 context.Articles.Add(new ArticleEF
@@ -65,7 +67,8 @@ namespace PeterPedia.Tests.Server
                     Id = 1,
                     SubscriptionId = 1,
                     Title = "Test",
-                    Content = "Testar"
+                    Content = "Testar",
+                    Url = "http://127.0.0.1"
                 });
 
                 context.Articles.Add(new ArticleEF
@@ -73,7 +76,8 @@ namespace PeterPedia.Tests.Server
                     Id = 2,
                     SubscriptionId = 1,
                     Title = "Test 2",
-                    Content = "Testar 2"
+                    Content = "Testar 2",
+                    Url = "http://127.0.0.1"
                 });
 
                 context.SaveChanges();
@@ -130,6 +134,8 @@ namespace PeterPedia.Tests.Server
                 {
                     Id = 1,
                     Title = "Test",
+                    Url = "http://127.0.0.1",
+                    Hash = new byte[0],
                 });
 
                 context.Articles.Add(new ArticleEF
@@ -139,6 +145,7 @@ namespace PeterPedia.Tests.Server
                     Title = "Test",
                     Content = "Testar",
                     ReadDate = DateTime.Now,
+                    Url = "http://127.0.0.1",
                 });
 
                 context.Articles.Add(new ArticleEF
@@ -148,6 +155,7 @@ namespace PeterPedia.Tests.Server
                     Title = "Test 2",
                     Content = "Testar 2",
                     ReadDate = DateTime.Now,
+                    Url = "http://127.0.0.1",
                 });
 
                 context.SaveChanges();
@@ -203,6 +211,8 @@ namespace PeterPedia.Tests.Server
                 {
                     Id = 1,
                     Title = "Test",
+                    Url = "http://127.0.0.1",
+                    Hash = new byte[0],
                 });
 
                 context.Articles.Add(new ArticleEF
@@ -210,7 +220,8 @@ namespace PeterPedia.Tests.Server
                     Id = 1,
                     SubscriptionId = 1,
                     Title = "Test",
-                    Content = "Testar"
+                    Content = "Testar",
+                    Url = "http://127.0.0.1",
                 });
 
                 context.Articles.Add(new ArticleEF
@@ -218,7 +229,8 @@ namespace PeterPedia.Tests.Server
                     Id = 2,
                     SubscriptionId = 1,
                     Title = "Test 2",
-                    Content = "Testar 2"
+                    Content = "Testar 2",
+                    Url = "http://127.0.0.1",
                 });
 
                 context.SaveChanges();
@@ -271,6 +283,8 @@ namespace PeterPedia.Tests.Server
                 {
                     Id = 1,
                     Title = "Test",
+                    Url = "http://127.0.0.1",
+                    Hash = new byte[0],
                 });
 
                 context.Articles.Add(new ArticleEF
@@ -278,7 +292,8 @@ namespace PeterPedia.Tests.Server
                     Id = 1,
                     SubscriptionId = 1,
                     Title = "Test",
-                    Content = "Testar"
+                    Content = "Testar",
+                    Url = "http://127.0.0.1",
                 });
 
                 context.SaveChanges();

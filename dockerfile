@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/aspnet:5.0-bullseye-slim AS base
+FROM mcr.microsoft.com/dotnet/aspnet:6.0-bullseye-slim AS base
 WORKDIR /app
 EXPOSE 80
 ENV ASPNETCORE_URLS=http://+:80
@@ -7,7 +7,7 @@ ENV ASPNETCORE_URLS=http://+:80
 RUN apt-get update && apt-get install -y mediainfo
 
 # Build
-FROM mcr.microsoft.com/dotnet/sdk:5.0-bullseye-slim AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0-bullseye-slim AS build
 WORKDIR /src
 
 # Copy project files
