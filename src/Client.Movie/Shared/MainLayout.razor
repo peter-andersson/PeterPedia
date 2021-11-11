@@ -3,7 +3,7 @@
 <BlazoredToasts Position="ToastPosition.BottomRight" Timeout="5" />
 
 <div class="container-fluid">
-    <NavMenu />
+    <NavMenu Title="Movie" Items="@Items" />
 
     <div class="main mt-3">
         <div class="content px-4">
@@ -11,3 +11,38 @@
         </div>
     </div>
 </div>
+
+@code {
+    public List<MenuItem> Items = new List<MenuItem>();
+
+    protected override void OnInitialized()
+    {
+        Items.Add(new MenuItem()
+        {
+            Display = "Watchlist",
+            Url = string.Empty,
+            IconType = Common.IconType.ViewList,
+        });
+
+        Items.Add(new MenuItem()
+        {
+            Display = "All movies",
+            Url = "movies",
+            IconType = Common.IconType.Film,
+        });
+
+        Items.Add(new MenuItem()
+        {
+            Display = "Add movie",
+            Url = "add",
+            IconType = Common.IconType.PlusCircle,
+        });
+
+        Items.Add(new MenuItem()
+        {
+            Display = "Statistics",
+            Url = "statistics",
+            IconType = Common.IconType.BarChart,
+        });
+    }
+}

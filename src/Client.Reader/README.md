@@ -1,2 +1,0 @@
-# Reader
-RSS läsare

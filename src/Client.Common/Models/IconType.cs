@@ -12,5 +12,11 @@ public enum IconType
 
     PlusCircle,
 
-    BarChart
+    BarChart,
+
+    ViewList,
+
+    Film,
+
+    ClockHistory
 }
