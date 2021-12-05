@@ -9,9 +9,13 @@
     using System.Threading.Tasks;
     using Blazored.Toast;
     using Blazored.Toast.Services;
+    using System.Text.Json;
 
     public class MovieService
     {
+        private static readonly JsonSerializerOptions Options = new(JsonSerializerDefaults.Web);
+        private static readonly PeterPediaJSONContext Context = new(Options);
+
         private readonly HttpClient _http;
         private readonly IToastService _toast;
 
@@ -64,16 +68,16 @@
                 return false;
             }
 
-            var postBody = new PostData()
+            var postBody = new AddMovie()
             {
                 Id = movieId,
             };
 
-            using var response = await _http.PostAsJsonAsync("/api/Movie", postBody);
+            using var response = await _http.PostAsJsonAsync("/api/Movie", postBody, Context.AddMovie);
 
             if (response.IsSuccessStatusCode)
             {
-                var movie = await response.Content.ReadFromJsonAsync<Movie>();
+                var movie = await response.Content.ReadFromJsonAsync<Movie>(Context.Movie);
 
                 _toast.ShowSuccess($"Movie {movie.Title} added");
 
@@ -131,7 +135,7 @@
                 return false;
             }
 
-            using var response = await _http.PutAsJsonAsync("/api/Movie", movie);
+            using var response = await _http.PutAsJsonAsync("/api/Movie", movie, Context.Movie);
 
             if (response.IsSuccessStatusCode)
             {
@@ -151,7 +155,7 @@
 
         private async Task FetchMovies()
         {
-            var movies = await _http.GetFromJsonAsync<Movie[]>("/api/Movie");
+            var movies = await _http.GetFromJsonAsync<Movie[]>("/api/Movie", Context.MovieArray);
 
             Movies = new List<Movie>(movies.Length);
             Movies.AddRange(movies);

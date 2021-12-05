@@ -6,11 +6,15 @@ using System.Threading.Tasks;
 using PeterPedia.Shared;
 using Blazored.Toast;
 using Blazored.Toast.Services;
+using System.Text.Json;
 
 namespace PeterPedia.Client.Reader.Services
 {
     public class RSSService
     {
+        private static readonly JsonSerializerOptions Options = new(JsonSerializerDefaults.Web);
+        private static readonly PeterPediaJSONContext Context = new(Options);
+
         private readonly HttpClient _http;
         private readonly IToastService _toast;
 
@@ -26,7 +30,7 @@ namespace PeterPedia.Client.Reader.Services
         {
             if (Subscriptions is null)
             {
-                var subscriptions = await _http.GetFromJsonAsync<Subscription[]>("/api/Subscription");
+                var subscriptions = await _http.GetFromJsonAsync<Subscription[]>("/api/Subscription", Context.SubscriptionArray);
 
                 Subscriptions = new List<Subscription>(subscriptions.Length);
                 Subscriptions.AddRange(subscriptions);
@@ -35,14 +39,14 @@ namespace PeterPedia.Client.Reader.Services
 
         public async Task<List<Subscription>> GetUnread()
         {
-            var unread = await _http.GetFromJsonAsync<Subscription[]>("/api/Article");
+            var unread = await _http.GetFromJsonAsync<Subscription[]>("/api/Article", Context.SubscriptionArray);
 
             return unread.OrderBy(s => s.Title).ToList();
         }
 
         public async Task<List<Article>> GetHistory()
         {
-            var articles = await _http.GetFromJsonAsync<Article[]>("/api/Article/history");
+            var articles = await _http.GetFromJsonAsync<Article[]>("/api/Article/history", Context.ArticleArray);
 
             return articles.ToList();
         }
@@ -76,13 +80,13 @@ namespace PeterPedia.Client.Reader.Services
                 Title = string.Empty,
             };
 
-            using var response = await _http.PostAsJsonAsync("/api/subscription", postBody);
+            using var response = await _http.PostAsJsonAsync("/api/subscription", postBody, Context.Subscription);
 
             if (response.IsSuccessStatusCode)
             {
                 _toast.ShowSuccess("Subscription added");
 
-                var subscription = await response.Content.ReadFromJsonAsync<Subscription>();
+                var subscription = await response.Content.ReadFromJsonAsync<Subscription>(Context.Subscription);
                 Subscriptions.Add(subscription);
 
                 return true;
@@ -137,7 +141,7 @@ namespace PeterPedia.Client.Reader.Services
                 return false;
             }
 
-            using var response = await _http.PutAsJsonAsync("/api/Subscription", subscription);
+            using var response = await _http.PutAsJsonAsync("/api/Subscription", subscription, Context.Subscription);
 
             if (response.IsSuccessStatusCode)
             {

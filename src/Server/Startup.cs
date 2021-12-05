@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using PeterPedia.Server.Services;
 using System.Net.Http;
 using Microsoft.Extensions.FileProviders;
+using PeterPedia.Shared;
 
 namespace PeterPedia.Server
 {
@@ -26,7 +27,7 @@ namespace PeterPedia.Server
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews().AddJsonOptions(options => options.JsonSerializerOptions.AddContext<PeterPediaJSONContext>()); ;
             services.AddRazorPages();
 
             services.AddSwaggerGen(c =>

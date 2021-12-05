@@ -1,18 +1,16 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
-using System;
+﻿using System.Net.Http.Json;
 using System.Text.RegularExpressions;
 using PeterPedia.Shared;
 using Blazored.Toast.Services;
-using Blazored.Toast;
+using System.Text.Json;
 
 namespace PeterPedia.Client.Episodes.Services
 {
     public class TVService
     {
+        private static readonly JsonSerializerOptions Options = new(JsonSerializerDefaults.Web);
+        private static readonly PeterPediaJSONContext Context = new(Options);
+
         private readonly HttpClient _http;
         private readonly IToastService _toast;
 
@@ -35,7 +33,7 @@ namespace PeterPedia.Client.Episodes.Services
         {
             if (Shows is null)
             {
-                var shows = await _http.GetFromJsonAsync<Show[]>("/api/TV");
+                var shows = await _http.GetFromJsonAsync<Show[]>("/api/TV", Context.ShowArray);
 
                 Shows = new List<Show>(shows.Length);
                 Shows.AddRange(shows);
@@ -75,16 +73,16 @@ namespace PeterPedia.Client.Episodes.Services
                 return false;
             }
 
-            var postBody = new PostData()
+            var postBody = new AddShow()
             {
                 Id = id,
             };
 
-            using var response = await _http.PostAsJsonAsync("/api/TV", postBody);
+            using var response = await _http.PostAsJsonAsync("/api/TV", postBody, Context.AddShow);
 
             if (response.IsSuccessStatusCode)
             {
-                var show = await response.Content.ReadFromJsonAsync<Show>();
+                var show = await response.Content.ReadFromJsonAsync<Show>(Context.Show);
                 Shows.Add(show);
 
                 _toast.ShowSuccess($"Show {show.Title} added");
@@ -141,13 +139,13 @@ namespace PeterPedia.Client.Episodes.Services
                 return false;
             }
 
-            using var response = await _http.PutAsJsonAsync("/api/TV", show);
+            using var response = await _http.PutAsJsonAsync("/api/TV", show, Context.Show);
 
             if (response.IsSuccessStatusCode)
             {
                 _toast.ShowSuccess($"Show  {show.Title} saved");
 
-                var serverShow = await _http.GetFromJsonAsync<Show>($"/api/TV/{show.Id}");
+                var serverShow = await _http.GetFromJsonAsync<Show>($"/api/TV/{show.Id}", Context.Show);
 
                 var index = Shows.IndexOf(existingShow);
                 Shows[index] = serverShow;
@@ -176,7 +174,7 @@ namespace PeterPedia.Client.Episodes.Services
                 Watched = true,
             };
 
-            using var response = await _http.PostAsJsonAsync("/api/TV/watch", data);
+            using var response = await _http.PostAsJsonAsync("/api/TV/watch", data, Context.ShowWatchData);
             if (response.IsSuccessStatusCode)
             {
                 foreach (var season in show.Seasons)
@@ -219,7 +217,7 @@ namespace PeterPedia.Client.Episodes.Services
                 Watched = false,
             };
 
-            using var response = await _http.PostAsJsonAsync("/api/TV/watch", data);
+            using var response = await _http.PostAsJsonAsync("/api/TV/watch", data, Context.ShowWatchData);
             if (response.IsSuccessStatusCode)
             {
                 foreach (var season in show.Seasons)
@@ -262,7 +260,7 @@ namespace PeterPedia.Client.Episodes.Services
                 Watched = true,
             };
 
-            using var response = await _http.PostAsJsonAsync("/api/tv/watch", data);
+            using var response = await _http.PostAsJsonAsync("/api/tv/watch", data, Context.ShowWatchData);
             if (response.IsSuccessStatusCode)
             {
                 foreach (var season in show.Seasons)
@@ -305,7 +303,7 @@ namespace PeterPedia.Client.Episodes.Services
                 Watched = false,
             };
 
-            using var response = await _http.PostAsJsonAsync("/api/TV/watch", data);
+            using var response = await _http.PostAsJsonAsync("/api/TV/watch", data, Context.ShowWatchData);
             if (response.IsSuccessStatusCode)
             {
                 foreach (var season in show.Seasons)

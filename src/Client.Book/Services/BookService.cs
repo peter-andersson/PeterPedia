@@ -7,9 +7,13 @@
     using System.Net.Http.Json;
     using System.Threading.Tasks;
     using Blazored.Toast.Services;
+    using System.Text.Json;
 
     public class BookService
     {
+        private static readonly JsonSerializerOptions Options = new(JsonSerializerDefaults.Web);
+        private static readonly PeterPediaJSONContext Context = new(Options);
+
         private readonly HttpClient _http;
 
         private readonly IToastService _toast;
@@ -39,7 +43,7 @@
 
         public async Task FetchAuthor()
         {
-            var authors = await _http.GetFromJsonAsync<Author[]>("/api/Author");
+            var authors = await _http.GetFromJsonAsync<Author[]>("/api/Author", Context.AuthorArray);
 
             Authors = new List<Author>(authors.Length);
             Authors.AddRange(authors);
@@ -49,7 +53,7 @@
 
         public async Task FetchBooks()
         {
-            var books = await _http.GetFromJsonAsync<Book[]>("/api/Book");
+            var books = await _http.GetFromJsonAsync<Book[]>("/api/Book", Context.BookArray);
 
             Books = new List<Book>(books.Length);
             Books.AddRange(books);
@@ -90,7 +94,7 @@
                 return false;
             }
 
-            using var response = await _http.PutAsJsonAsync("/api/Book", book);
+            using var response = await _http.PutAsJsonAsync("/api/Book", book, Context.Book);
 
             if (response.IsSuccessStatusCode)
             {
@@ -123,13 +127,13 @@
                 return false;
             }
 
-            using var response = await _http.PostAsJsonAsync("/api/Book", book);
+            using var response = await _http.PostAsJsonAsync("/api/Book", book, Context.Book);
 
             if (response.IsSuccessStatusCode)
             {
                 _toast.ShowSuccess($"Book {book.Title} added");
 
-                book = await response.Content.ReadFromJsonAsync<Book>();
+                book = await response.Content.ReadFromJsonAsync<Book>(Context.Book);
 
                 Books.Add(book);
 

@@ -1,16 +1,13 @@
-using System;
+namespace PeterPedia.Shared;
 
-namespace PeterPedia.Shared
+public class Author
 {
-    public class Author
+    public Author()
     {
-        public Author()
-        {
-            Name = string.Empty;
-        }
-
-        public int Id { get; set; }
-
-        public string Name { get; set; }
+        Name = string.Empty;
     }
+
+    public int Id { get; set; }
+
+    public string Name { get; set; }
 }

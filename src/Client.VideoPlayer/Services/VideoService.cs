@@ -7,9 +7,13 @@
     using System.Net.Http.Json;
     using System.Threading.Tasks;
     using Blazored.Toast.Services;
+    using System.Text.Json;
 
     public class VideoService
     {
+        private static readonly JsonSerializerOptions Options = new(JsonSerializerDefaults.Web);
+        private static readonly PeterPediaJSONContext Context = new(Options);
+
         private readonly HttpClient _http;
 
         private readonly IToastService _toast;
@@ -26,7 +30,7 @@
         {
             if ((Videos is null) || (Videos.Count == 0))
             {
-                var items = await _http.GetFromJsonAsync<Video[]>("/api/Video");
+                var items = await _http.GetFromJsonAsync<Video[]>("/api/Video", Context.VideoArray);
 
                 Videos = new List<Video>(items.Length);
                 Videos.AddRange(items);

@@ -1,30 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace PeterPedia.Shared;
 
-namespace PeterPedia.Shared
+public class Season
 {
-    public class Season
+    public int Id { get; set; }
+
+    public int SeasonNumber { get; set; }
+
+    public IList<Episode> Episodes { get; set; } = new List<Episode>();
+
+    public bool IsAllWatched
     {
-        public int Id { get; set; }
-
-        public int SeasonNumber { get; set; }
-
-        public IList<Episode> Episodes { get; set; } = new List<Episode>();
-
-        public bool IsAllWatched
+        get
         {
-            get
+            foreach (var episode in Episodes)
             {
-                foreach (var episode in Episodes)
+                if ((episode.Watched == false) && (episode.AirDate != null) && (episode.AirDate <= DateTime.UtcNow))
                 {
-                    if ((episode.Watched == false) && (episode.AirDate != null) && (episode.AirDate <= DateTime.UtcNow))
-                    {
-                        return false;
-                    }
+                    return false;
                 }
-
-                return true;
             }
+
+            return true;
         }
     }
 }

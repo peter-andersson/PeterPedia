@@ -1,48 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace PeterPedia.Shared;
 
-namespace PeterPedia.Shared
+public enum BookState
 {
-    public enum BookState
+    WantToRead = 1,
+    Reading = 2,
+    Read = 3,
+}
+
+public class Book
+{
+    public Book()
     {
-        WantToRead = 1,
-        Reading = 2,
-        Read = 3,
+        Authors = new List<string>();
+        Title = string.Empty;
+        AuthorText = string.Empty;
+        CurrentAuthor = string.Empty;
     }
 
-    public class Book
+    public int Id { get; set; }
+
+    public string Title { get; set; }
+
+    public List<string> Authors { get; set; }
+
+    public BookState State { get; set; }
+
+    public bool SearchAuthor(string searchString)
     {
-        public Book()
+        foreach (string author in Authors)
         {
-            Authors = new List<string>();
-            Title = string.Empty;
-            AuthorText = string.Empty;
-            CurrentAuthor = string.Empty;
-        }
-
-        public int Id { get; set; }
-
-        public string Title { get; set; }
-
-        public List<string> Authors { get; set; }
-
-        public BookState State { get; set; }
-
-        public bool SearchAuthor(string searchString)
-        {
-            foreach (string author in Authors)
+            if (author.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             {
-                if (author.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-                {
-                    return true;
-                }
+                return true;
             }
-
-            return false;
         }
 
-        public string AuthorText { get; set; }
-
-        public string CurrentAuthor { get; set; }
+        return false;
     }
+
+    public string AuthorText { get; set; }
+
+    public string CurrentAuthor { get; set; }
 }

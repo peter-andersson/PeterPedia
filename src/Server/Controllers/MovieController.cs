@@ -59,7 +59,7 @@ namespace PeterPedia.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] PostData data)
+        public async Task<IActionResult> Post([FromBody] AddMovie data)
         {
             _logger.LogDebug($"Add movie with id {data?.Id}");
 
