@@ -28,7 +28,7 @@ namespace PeterPedia.Server.Controllers
         public async Task<IActionResult> Get()
         {
             _logger.LogDebug("Get unread articles");
-            var subscriptions = await _dbContext.Subscriptions.Include(s => s.Articles.Where(a => a.ReadDate == null).OrderBy(a => a.PublishDate)).AsSplitQuery().AsNoTracking().ToListAsync().ConfigureAwait(false);
+            var subscriptions = await _dbContext.Subscriptions.Include(s => s.Articles.Where(a => a.ReadDate == null).OrderBy(a => a.PublishDate)).AsSplitQuery().ToListAsync().ConfigureAwait(false);
             subscriptions = subscriptions.Where(s => s.Articles.Count > 0).ToList();
 
             var result = new List<Subscription>(subscriptions.Count);
@@ -44,7 +44,7 @@ namespace PeterPedia.Server.Controllers
         public async Task<IActionResult> History()
         {
             _logger.LogDebug($"Get read articles");
-            var articles = await _dbContext.Articles.AsNoTracking().Where(a => a.ReadDate != null).OrderByDescending(a => a.ReadDate).Take(100).ToListAsync().ConfigureAwait(false);
+            var articles = await _dbContext.Articles.Where(a => a.ReadDate != null).OrderByDescending(a => a.ReadDate).Take(100).ToListAsync().ConfigureAwait(false);
 
             var result = new List<Article>(articles.Count);
             foreach (var article in articles)
@@ -59,7 +59,7 @@ namespace PeterPedia.Server.Controllers
         public async Task<IActionResult> Stats()
         {
             _logger.LogDebug($"Get articles statistics");
-            int articleCount = await _dbContext.Articles.AsNoTracking().CountAsync().ConfigureAwait(false);
+            int articleCount = await _dbContext.Articles.CountAsync().ConfigureAwait(false);
 
             return Ok(articleCount);
         }
@@ -69,7 +69,7 @@ namespace PeterPedia.Server.Controllers
         {
             _logger.LogDebug($"Read articleId: {articleId}");
 
-            var article = await _dbContext.Articles.FindAsync(articleId).ConfigureAwait(false);
+            var article = await _dbContext.Articles.Where(a => a.Id == articleId).AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
             if (article is null)
             {
                 return NotFound();

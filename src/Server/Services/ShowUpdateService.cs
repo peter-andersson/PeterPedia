@@ -37,7 +37,7 @@ namespace PeterPedia.Server.Services
         {
             _logger.LogInformation("ShowUpdateService - Execute");
 
-            var shows = await _dbContext.Shows.Include(sh => sh.Seasons).ThenInclude(se => se.Episodes).AsSplitQuery().AsNoTracking().OrderBy(s => s.Title).ToListAsync().ConfigureAwait(false);
+            var shows = await _dbContext.Shows.Include(sh => sh.Seasons).ThenInclude(se => se.Episodes).AsSplitQuery().OrderBy(s => s.Title).ToListAsync().ConfigureAwait(false);
 
             int updateCount = 0;
             foreach (var show in shows)
@@ -85,6 +85,7 @@ namespace PeterPedia.Server.Services
                 .ThenInclude(season => season.Episodes)
                 .AsSplitQuery()
                 .Where(show => show.Id == id)
+                .AsTracking()
                 .SingleOrDefaultAsync().ConfigureAwait(false);
 
             if (show is null)

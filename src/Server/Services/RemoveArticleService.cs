@@ -34,7 +34,7 @@ namespace PeterPedia.Server.Services
             _logger.LogInformation("RemoveArticleService - Execute");
 
             DateTime ageLimit = DateTime.UtcNow.AddDays(-30);
-            var articles = await _dbContext.Articles.Where(a => a.ReadDate < ageLimit).ToListAsync();
+            var articles = await _dbContext.Articles.Where(a => a.ReadDate < ageLimit).AsTracking().ToListAsync();
 
             _logger.LogInformation($"Removing {articles.Count} articles.");
 

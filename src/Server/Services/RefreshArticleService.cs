@@ -58,6 +58,7 @@ namespace PeterPedia.Server.Services
                 var subscriptions = await _dbContext.Subscriptions
                     .Include(s => s.Articles)
                     .AsSplitQuery()
+                    .AsTracking()
                     .ToListAsync().ConfigureAwait(false);
 
                 int updateCount = 0;

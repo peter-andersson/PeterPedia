@@ -20,7 +20,7 @@ namespace PeterPedia.Server.Services
         private readonly PeterPediaContext _dbContext;
         private readonly string _basePath;
 
-        private List<string> videoFilesFound = new List<string>();
+        private readonly List<string> videoFilesFound = new List<string>();
 
         public VideoService(ILogger<VideoService> logger, PeterPediaContext dbContext, IConfiguration configuration)
         {
@@ -44,7 +44,7 @@ namespace PeterPedia.Server.Services
         {
             videoFilesFound.Clear();
 
-            var videos = await _dbContext.Videos.AsNoTracking().ToListAsync();
+            var videos = await _dbContext.Videos.ToListAsync();
 
             await ListFiles(_basePath);
 
@@ -120,7 +120,7 @@ namespace PeterPedia.Server.Services
 
                 videoFilesFound.Add(file);
 
-                var existing = await _dbContext.Videos.Where(v => v.AbsolutePath == file).SingleOrDefaultAsync();
+                var existing = await _dbContext.Videos.Where(v => v.AbsolutePath == file).AsTracking().SingleOrDefaultAsync();
 
                 if (existing is null)
                 {

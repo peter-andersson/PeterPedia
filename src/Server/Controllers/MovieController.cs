@@ -36,7 +36,7 @@ namespace PeterPedia.Server.Controllers
 
             if (id.GetValueOrDefault(0) > 0)
             {
-                var movie = await _dbContext.Movies.AsNoTracking().Where(m => m.Id == id).SingleOrDefaultAsync();
+                var movie = await _dbContext.Movies.Where(m => m.Id == id).SingleOrDefaultAsync();
                 if (movie is null)
                 {
                     return NotFound();
@@ -46,7 +46,7 @@ namespace PeterPedia.Server.Controllers
             }
             else
             {
-                var movies = await _dbContext.Movies.AsNoTracking().ToListAsync().ConfigureAwait(false);
+                var movies = await _dbContext.Movies.ToListAsync().ConfigureAwait(false);
 
                 var result = new List<Movie>(movies.Count);
                 foreach (var movie in movies)
@@ -114,7 +114,7 @@ namespace PeterPedia.Server.Controllers
                 return BadRequest();
             }
 
-            var existingMovie = await _dbContext.Movies.FindAsync(movie.Id).ConfigureAwait(false);
+            var existingMovie = await _dbContext.Movies.Where(m => m.Id == movie.Id).AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
 
             if (existingMovie is null)
             {
@@ -134,7 +134,7 @@ namespace PeterPedia.Server.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             _logger.LogDebug($"Delete movie with id {id}");
-            var movie = await _dbContext.Movies.FindAsync(id).ConfigureAwait(false);
+            var movie = await _dbContext.Movies.Where(m => m.Id == id).AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
             if (movie is null)
             {
                 return NotFound();

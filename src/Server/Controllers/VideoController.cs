@@ -34,7 +34,7 @@ namespace PeterPedia.Server.Controllers
         public async Task<IActionResult> Get()
         {
             _logger.LogDebug("Get videos");
-            var items = await _dbContext.Videos.AsNoTracking().ToListAsync().ConfigureAwait(false);
+            var items = await _dbContext.Videos.ToListAsync().ConfigureAwait(false);
 
             var result = new List<Video>(items.Count);
             foreach (var item in items)
@@ -50,7 +50,7 @@ namespace PeterPedia.Server.Controllers
         {
             _logger.LogDebug($"Delete id: {id}");
 
-            var item = await _dbContext.Videos.FindAsync(id).ConfigureAwait(false);
+            var item = await _dbContext.Videos.Where(v => v.Id == id).AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
 
             if (item is null)
             {

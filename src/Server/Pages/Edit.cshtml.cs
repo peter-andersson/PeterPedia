@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using PeterPedia.Server.Data;
@@ -25,7 +22,7 @@ namespace PeterPedia.Server.Pages
 
         public async Task OnGetAsync(int? id)
         {
-            Links = await _dbContext.Links.OrderBy(l => l.Title).ToListAsync();
+            Links = await _dbContext.Links.OrderBy(l => l.Title).AsTracking().ToListAsync();
 
             if (id.HasValue)
             {
@@ -47,7 +44,7 @@ namespace PeterPedia.Server.Pages
         {
             if (id > 0)
             {
-                var link = _dbContext.Links.Where(l => l.Id == id).SingleOrDefault();
+                var link = _dbContext.Links.Where(l => l.Id == id).AsTracking().SingleOrDefault();
 
                 if (link is not null)
                 {

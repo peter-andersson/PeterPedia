@@ -1,11 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using System;
-using Microsoft.Extensions.Logging;
 using System.Net;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Collections.Generic;
 using PeterPedia.Server.Data;
 using PeterPedia.Server.Services;
 using PeterPedia.Server.Data.Models;
@@ -46,7 +41,7 @@ namespace PeterPedia.Server.Controllers
             }
             else
             {
-                var shows = await _dbContext.Shows.Include(sh => sh.Seasons).ThenInclude(se => se.Episodes).AsSplitQuery().AsNoTracking().ToListAsync().ConfigureAwait(false);
+                var shows = await _dbContext.Shows.Include(sh => sh.Seasons).ThenInclude(se => se.Episodes).AsSplitQuery().ToListAsync().ConfigureAwait(false);
 
                 var result = new List<Show>(shows.Count);
                 foreach (var show in shows)
@@ -141,83 +136,45 @@ namespace PeterPedia.Server.Controllers
                 return BadRequest("EpisodeId or SeasonId must be set.");
             }
 
-            if (data.Watched)
+            SeasonEF? season = null;
+            EpisodeEF? episode = null;
+            if (data.SeasonId.HasValue)
             {
-                if (data.SeasonId.HasValue)
+                season = await _dbContext.Seasons.Include(s => s.Episodes).AsSplitQuery().AsTracking().Where(s => s.Id == data.SeasonId).OrderBy(s => s.Id).SingleOrDefaultAsync().ConfigureAwait(false);
+
+                if (season is null)
                 {
-                    _logger.LogDebug($"Mark season as watched {data.SeasonId}");
-                    var season = await _dbContext.Seasons.Include(s => s.Episodes).AsSplitQuery().Where(s => s.Id == data.SeasonId).OrderBy(s => s.Id).SingleOrDefaultAsync().ConfigureAwait(false);
-
-                    if (season is null)
-                    {
-                        _logger.LogDebug("Season not found");
-                        return NotFound();
-                    }
-
-                    foreach (var episode in season.Episodes)
-                    {
-                        episode.Watched = true;
-                    }
-
-                    await _dbContext.SaveChangesAsync().ConfigureAwait(false);
-
-                    return Ok();
+                    _logger.LogDebug("Season not found");
+                    return NotFound();
                 }
-                else
+
+                _logger.LogDebug("Update season id {0} with state {1}", data.SeasonId, data.Watched);
+
+                foreach (var seasonEpisode in season.Episodes)
                 {
-                    _logger.LogDebug($"Mark episode as watched {data.EpisodeId}");
-                    var episode = await _dbContext.Episodes.FindAsync(data.EpisodeId).ConfigureAwait(false);
-
-                    if (episode is null)
-                    {
-                        _logger.LogDebug("Episode not found");
-                        return NotFound();
-                    }
-
-                    episode.Watched = true;
-                    await _dbContext.SaveChangesAsync().ConfigureAwait(false);
-
-                    return Ok();
+                    seasonEpisode.Watched = data.Watched;
                 }
+
+                await _dbContext.SaveChangesAsync().ConfigureAwait(false);
+
+                return Ok();
             }
             else
             {
-                if (data.SeasonId.HasValue)
+                episode = await _dbContext.Episodes.Where(e => e.Id == data.EpisodeId).AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
+
+                if (episode is null)
                 {
-                    _logger.LogDebug($"Mark season as unwatched {data.SeasonId}");
-                    var season = await _dbContext.Seasons.Include(s => s.Episodes).AsSplitQuery().Where(s => s.Id == data.SeasonId).OrderBy(s => s.Id).SingleOrDefaultAsync().ConfigureAwait(false);
-
-                    if (season is null)
-                    {
-                        _logger.LogDebug("Season not found");
-                        return NotFound();
-                    }
-
-                    foreach (var episode in season.Episodes)
-                    {
-                        episode.Watched = false;
-                    }
-
-                    await _dbContext.SaveChangesAsync().ConfigureAwait(false);
-                    return Ok();
+                    _logger.LogDebug("Episode not found");
+                    return NotFound();
                 }
-                else
-                {
-                    _logger.LogDebug($"Mark episode as unwatched {data.EpisodeId}");
-                    var episode = await _dbContext.Episodes.FindAsync(data.EpisodeId).ConfigureAwait(false);
 
-                    if (episode is null)
-                    {
-                        _logger.LogDebug("Episode not found");
-                        return NotFound();
-                    }
+                _logger.LogDebug("Update episode id {0} with state {1}", data.EpisodeId, data.Watched);
+                episode.Watched = data.Watched;
+                await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
-                    episode.Watched = false;
-                    await _dbContext.SaveChangesAsync().ConfigureAwait(false);
-
-                    return Ok();
-                }
-            }
+                return Ok();
+            }           
         }
 
         [HttpPut]
@@ -228,7 +185,7 @@ namespace PeterPedia.Server.Controllers
                 return BadRequest();
             }
 
-            var existingShow = await _dbContext.Shows.FindAsync(show.Id).ConfigureAwait(false);
+            var existingShow = await _dbContext.Shows.Where(s => s.Id == show.Id).AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
 
             if (existingShow is null)
             {
@@ -252,7 +209,7 @@ namespace PeterPedia.Server.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             _logger.LogDebug($"Delete show with id {id}");
-            var show = await _dbContext.Shows.FindAsync(id).ConfigureAwait(false);
+            var show = await _dbContext.Shows.Where(s => s.Id == id).AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
             if (show is null)
             {
                 return NotFound();
@@ -272,6 +229,7 @@ namespace PeterPedia.Server.Controllers
                 .ThenInclude(season => season.Episodes)
                 .AsSplitQuery()
                 .Where(show => show.Id == id)
+                .AsTracking()
                 .SingleOrDefaultAsync().ConfigureAwait(false);
 
             if (show is null)

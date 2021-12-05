@@ -41,7 +41,7 @@ namespace PeterPedia.Server.Controllers
             }
             else
             {
-                var authors = await _dbContext.Authors.AsNoTracking().ToListAsync().ConfigureAwait(false);
+                var authors = await _dbContext.Authors.ToListAsync().ConfigureAwait(false);
 
                 var result = new List<Author>(authors.Count);
                 foreach (var author in authors)
@@ -90,7 +90,7 @@ namespace PeterPedia.Server.Controllers
                 return BadRequest();
             }
 
-            var existingAuthor = await _dbContext.Authors.Where(s => s.Id == author.Id).SingleOrDefaultAsync().ConfigureAwait(false);
+            var existingAuthor = await _dbContext.Authors.Where(s => s.Id == author.Id).AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
             if (existingAuthor is null)
             {
                 return NotFound();
@@ -116,7 +116,7 @@ namespace PeterPedia.Server.Controllers
                 return BadRequest();
             }
 
-            var author = await _dbContext.Authors.FindAsync(id).ConfigureAwait(false);
+            var author = await _dbContext.Authors.Where(a => a.Id == id).AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
 
             if (author is null)
             {

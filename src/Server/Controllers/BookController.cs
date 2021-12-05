@@ -41,7 +41,7 @@ namespace PeterPedia.Server.Controllers
             }
             else
             {
-                var books = await _dbContext.Books.Include(b => b.Authors).AsSplitQuery().AsNoTracking().ToListAsync().ConfigureAwait(false);
+                var books = await _dbContext.Books.Include(b => b.Authors).AsSplitQuery().ToListAsync().ConfigureAwait(false);
 
                 var result = new List<Book>(books.Count);
                 foreach (var book in books)
@@ -70,7 +70,7 @@ namespace PeterPedia.Server.Controllers
 
             foreach (var name in book.Authors)
             {
-                var author = await _dbContext.Authors.Where(a => a.Name == name.Trim()).FirstOrDefaultAsync();
+                var author = await _dbContext.Authors.Where(a => a.Name == name.Trim()).AsTracking().FirstOrDefaultAsync();
 
                 if (author is null)
                 {
@@ -101,7 +101,7 @@ namespace PeterPedia.Server.Controllers
                 return BadRequest();
             }
 
-            var bookEF = await _dbContext.Books.Where(b => b.Id == book.Id).Include(b => b.Authors).AsSplitQuery().SingleOrDefaultAsync().ConfigureAwait(false);
+            var bookEF = await _dbContext.Books.Where(b => b.Id == book.Id).Include(b => b.Authors).AsSplitQuery().AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
             if (bookEF is null)
             {
                 return NotFound();
@@ -110,7 +110,7 @@ namespace PeterPedia.Server.Controllers
             bookEF.Authors.Clear();
             foreach (var name in book.Authors)
             {
-                var author = await _dbContext.Authors.Where(a => a.Name == name.Trim()).FirstOrDefaultAsync();
+                var author = await _dbContext.Authors.Where(a => a.Name == name.Trim()).AsTracking().FirstOrDefaultAsync();
 
                 if (author is null)
                 {
@@ -145,7 +145,7 @@ namespace PeterPedia.Server.Controllers
                 return BadRequest();
             }
 
-            var bookEF = await _dbContext.Books.FindAsync(id).ConfigureAwait(false);
+            var bookEF = await _dbContext.Books.Where(b => b.Id == id).AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
 
             if (bookEF is null)
             {

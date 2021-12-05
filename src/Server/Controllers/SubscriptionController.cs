@@ -44,7 +44,7 @@ namespace PeterPedia.Server.Controllers
             }
             else
             {
-                var subscriptions = await _dbContext.Subscriptions.AsNoTracking().ToListAsync().ConfigureAwait(false);
+                var subscriptions = await _dbContext.Subscriptions.ToListAsync().ConfigureAwait(false);
 
                 var result = new List<Subscription>(subscriptions.Count);
                 foreach (var subscription in subscriptions)
@@ -130,7 +130,7 @@ namespace PeterPedia.Server.Controllers
                 return BadRequest();
             }
 
-            var existingSubscription = await _dbContext.Subscriptions.Where(s => s.Id == subscription.Id).SingleOrDefaultAsync().ConfigureAwait(false);
+            var existingSubscription = await _dbContext.Subscriptions.Where(s => s.Id == subscription.Id).AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
             if (existingSubscription is null)
             {
                 return NotFound();
@@ -199,7 +199,7 @@ namespace PeterPedia.Server.Controllers
                 return BadRequest();
             }
 
-            var subscription = await _dbContext.Subscriptions.FindAsync(id).ConfigureAwait(false);
+            var subscription = await _dbContext.Subscriptions.Where(s => s.Id == id).AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
 
             if (subscription is null)
             {

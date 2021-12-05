@@ -39,6 +39,7 @@ namespace PeterPedia.Server
 
             services.AddDbContext<PeterPediaContext>(options =>
             {
+                options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 options.UseSqlite(Configuration.GetConnectionString("PeterPedia"));
             });
 
