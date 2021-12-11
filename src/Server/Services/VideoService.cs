@@ -186,6 +186,7 @@ internal partial class VideoService
         return null;
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable CA1822 // Mark members as static
 #pragma warning disable IDE0060 // Remove unused parameter
     [LoggerMessage(0, LogLevel.Information, "Video with path '{path}' no longer exists. Removing video.")]
@@ -213,4 +214,5 @@ internal partial class VideoService
     partial void LogException(Exception ex);
 #pragma warning restore CA1822 // Mark members as static
 #pragma warning restore IDE0060 // Remove unused parameter
+#pragma warning restore IDE0079 // Remove unnecessary suppression
 }
