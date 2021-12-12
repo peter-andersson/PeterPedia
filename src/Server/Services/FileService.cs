@@ -1,20 +1,17 @@
-using System.IO;
+namespace PeterPedia.Server.Services;
 
-namespace PeterPedia.Server.Services
+public interface IFileService
 {
-    public interface IFileService
-    {
-        void Delete(string path);
-    }
+    void Delete(string path);
+}
 
-    public class FileService : IFileService
+public class FileService : IFileService
+{
+    public void Delete(string path)
     {
-        public void Delete(string path)
+        if (File.Exists(path))
         {
-            if (File.Exists(path))
-            {
-                File.Delete(path);
-            }
+            File.Delete(path);
         }
     }
 }

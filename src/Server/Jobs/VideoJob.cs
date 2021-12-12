@@ -3,20 +3,21 @@ using PeterPedia.Server.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using PeterPedia.Shared.Services.Models;
-using System.Runtime.CompilerServices;
+using Quartz;
 
-namespace PeterPedia.Server.Services;
+namespace PeterPedia.Server.Jobs;
 
-internal partial class VideoService
+[DisallowConcurrentExecution]
+public partial class VideoJob : IJob
 {
-    private readonly ILogger<VideoService> _logger;
+    private readonly ILogger<VideoJob> _logger;
     private readonly PeterPediaContext _dbContext;
     private readonly string _basePath;
     private readonly string _mediaInfo;
 
     private readonly List<string> videoFilesFound = new();
 
-    public VideoService(ILogger<VideoService> logger, PeterPediaContext dbContext, IConfiguration configuration)
+    public VideoJob(ILogger<VideoJob> logger, PeterPediaContext dbContext, IConfiguration configuration)
     {
         _logger = logger;
         _dbContext = dbContext;
@@ -25,18 +26,7 @@ internal partial class VideoService
         _mediaInfo = configuration["MediaInfo"] ?? "/usr/bin/mediainfo";
     }
 
-    public async Task DoWork(CancellationToken stoppingToken)
-    {
-        while (!stoppingToken.IsCancellationRequested)
-        {
-            await Execute();
-
-            // await Task.Delay(TimeSpan.FromMinutes(60), stoppingToken);
-            await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
-        }
-    }
-
-    private async Task Execute()
+    public async Task Execute(IJobExecutionContext context)
     {
         videoFilesFound.Clear();
 

@@ -49,15 +49,6 @@ namespace PeterPedia.Server
                     x.GetRequiredService<IHttpClientFactory>()
                 ));
 
-            services.AddHostedService<ConsumeRemoveArticleService>();
-            services.AddHostedService<ConsumeRefreshArticleService>();
-            services.AddHostedService<ConsumeShowUpdateService>();
-            services.AddHostedService<ConsumeVideoService>();
-
-            services.AddScoped<VideoService>();
-            services.AddScoped<RemoveArticleService>();
-            services.AddScoped<RefreshArticleService>();
-            services.AddScoped<IShowUpdateService, ShowUpdateService>();
             services.AddScoped<IFileService, FileService>();
         }
 

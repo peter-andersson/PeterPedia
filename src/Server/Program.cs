@@ -4,6 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using PeterPedia.Server.Data;
+using PeterPedia.Server.Jobs;
+using Quartz;
 
 namespace PeterPedia.Server
 {
@@ -27,12 +29,30 @@ namespace PeterPedia.Server
             host.Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            return 
+                Host.CreateDefaultBuilder(args)
+                .ConfigureServices((hostContext, services) =>
+                {
+                    services.AddQuartz(q =>
+                    {
+                        q.UseMicrosoftDependencyInjectionJobFactory();
+
+                        q.AddJobAndTrigger<RemoveArticleJob>(hostContext.Configuration);
+                        q.AddJobAndTrigger<RefreshArticleJob>(hostContext.Configuration);
+                        q.AddJobAndTrigger<VideoJob>(hostContext.Configuration);
+                        q.AddJobAndTrigger<ShowUpdateJob>(hostContext.Configuration);
+                    });
+
+                    services.AddQuartzHostedService(
+                        q => q.WaitForJobsToComplete = true);
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+        }
 
         private static void CreateDbIfNotExists(IHost host)
         {
@@ -51,6 +71,6 @@ namespace PeterPedia.Server
 
                 throw;
             }
-        }
+        }        
     }
 }
