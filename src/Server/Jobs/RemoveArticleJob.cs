@@ -7,7 +7,9 @@ namespace PeterPedia.Server.Jobs;
 [DisallowConcurrentExecution]
 public partial class RemoveArticleJob : IJob
 {
+#pragma warning disable IDE0052 // Remove unread private members
     private readonly ILogger<RemoveArticleJob> _logger;
+#pragma warning restore IDE0052 // Remove unread private members
     private readonly PeterPediaContext _dbContext;
 
     public RemoveArticleJob(ILogger<RemoveArticleJob> logger, PeterPediaContext dbContext)

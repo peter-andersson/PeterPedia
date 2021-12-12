@@ -24,32 +24,18 @@ public partial class SubscriptionController : Controller
         _dbContext = dbContext;
     }
 
-    [HttpGet("{id:int?}")]
-    public async Task<IActionResult> Get(int? id)
+    [HttpGet]
+    public async Task<IActionResult> Get()
     {
-        if (id.GetValueOrDefault(0) > 0)
+        var subscriptions = await _dbContext.Subscriptions.ToListAsync().ConfigureAwait(false);
+
+        var result = new List<Subscription>(subscriptions.Count);
+        foreach (var subscription in subscriptions)
         {
-            var subscriptionEF = await _dbContext.Subscriptions.Where(s => s.Id == id).SingleOrDefaultAsync().ConfigureAwait(false);
-
-            if (subscriptionEF is null)
-            {
-                return NotFound();
-            }
-
-            return Ok(ConvertToSubscription(subscriptionEF));
+            result.Add(ConvertToSubscription(subscription));
         }
-        else
-        {
-            var subscriptions = await _dbContext.Subscriptions.ToListAsync().ConfigureAwait(false);
 
-            var result = new List<Subscription>(subscriptions.Count);
-            foreach (var subscription in subscriptions)
-            {
-                result.Add(ConvertToSubscription(subscription));
-            }
-
-            return Ok(result);
-        }
+        return Ok(result);
     }
 
     [HttpPost]

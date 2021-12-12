@@ -10,7 +10,9 @@ namespace PeterPedia.Server.Jobs;
 [DisallowConcurrentExecution]
 public partial class ShowUpdateJob : IJob
 {
+#pragma warning disable IDE0052 // Remove unread private members
     private readonly ILogger<ShowUpdateJob> _logger;
+#pragma warning restore IDE0052 // Remove unread private members
     private readonly PeterPediaContext _dbContext;
     private readonly TheMovieDatabaseService _tmdbService;
 
