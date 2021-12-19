@@ -5,7 +5,7 @@
   "scripts": {
     "test": "dotnet test",
     "build": "dotnet build",
-    "lib": "node .scripts/lib.js"
+    "css": "purgecss --css node_modules/bootstrap/dist/css/bootstrap.min.css --output  src/Server/wwwroot/css/bootstrap.min.css --content src/**/*.html src/**/*.razor"
   },
   "repository": {
     "type": "git",
@@ -19,5 +19,8 @@
   "homepage": "https://github.com/peter-andersson/PeterPedia#readme",
   "dependencies": {
     "bootstrap": "^5.1.3"
+  },
+  "devDependencies": {
+    "purgecss": "^4.1.3"
   }
 }
