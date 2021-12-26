@@ -352,3 +352,5 @@ MigrationBackup/
 *.db
 *.db-wal
 *.db-shm
+
+*.exe

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PeterPedia</title>
 
-    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/app.min.css" rel="stylesheet" />
 
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -14,35 +14,17 @@
     <link rel="manifest" href="/site.webmanifest">
 </head>
 
-<body class="bg-dark text-white">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">PeterPedia</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ms-auto me-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/edit">Edit</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/swagger">API</a>
-                    </li>
-                </ul>
-            </div>
+<body>
+    <div class="flex flex-col">
+        <div class="flex flex-row justify-center items-center gap-x-8 bg-sky-600 text-black">
+            <a class="text-4xl hover:underline" href="/">PeterPedia</a>
+            <a class="text-xl hover:underline" href="/edit">Edit</a>
+            <a class="text-xl hover:underline" href="/swagger">API</a>
         </div>
-    </nav>
-
-    <main role="main" class="container">
-        @RenderBody()
-    </main>
-
-    <script src="/js/bootstrap.bundle.min.js"></script>
-
-    @await RenderSectionAsync("Scripts", required: false)
+        <div class="min-h-screen p-6">
+            @RenderBody()
+        </div>
+    </div>    
 </body>
 
 </html>

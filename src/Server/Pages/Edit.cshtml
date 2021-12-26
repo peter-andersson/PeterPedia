@@ -1,39 +1,34 @@
 @page "{id:int?}"
 @model PeterPedia.Server.Pages.EditModel
 
-<form class="row mt-2" method="post" autocomplete="off">
-    <input type="hidden" class="form-control" id="LinkId" asp-for="Link.Id">
-    <div class="mb-3">
-        <label for="LinkTitle" class="form-label">Title</label>
-        <input type="text" class="form-control" id="LinkTitle" placeholder="Title" asp-for="Link.Title">
-    </div>
-    <div class="mb-3">
-        <label for="LinkUrl" class="form-label">Url</label>
-        <input type="text" class="form-control" id="LinkUrl" placeholder="Url" asp-for="Link.Url">
-    </div>
-    <div class="mb-3">
-        <button type="submit" class="btn btn-primary">Save</button>
-    </div>
+<form method="post" autocomplete="off">
+  <input type="hidden" class="form-control" id="LinkId" asp-for="Link.Id" />
+  <div class="grid grid-rows-3 grid-cols-[100px_1fr] items-center gap-y-2">
+    <label for="LinkTitle" class="place-self-end self-center mr-3">Title</label>
+    <input type="text" class="rounded-md text-black" id="LinkTitle" placeholder="Title" asp-for="Link.Title" />
+    <label for="LinkUrl" class="place-self-end self-center mr-3">Url</label>
+    <input type="text" class="rounded-md text-black" id="LinkUrl" placeholder="Url" asp-for="Link.Url" />
+    <button type="submit" class="rounded-md bg-green-600 ml-5 w-20 h-10 text-black hover:underline">Save</button>
+  </div>
 </form>
-<hr />
-<table class="table table-dark table-striped table-hoover">
 
-    <head>
+<table class="mt-5 min-w-full divide-y divide-gray-200">
+    <thead class="bg-slate-900">
         <tr>
-            <th>Title</th>
-            <th>Url</th>
+            <th class="text-left font-medium px-6 py-3">Title</th>
+            <th class="text-left font-medium px-6 py-3">Url</th>
             <th></th>
         </tr>
-    </head>
-    <tbody>
+    </thead>
+    <tbody class="bg-slate-700 divide-y divide-gray-200">
         @foreach (var link in Model.Links)
         {
             <tr>
-                <td>@link.Title</td>
-                <td>@link.Url</td>
-                <td>
-                    <a class="link-light me-2" asp-page="edit" asp-route-id="@link.Id">Edit</a>
-                    <a class="link-danger" asp-page="edit" asp-route-id="@link.Id" asp-page-handler="Delete">Delete</a>
+                <td class="px-6 py-2 whitespace-nowrap">@link.Title</td>
+                <td class="px-6 py-2 whitespace-nowrap">@link.Url</td>
+                <td class="px-6 py-2 whitespace-nowrap">
+                    <a class="me-2 hover:underline" asp-page="edit" asp-route-id="@link.Id">Edit</a>
+                    <a class="hover:underline" asp-page="edit" asp-route-id="@link.Id" asp-page-handler="Delete">Delete</a>
                 </td>
             </tr>
         }

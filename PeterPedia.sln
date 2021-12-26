@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PeterPedia.Client.VideoPlay
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PeterPedia.Client.Common", "src\Client.Common\PeterPedia.Client.Common.csproj", "{9BD199D9-6499-4A1B-9278-52220F243EB6}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PeterPedia.Client", "src\Client\PeterPedia.Client.csproj", "{572DFE44-2439-4075-A861-BA29607D26D4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -143,6 +145,18 @@ Global
 		{9BD199D9-6499-4A1B-9278-52220F243EB6}.Release|x64.Build.0 = Release|Any CPU
 		{9BD199D9-6499-4A1B-9278-52220F243EB6}.Release|x86.ActiveCfg = Release|Any CPU
 		{9BD199D9-6499-4A1B-9278-52220F243EB6}.Release|x86.Build.0 = Release|Any CPU
+		{572DFE44-2439-4075-A861-BA29607D26D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{572DFE44-2439-4075-A861-BA29607D26D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{572DFE44-2439-4075-A861-BA29607D26D4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{572DFE44-2439-4075-A861-BA29607D26D4}.Debug|x64.Build.0 = Debug|Any CPU
+		{572DFE44-2439-4075-A861-BA29607D26D4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{572DFE44-2439-4075-A861-BA29607D26D4}.Debug|x86.Build.0 = Debug|Any CPU
+		{572DFE44-2439-4075-A861-BA29607D26D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{572DFE44-2439-4075-A861-BA29607D26D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{572DFE44-2439-4075-A861-BA29607D26D4}.Release|x64.ActiveCfg = Release|Any CPU
+		{572DFE44-2439-4075-A861-BA29607D26D4}.Release|x64.Build.0 = Release|Any CPU
+		{572DFE44-2439-4075-A861-BA29607D26D4}.Release|x86.ActiveCfg = Release|Any CPU
+		{572DFE44-2439-4075-A861-BA29607D26D4}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -157,6 +171,7 @@ Global
 		{7C13116E-3089-4F05-945E-5119BEE61411} = {042CB1B5-0645-469D-8FFC-71B8A7C7CFD9}
 		{7389499B-0884-4D8F-B2BD-34230620706A} = {DB323946-B3C3-4145-853E-A21DBA0A4E0D}
 		{9BD199D9-6499-4A1B-9278-52220F243EB6} = {DB323946-B3C3-4145-853E-A21DBA0A4E0D}
+		{572DFE44-2439-4075-A861-BA29607D26D4} = {DB323946-B3C3-4145-853E-A21DBA0A4E0D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EB2A5A0A-3E09-44B6-A9F2-77EA3428DBFF}
