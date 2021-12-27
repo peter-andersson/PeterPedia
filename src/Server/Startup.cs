@@ -113,20 +113,7 @@ public class Startup
                 endpoints.MapFallbackToFile("Episodes/{*path:nonfile}", "Episodes/index.html");
             });
         });
-
-        app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/Movie"), movie =>
-        {
-            movie.UseBlazorFrameworkFiles("/Movie");
-            movie.UseStaticFiles();
-
-            movie.UseRouting();
-            movie.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-                endpoints.MapFallbackToFile("Movie/{*path:nonfile}", "Movie/index.html");
-            });
-        });
-
+    
         app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/Reader"), reader =>
         {
             reader.UseBlazorFrameworkFiles("/Reader");
