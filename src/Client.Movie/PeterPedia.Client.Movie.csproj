@@ -16,5 +16,9 @@
   <ItemGroup>
     <ProjectReference Include="../Shared/PeterPedia.Shared.csproj" />
     <ProjectReference Include="../Client.Common/PeterPedia.Client.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
   </ItemGroup>  
 </Project>
