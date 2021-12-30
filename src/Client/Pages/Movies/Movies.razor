@@ -1,6 +1,6 @@
 ﻿@page "/movies/all"
 
-<h2>All movies</h2>
+<h1 class="text-4xl">All movies</h1>
 
 @if (MovieList == null)
 {
@@ -8,27 +8,21 @@
 }
 else
 {
-<div class="col-12 w-auto">
-    <EditForm class="row align-items-center" EditContext="@SearchContext" OnSubmit="@LoadAllMovies">
-        <div class="col-12 col-sm-10">
-            <label class="visually-hidden" for="search">Filter by title</label>
-            <InputText id="search" class="form-control" @bind-Value="CurrentSearch" placeholder="Filter by title" />
-        </div>
-        <div class="col-12 col-sm-2 pt-2 pt-sm-0">
-            <button type="submit" class="btn btn-primary w-100">Search</button>
-        </div>
-    </EditForm>
-</div>    
+<EditForm class="container" EditContext="@SearchContext" OnSubmit="@LoadAllMovies">
+    <div class="flex">
+        <InputText id="search" class="w-1/2" @bind-Value="CurrentSearch" placeholder="Filter by title" />
 
-    <div class="row">
-        <div class="col-12">
-            <MovieTable Movies="@MovieList" ReturnUrl="movies"></MovieTable>
+        <button type="submit" class="ml-2 btn btn-green">Search</button>
+    </div>    
+</EditForm>
 
-            <div class="pagination">
-                <button class="btn btn-primary" @onclick=@(() => NavigateToPage(NavigatePage.First)) disabled="@IsPreviousButtonDisabled">First</button>
-                <button class="btn btn-primary ms-2" @onclick=@(() => NavigateToPage(NavigatePage.Previous)) disabled="@IsPreviousButtonDisabled">Previous</button>
-                <button class="btn btn-primary ms-2" @onclick=@(() => NavigateToPage(NavigatePage.Next)) disabled="@IsNextButtonDisabled">Next</button>
-            </div>
-        </div>
-    </div>
+<div class="container">
+    <MovieTable Movies="@MovieList" ReturnUrl="movies"></MovieTable>
+</div>
+
+<div class="container">
+    <button class="btn btn-blue" @onclick=@(() => NavigateToPage(NavigatePage.First)) disabled="@IsPreviousButtonDisabled">First</button>
+    <button class="btn btn-blue ml-2" @onclick=@(() => NavigateToPage(NavigatePage.Previous)) disabled="@IsPreviousButtonDisabled">Previous</button>
+    <button class="btn btn-blue ml-2" @onclick=@(() => NavigateToPage(NavigatePage.Next)) disabled="@IsNextButtonDisabled">Next</button>
+</div>
 }

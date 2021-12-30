@@ -1,17 +1,15 @@
 ﻿@page "/movies/delete/{id:int}"
 @page "/movies/delete/{id:int}/{returnUrl?}"
 
-<h2>Delete movie</h2>
-<div class="form-group">
-    <label class="control-label">Title: @Title</label>
-</div>
-<p class="text-danger">Do you really want to delete this movie? This action cannot be undone.</p>
-<div class="row">
-    <div class="col-auto">
-        <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
-    </div>
-    <div class="col-auto">
-        <button class="btn btn-danger" @onclick="@(async () => await DeleteMovie())"
-            disabled=@IsTaskRunning>Delete</button>
-    </div>
+<h1 class="text-4xl">Delete movie</h1>
+
+<p>
+    Title: <span class="font-bold">@Title</span>
+</P>
+
+<p class="text-red-500 font-bold">Do you really want to delete this movie? This action cannot be undone.</p>
+
+<div class="flex mt-2">
+    <button type="button" class="btn btn-green" @onclick="Cancel">Cancel</button>   
+    <button class="ml-2 btn btn-red" @onclick="@(async () => await DeleteMovie())" disabled=@IsTaskRunning>Delete</button>
 </div>

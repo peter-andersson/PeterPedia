@@ -1,17 +1,11 @@
 ﻿@page "/movies/add"
 
-<h2>Add movie</h2>
+<h1 class="text-4xl">Add movie</h1>
 
-<EditForm class="row align-items-center" EditContext="@AddContext" OnSubmit="@(async () => await AddMovie())">
-    <div class="mb-3">
-        <label for="search">TheMovieDb id or URL</label>
-        <input id="search" class="form-control flex-grow-1" @ref="Input" @bind-value="MovieUrl"
-            placeholder="TheMovieDb id or URL" autofocus />
-    </div>
+<EditForm class="container" EditContext="@AddContext" OnSubmit="@(async () => await AddMovie())">
+    <div class="flex">
+        <input id="search" class="w-1/2" @ref="Input" @bind-value="MovieUrl" placeholder="TheMovieDb id or URL" autofocus />
 
-    <div class="row">
-        <div class="col-auto">
-            <button type="submit" class="btn btn-success" disabled=@IsTaskRunning>Add movie</button>
-        </div>
-    </div>
+        <button type="submit" class="ml-2 btn btn-green" disabled=@IsTaskRunning>Add movie</button>
+    </div>    
 </EditForm>

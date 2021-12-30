@@ -29,7 +29,7 @@ public class MovieService
 
     public async Task FetchData()
     {
-        if (Movies is null)
+        if (Movies.Count == 0)
         {
             await FetchMovies();
         }
@@ -37,12 +37,12 @@ public class MovieService
 
     public async Task<Movie?> Get(int id)
     {
-        if (Movies is null)
+        if (Movies.Count == 0)
         {
             await FetchData();
         }
 
-        if (Movies is not null)
+        if (Movies.Count > 0)
         {
             return Movies.Where(b => b.Id == id).FirstOrDefault();
         }

@@ -10,7 +10,7 @@ namespace PeterPedia.Client.Shared
 
         public List<MenuItem> Items { get; private set; } = new List<MenuItem>();
 
-        private string CurrentPage;
+        private string CurrentPage = string.Empty;
 
         protected override void OnInitialized()
         {
@@ -68,7 +68,6 @@ namespace PeterPedia.Client.Shared
             Items.Add(new MenuItem("movies", "Watchlist"));
             Items.Add(new MenuItem("movies/all", "All movies"));
             Items.Add(new MenuItem("movies/add", "Add movie"));
-            Items.Add(new MenuItem("movies/statistics", "Statistics"));
 
             return true;
         }
