@@ -126,20 +126,7 @@ public class Startup
                 endpoints.MapFallbackToFile("Reader/{*path:nonfile}", "Reader/index.html");
             });
         });
-
-        app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/VideoPlayer"), reader =>
-        {
-            reader.UseBlazorFrameworkFiles("/VideoPlayer");
-            reader.UseStaticFiles();
-
-            reader.UseRouting();
-            reader.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-                endpoints.MapFallbackToFile("VideoPlayer/{*path:nonfile}", "VideoPlayer/index.html");
-            });
-        });
-
+     
         app.UseStaticFiles();
 
         app.UseStaticFiles(new StaticFileOptions

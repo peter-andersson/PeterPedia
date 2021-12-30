@@ -1,0 +1,19 @@
+﻿@page "/videos"
+
+<table class="mt-5 min-w-full divide-y divide-gray-200">
+    <thead class="bg-slate-900">
+        <tr>
+            <th class="text-left">Title</th>
+            <th class="text-left">Duration</th>
+        </tr>
+    </thead>
+    <tbody class="bg-slate-700 divide-y divide-gray-200">
+        @foreach (var item in @Videos)
+        {
+            <tr>
+                <td><a href="videos/player/@item.Id">@item.Title</a></td>
+                <td>@item.Duration.ToString(@"hh\:mm\:ss")</td>
+            </tr>
+        }
+    </tbody>
+</table>

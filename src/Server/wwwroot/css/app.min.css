@@ -819,6 +819,10 @@ a:hover {
   display: none;
 }
 
+.aspect-video {
+  aspect-ratio: 16 / 9;
+}
+
 .h-screen {
   height: 100vh;
 }
