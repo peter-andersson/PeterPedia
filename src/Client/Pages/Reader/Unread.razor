@@ -1,0 +1,43 @@
+﻿@page "/reader"
+
+<h2>Unread articles</h2>
+@if ((SubscriptionList is null) || (SubscriptionList.Count == 0))
+{
+    <p><em>Nothing to read!</em></p>
+}
+else
+{
+    if (Subscription is not null)
+    {
+        <h3>@Subscription.Title - @Subscription.Articles.Count</h3>
+        <p class="col-12">Last updated: @Subscription.LastUpdate.ToLocalTime().ToString("d MMM yyyy HH:mm:ss")</p>
+        <hr />
+        <div class="col-12">
+    @foreach (var article in Subscription.Articles)
+            {
+                <ArticleView Article="article" OnArticleRemove="@ArticleRemoved"></ArticleView>
+            }
+        </div>
+        <div class="col-12 mt-2">
+            <button class="btn btn-primary" @onclick="() => Load(null)">Return to list</button>
+        </div>
+    }
+    else if (SubscriptionList.Count > 0)
+    {
+        <div class="col-12">
+    <div class="list-group list-group-flush">
+        @foreach (var subscription in SubscriptionList)
+                {
+                    if (subscription.Articles.Count > 0)
+                    {
+                        <button class="list-group-item d-flex justify-content-between align-items-start list-group-item-dark text-dark"
+            @onclick="() => Load(subscription)">
+                            <div class="ms-2 me-auto">@subscription.Title</div>
+                            <span class="badge bg-primary rounded-pill">@subscription.Articles.Count</span>
+                        </button>
+                    }
+                }
+            </div>
+        </div>
+    }
+}

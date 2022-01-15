@@ -14,6 +14,8 @@ builder.Services.AddBlazoredToast();
 
 builder.Services.AddScoped<BookService>();
 builder.Services.AddScoped<MovieService>();
+builder.Services.AddScoped<RSSService>();
+builder.Services.AddScoped<TVService>();
 builder.Services.AddScoped<VideoService>();
 
 await builder.Build().RunAsync();

@@ -23,9 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Client\PeterPedia.Client.csproj" />
-    <ProjectReference Include="..\Client.Episodes/PeterPedia.Client.Episodes.csproj" />
-    <ProjectReference Include="..\Client.Reader/PeterPedia.Client.Reader.csproj" />      
+    <ProjectReference Include="..\Client\PeterPedia.Client.csproj" />      
     <ProjectReference Include="..\Shared\PeterPedia.Shared.csproj" />
   </ItemGroup>
 

@@ -1,0 +1,16 @@
+﻿@page "/episodes/add"
+
+<h2>Add show</h2>
+
+<EditForm class="row align-items-center" EditContext="@AddContext" OnSubmit="@(async () => await AddShow())">
+    <div class="mb-3">
+        <label for="search">TheMovieDb id or URL</label>
+        <input id="search" class="form-control flex-grow-1" @ref="Input" @bind-value="TVUrl" placeholder="TheMovieDb id or URL" autofocus />
+    </div>
+
+    <div class="row">
+        <div class="col-auto">
+            <button type="submit" class="btn btn-success" disabled=@IsTaskRunning>Add</button>
+        </div>
+    </div>
+</EditForm>

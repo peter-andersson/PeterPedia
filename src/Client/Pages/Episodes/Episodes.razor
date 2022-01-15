@@ -1,0 +1,30 @@
+﻿@page "/episodes"
+
+<h2>Episodes</h2>
+
+@if (Shows == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (Shows.Count > 0)
+{
+    <div class="col-12">
+    <div class="list-group list-group-flush">
+        @foreach (var show in Shows)
+            {
+                if (show.UnwatchedEpisodeCount > 0)
+                {
+                    <a href="show/@show.Id"
+            class="list-group-item list-group-item-action text-nowrap text-left text-dark list-group-item-dark">
+                        @show.Title <span class="badge bg-primary float-end">@show.UnwatchedEpisodeCount</span>
+                        <span class="visually-hidden">unwatched episodes</span>
+                    </a>
+                }
+            }
+        </div>
+    </div>
+}
+else
+{
+    <h3>No more episodes to watch</h3>
+}

@@ -28,13 +28,23 @@ namespace PeterPedia.Client.Shared
         {
             bool hasChanged;
 
-            if (NavigationManager.Uri.Contains("/movies"))
+            var url = NavigationManager.Uri.ToLowerInvariant();
+
+            if (url.Contains("/movies"))
             {
                 hasChanged = LoadMoviesMenu();
             }
-            else if (NavigationManager.Uri.Contains("/books"))
+            else if (url.Contains("/books"))
             {
                 hasChanged = LoadBooksMenu();
+            }
+            else if (url.Contains("/episodes"))
+            {
+                hasChanged = LoadEpisodesMenu();
+            }
+            else if (url.Contains("/reader"))
+            {
+                hasChanged = LoadReaderMenu();
             }
             else
             {
@@ -89,6 +99,41 @@ namespace PeterPedia.Client.Shared
             Items.Add(new MenuItem("books", "Reading"));
             Items.Add(new MenuItem("books/readlist", "Want to read"));
             Items.Add(new MenuItem("books/read", "Read"));            
+
+            return true;
+        }
+
+        private bool LoadEpisodesMenu()
+        {
+            if (CurrentPage == "episodes")
+            {
+                return false;
+            }
+
+            Items.Clear();
+            CurrentPage = "episodes";
+
+            Items.Add(new MenuItem("episodes", "Unwatched"));
+            Items.Add(new MenuItem("episodes/shows", "Shows"));
+            Items.Add(new MenuItem("episodes/add", "Add show"));
+
+            return true;
+        }
+
+        public bool LoadReaderMenu()
+        {
+            if (CurrentPage == "reader")
+            {
+                return false;
+            }
+
+            Items.Clear();
+            CurrentPage = "reader";
+
+            Items.Add(new MenuItem("reader", "Unread"));
+            Items.Add(new MenuItem("reader/subscriptions", "Subscriptions"));
+            Items.Add(new MenuItem("reader/history", "History"));
+            Items.Add(new MenuItem("reader/add", "Add subscriptions"));
 
             return true;
         }
