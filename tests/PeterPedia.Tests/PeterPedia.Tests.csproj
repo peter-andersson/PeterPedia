@@ -24,7 +24,6 @@
 
   <ItemGroup>
     <ProjectReference Include="../../src/Server/PeterPedia.Server.csproj" />
-    <ProjectReference Include="../../src/Client.Book/PeterPedia.Client.Book.csproj" />
   </ItemGroup>
 
 </Project>

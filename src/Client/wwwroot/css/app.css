@@ -1,1 +1,15 @@
-﻿
+﻿.sidebar .nav-link {
+    color: rgba(255,255,255,.55);
+}
+
+    .sidebar .nav-link:hover {
+        color: rgba(255,255,255,.75);
+    }
+
+    .sidebar .nav-link.active {
+        color: #fff;
+    }
+
+#blazor-error-ui {
+    display: none;
+}

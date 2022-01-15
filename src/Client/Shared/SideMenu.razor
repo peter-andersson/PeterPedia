@@ -1,0 +1,8 @@
+﻿<ul class="sidebar nav flex-column">
+    @foreach (var item in Items)
+    {
+        <li class="nav-item">
+            <NavLink class="nav-link" href="@item.Url" Match="NavLinkMatch.All">@item.Text</NavLink>    
+        </li>
+    }
+</ul>

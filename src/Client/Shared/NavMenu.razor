@@ -1,24 +1,27 @@
-﻿<div class="row-start-1 col-span-2 bg-sky-600 text-black">
-    <nav class="flex flex-row gap-x-8 items-center h-full">
-        <a class="ml-4 text-4xl" href="/">PeterPedia</a>
-
-        <NavLink class="nav-link" href="Book" Match="NavLinkMatch.All">Books</NavLink>
-
-        <NavLink class="nav-link" href="Episodes" Match="NavLinkMatch.All">Episodes</NavLink>
-
-        <NavLink class="nav-link" href="movies" Match="NavLinkMatch.All">Movies</NavLink>
-                
-        <NavLink class="nav-link" href="RSS" Match="NavLinkMatch.All">RSS Reader</NavLink>
-
-        <NavLink class="nav-link" href="videos" Match="NavLinkMatch.All">Videos</NavLink>       
-    </nav>
-</div>
-
-<div class="row-start-2 col-start-1 bg-sky-900">
-    <nav class="flex flex-col gap-y-4 pt-4 pl-4">
-        @foreach (var item in Items)
-        {
-            <NavLink class="nav-link" href="@item.Url" Match="NavLinkMatch.All">@item.Text</NavLink>    
-        }
-    </nav>
-</div>
+﻿<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">PeterPedia</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="books" Match="NavLinkMatch.Prefix">Books</NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="episodes" Match="NavLinkMatch.Prefix">Episodes</NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="movies" Match="NavLinkMatch.Prefix">Movies</NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="rss" Match="NavLinkMatch.Prefix">RSS Reader</NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="videos" Match="NavLinkMatch.Prefix">Videos</NavLink>       
+                </li>     
+            </ul>
+        </div>
+    </div>
+</nav>

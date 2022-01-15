@@ -3,7 +3,7 @@ using PeterPedia.Client.Models;
 
 namespace PeterPedia.Client.Shared
 {
-    public partial class NavMenu : ComponentBase
+    public partial class SideMenu : ComponentBase
     {
         [Inject]
         public NavigationManager NavigationManager { get; set; } = null!;
@@ -31,6 +31,10 @@ namespace PeterPedia.Client.Shared
             if (NavigationManager.Uri.Contains("/movies"))
             {
                 hasChanged = LoadMoviesMenu();
+            }
+            else if (NavigationManager.Uri.Contains("/books"))
+            {
+                hasChanged = LoadBooksMenu();
             }
             else
             {
@@ -68,6 +72,23 @@ namespace PeterPedia.Client.Shared
             Items.Add(new MenuItem("movies", "Watchlist"));
             Items.Add(new MenuItem("movies/all", "All movies"));
             Items.Add(new MenuItem("movies/add", "Add movie"));
+
+            return true;
+        }
+
+        private bool LoadBooksMenu()
+        {
+            if (CurrentPage == "books")
+            {
+                return false;
+            }
+
+            Items.Clear();
+            CurrentPage = "books";
+
+            Items.Add(new MenuItem("books", "Reading"));
+            Items.Add(new MenuItem("books/readlist", "Want to read"));
+            Items.Add(new MenuItem("books/read", "Read"));            
 
             return true;
         }
