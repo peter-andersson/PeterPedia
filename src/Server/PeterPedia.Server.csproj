@@ -38,6 +38,11 @@
 
   <ItemGroup>
     <None Remove="lpda.db" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Pages\Shared\" />
+    <Folder Include="wwwroot\" />
   </ItemGroup> 
 
 </Project>

@@ -62,71 +62,7 @@ public class Startup
         app.UseSwagger();
         app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "LPDA.Api v1"));
 
-        app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/PeterPedia"), book =>
-        {
-            book.UseBlazorFrameworkFiles("/PeterPedia");
-            book.UseStaticFiles();
-
-            book.UseRouting();
-            book.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-                endpoints.MapFallbackToFile("PeterPedia/{*path:nonfile}", "PeterPedia/index.html");
-            });
-        });
-
-        app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/Book"), book =>
-        {
-            book.UseBlazorFrameworkFiles("/Book");
-            book.UseStaticFiles();
-
-            book.UseRouting();
-            book.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-                endpoints.MapFallbackToFile("Book/{*path:nonfile}", "Book/index.html");
-            });
-        });
-
-        app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/ReadList"), bookmark =>
-        {
-            bookmark.UseBlazorFrameworkFiles("/ReadList");
-            bookmark.UseStaticFiles();
-
-            bookmark.UseRouting();
-            bookmark.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-                endpoints.MapFallbackToFile("ReadList/{*path:nonfile}", "ReadList/index.html");
-            });
-        });
-
-        app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/Episodes"), episodes =>
-        {
-            episodes.UseBlazorFrameworkFiles("/Episodes");
-            episodes.UseStaticFiles();
-
-            episodes.UseRouting();
-            episodes.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-                endpoints.MapFallbackToFile("Episodes/{*path:nonfile}", "Episodes/index.html");
-            });
-        });
-    
-        app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/Reader"), reader =>
-        {
-            reader.UseBlazorFrameworkFiles("/Reader");
-            reader.UseStaticFiles();
-
-            reader.UseRouting();
-            reader.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-                endpoints.MapFallbackToFile("Reader/{*path:nonfile}", "Reader/index.html");
-            });
-        });
-     
+        app.UseBlazorFrameworkFiles();
         app.UseStaticFiles();
 
         app.UseStaticFiles(new StaticFileOptions
@@ -137,10 +73,11 @@ public class Startup
 
         app.UseRouting();
 
-        app.UseEndpoints(endpoints =>
+        app.UseEndpoints(app =>
         {
-            endpoints.MapRazorPages();
-            endpoints.MapControllers();
-        });
+            app.MapRazorPages();
+            app.MapControllers();
+            app.MapFallbackToFile("index.html");
+        });        
     }
 }

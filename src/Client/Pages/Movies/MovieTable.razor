@@ -4,17 +4,17 @@
 }
 else
 {
-    <table class="mt-5 min-w-full divide-y divide-gray-200">
+    <table class="table table-dark table-striped table-hover">
     <thead class="bg-slate-900">
         <tr>
-            <th class="text-left">Title</th>
-            <th class="text-left">Original title</th>
-            <th class="text-left">Original language</th>
-            <th class="text-left">Runtime</th>
+            <th>Title</th>
+            <th>Original title</th>
+            <th>Original language</th>
+            <th>Runtime</th>
             <th></th>
         </tr>
     </thead>
-    <tbody class="bg-slate-700 divide-y divide-gray-200">
+    <tbody>
         @foreach (var movie in Movies)
             {
                 <tr>
@@ -23,8 +23,8 @@ else
                     <td>@movie.OriginalLanguage</td>
                     <td>@movie.RunTime</td>
                     <td>
-                        <a href="movies/edit/@movie.Id/@ReturnUrl">Edit</a>
-                        <a class="ml-2" href="movies/delete/@movie.Id/@ReturnUrl">Delete</a>
+                        <a class="link-success" href="movies/edit/@movie.Id/@ReturnUrl">Edit</a>
+                        <a class="ml-2 link-danger" href="movies/delete/@movie.Id/@ReturnUrl">Delete</a>
                     </td>
                 </tr>
             }

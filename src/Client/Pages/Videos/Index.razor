@@ -1,13 +1,13 @@
 ﻿@page "/videos"
 
-<table class="mt-5 min-w-full divide-y divide-gray-200">
-    <thead class="bg-slate-900">
+<table class="table-dark">
+    <thead>
         <tr>
-            <th class="text-left">Title</th>
-            <th class="text-left">Duration</th>
+            <th class="col-10">Title</th>
+            <th class="col-2">Duration</th>
         </tr>
     </thead>
-    <tbody class="bg-slate-700 divide-y divide-gray-200">
+    <tbody>
         @foreach (var item in @Videos)
         {
             <tr>
