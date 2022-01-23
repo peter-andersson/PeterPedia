@@ -1,15 +1,10 @@
-﻿namespace PeterPedia.Client.Services;
-
-using PeterPedia.Shared;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
+﻿using PeterPedia.Shared;
 using System.Net.Http.Json;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Blazored.Toast;
 using Blazored.Toast.Services;
 using System.Text.Json;
+
+namespace PeterPedia.Client.Services;
 
 public class MovieService
 {
@@ -19,35 +14,42 @@ public class MovieService
     private readonly HttpClient _http;
     private readonly IToastService _toast;
 
+    private readonly List<Movie> _movieList = new();
+
     public MovieService(HttpClient httpClient, IToastService toastService)
     {
         _http = httpClient;
         _toast = toastService;
     }
 
-    public List<Movie> Movies { get; private set; } = new List<Movie>();
-
-    public async Task FetchData()
+    public async Task<List<Movie>> GetMovies(string filter, bool watchList)
     {
-        if (Movies.Count == 0)
+        await FetchMovies();
+
+        IEnumerable<Movie> movies;
+
+        if (watchList)
         {
-            await FetchMovies();
+            movies = _movieList.Where(m => !m.WatchedDate.HasValue);
         }
+        else
+        {
+            movies = _movieList;
+        }
+
+        if (!string.IsNullOrWhiteSpace(filter))
+        {
+            movies = movies.Where(m => m.Title.Contains(filter, StringComparison.InvariantCultureIgnoreCase) || m.OriginalTitle.Contains(filter, StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        return movies.OrderBy(m => m.Title).ToList();
     }
 
     public async Task<Movie?> Get(int id)
     {
-        if (Movies.Count == 0)
-        {
-            await FetchData();
-        }
-
-        if (Movies.Count > 0)
-        {
-            return Movies.Where(b => b.Id == id).FirstOrDefault();
-        }
-
-        return null;
+        await FetchMovies();
+        
+        return _movieList.Where(b => b.Id == id).FirstOrDefault();
     }
 
     public async Task<bool> Add(string movieUrl)
@@ -88,7 +90,7 @@ public class MovieService
             {
                 _toast.ShowSuccess($"Movie {movie.Title} added");
 
-                Movies.Add(movie);
+                _movieList.Add(movie);
 
                 return true;
             }
@@ -122,7 +124,7 @@ public class MovieService
         {
             _toast.ShowSuccess($"Movie {movie.Title} deleted");
 
-            Movies.Remove(movie);
+            _movieList.Remove(movie);
 
             return true;
         }
@@ -165,17 +167,22 @@ public class MovieService
             _toast.ShowError($"Failed to save movie. StatusCode = {response.StatusCode}");
             return false;
         }
-    }
+    }    
 
     private async Task FetchMovies()
     {
+        if (_movieList.Count > 0)
+        {
+            return;
+        }
+
         var movies = await _http.GetFromJsonAsync("/api/Movie", Context.MovieArray);
 
-        Movies.Clear();
+        _movieList.Clear();
 
         if (movies is not null)
         {
-            Movies.AddRange(movies);
+            _movieList.AddRange(movies);
         }       
     }
 }

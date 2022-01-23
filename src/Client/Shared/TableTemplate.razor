@@ -1,0 +1,66 @@
+﻿@typeparam T
+
+@if (PaginatedItems is null)
+{
+    <p>No data supplied!</p>        
+}
+else
+{
+    if (SearchEnabled)
+    {
+        <div class="row w-100">
+            <div class="col-12">
+                <EditForm class="row align-items-center" EditContext="@SearchContext" OnSubmit="@Search">
+                    <div class="col-12 col-sm-10">
+                        <label class="visually-hidden" for="search">Filter by title</label>
+                        <InputText id="search" class="form-control" autocomplete="off" @bind-Value="CurrentSearch" placeholder="" />           
+                    </div>   
+                    <div class="col-12 col-sm-2 pt-2 pt-sm-0">
+                        <button type="submit" class="btn btn-primary w-100">Search</button>
+                    </div>        
+                </EditForm> 
+            </div>
+        </div>
+    }
+
+    @if (PaginatedItems.Count == 0)
+    {
+        <p>No data found!</p>
+    }
+    else 
+    {
+        <div class="row">
+            <div class="col-12">    
+                <table class="table table-dark table-striped table-hover">
+                    <thead>
+                        <tr>@TableHeader</tr>
+                    </thead>
+                    <tbody>
+                        @foreach (T item in PaginatedItems)
+                        {
+                            if (RowTemplate is not null)
+                            {
+                                <tr>@RowTemplate(item)</tr>
+                            }
+                        }
+                    </tbody>
+                </table>            
+            </div>
+        </div>
+
+        @if (PaginationEnabled)
+        {
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex justify-content-start">
+                    <button class="btn btn-info" disabled="@IsPreviousButtonDisabled" @onclick=@(() => NavigateToPage(1))>First</button>
+                    <button class="btn btn-primary ms-2" disabled="@IsPreviousButtonDisabled" @onclick=@(() => NavigateToPage(CurrentPage - 1))>Previous</button>
+                </div>
+                <p class="my-auto">Displaying page @CurrentPage of @PageCount</p>
+                <div class="d-flex justify-content-end">
+                    <button class="btn btn-primary" disabled="@IsNextButtonDisabled" @onclick=@(() => NavigateToPage(CurrentPage + 1))>Next</button>
+                    <button class="btn btn-info ms-2" disabled="@IsNextButtonDisabled" @onclick=@(() => NavigateToPage(-1))>Last</button>
+                </div>
+            </div>            
+        }
+    }
+}

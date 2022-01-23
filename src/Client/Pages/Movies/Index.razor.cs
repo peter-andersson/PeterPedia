@@ -8,17 +8,15 @@ public partial class Index : ComponentBase
     [Inject]
     private MovieService MovieService { get; set; } = null!;
 
-    private List<PeterPedia.Shared.Movie> Movies = null!;
+    public List<PeterPedia.Shared.Movie> MovieList { get; private set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
-        await MovieService.FetchData();
-
-        LoadWatchList();
+        await FilterMovies(string.Empty);
     }
 
-    private void LoadWatchList()
+    public async Task FilterMovies(string filter)
     {
-        Movies = MovieService.Movies.Where(m => !m.WatchedDate.HasValue).OrderBy(m => m.Title).ToList();
+        MovieList = await MovieService.GetMovies(filter, watchList: true);
     }
 }

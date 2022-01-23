@@ -2,20 +2,20 @@
 
 @if (Video is null)
 {
-    <h1>Video not found</h1>
+    <h2>Video not found</h2>
 }
 else
 {
-    <h1>@Video.Title</h1>
-    <h2>Duration: @Video.Duration.ToString(@"hh\:mm\:ss")</h2>
+    <h2>@Video.Title</h2>
+    <h3>Duration: @Video.Duration.ToString(@"hh\:mm\:ss")</h3>
 
     <div class="container">
-        <video class="w-1/2 aspect-video" controls>
+        <video class="w-50 ratio ratio-16x9" controls>
             <source src="@Video.Url" type="@Video.Type">
             
             Your browser does not support the video tag.
         </video>
     </div>
 
-    <button class="btn btn-red mt-2" @onclick="Delete">Remove</button>
+    <button class="btn btn-danger mt-2" @onclick="Delete">Remove</button>
 }

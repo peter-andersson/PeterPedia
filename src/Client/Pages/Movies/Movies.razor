@@ -1,6 +1,6 @@
 ﻿@page "/movies/all"
 
-<h1 class="text-4xl">All movies</h1>
+<h2>All movies</h2>
 
 @if (MovieList == null)
 {
@@ -8,21 +8,25 @@
 }
 else
 {
-<EditForm class="container" EditContext="@SearchContext" OnSubmit="@LoadAllMovies">
-    <div class="flex">
-        <InputText id="search" class="w-1/2" @bind-Value="CurrentSearch" placeholder="Filter by title" />
-
-        <button type="submit" class="ml-2 btn btn-green">Search</button>
-    </div>    
-</EditForm>
-
-<div class="container">
-    <MovieTable Movies="@MovieList" ReturnUrl="movies"></MovieTable>
-</div>
-
-<div class="container">
-    <button class="btn btn-blue" @onclick=@(() => NavigateToPage(NavigatePage.First)) disabled="@IsPreviousButtonDisabled">First</button>
-    <button class="btn btn-blue ml-2" @onclick=@(() => NavigateToPage(NavigatePage.Previous)) disabled="@IsPreviousButtonDisabled">Previous</button>
-    <button class="btn btn-blue ml-2" @onclick=@(() => NavigateToPage(NavigatePage.Next)) disabled="@IsNextButtonDisabled">Next</button>
-</div>
+    <TableTemplate Items="MovieList" Context="movie" 
+        SearchEnabled="true" OnSearch="@FilterMovies"
+        PaginationEnabled="true" PageSize="20">
+        <TableHeader>
+            <th>Title</th>
+            <th>Original title</th>
+            <th>Original language</th>
+            <th>Runtime</th>
+            <th></th>
+        </TableHeader>
+        <RowTemplate>
+            <td>@movie.Title</td>
+            <td>@movie.OriginalLanguage</td>
+            <td>@movie.OriginalLanguage</td>
+            <td>@movie.RunTime</td>
+            <td>
+                <a class="link-success" href="movies/edit/@movie.Id">Edit</a>
+                <a class="ml-2 link-danger" href="movies/delete/@movie.Id">Delete</a>
+            </td>
+        </RowTemplate>
+    </TableTemplate>
 }

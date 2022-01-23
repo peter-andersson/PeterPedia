@@ -9,10 +9,30 @@ public partial class History : ComponentBase
     [Inject]
     private RSSService RSSService { get; set; } = null!;
 
-    private List<Article> Articles = null!;
+    public List<Article> Articles { get; set; } = null!;
+
+    private List<Article> _articles = null!;
 
     protected override async Task OnInitializedAsync()
     {
-        Articles = await RSSService.GetHistory();
+        _articles = await RSSService.GetHistory();
+
+        FilterArticles(string.Empty);
+    }
+
+    public void FilterArticles(string filter)
+    {
+        IEnumerable<Article> articles;
+
+        if (string.IsNullOrWhiteSpace(filter))
+        {
+            articles = _articles;
+        }
+        else
+        {
+            articles = _articles.Where(a => a.Title.Contains(filter, StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        Articles = articles.ToList();
     }
 }
