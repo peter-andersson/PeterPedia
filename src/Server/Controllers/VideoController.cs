@@ -88,7 +88,7 @@ public partial class VideoController : Controller
         var basePath = _configuration["VideoPath"] ?? "/video";
         var relativePath = Path.GetRelativePath(basePath, itemEF.AbsolutePath);
 
-        video.Url = "/video/" + relativePath;
+        video.Url = "/video/" + relativePath.Replace('\\', '/');
 
         return video;
     }
