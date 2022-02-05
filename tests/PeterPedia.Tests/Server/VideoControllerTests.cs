@@ -34,19 +34,18 @@ namespace PeterPedia.Tests.Server
         {
             var options = GetDbContextOptions();
 
-            using (var context = new PeterPediaContext(options))
-            {
-                var controller = CreateController(context);
+            using var context = new PeterPediaContext(options);
 
-                var result = await controller.Get();
-                var okResult = result as OkObjectResult;
-                var items = okResult.Value as List<Video>;
+            var controller = CreateController(context);
 
-                Assert.NotNull(okResult);
-                Assert.Equal(200, okResult.StatusCode);
-                Assert.NotNull(items);
-                Assert.Empty(items);
-            }
+            var result = await controller.Get();
+            var okResult = result as OkObjectResult;
+            var items = okResult.Value as List<Video>;
+
+            Assert.NotNull(okResult);
+            Assert.Equal(200, okResult.StatusCode);
+            Assert.NotNull(items);
+            Assert.Empty(items);
         }
 
         [Fact]
@@ -56,26 +55,25 @@ namespace PeterPedia.Tests.Server
 
             AddTestData(options);
 
-            using (var context = new PeterPediaContext(options))
-            {
-                var controller = CreateController(context);
+            using var context = new PeterPediaContext(options);
 
-                var result = await controller.Get();
-                var okResult = result as OkObjectResult;
-                var items = okResult.Value as List<Video>;
+            var controller = CreateController(context);
 
-                Assert.NotNull(okResult);
-                Assert.Equal(200, okResult.StatusCode);
-                Assert.NotNull(items);
-                Assert.Single(items);
+            var result = await controller.Get();
+            var okResult = result as OkObjectResult;
+            var items = okResult.Value as List<Video>;
 
-                var video = items[0];
-                Assert.Equal(1, video.Id);
-                Assert.Equal("/video/test/file.mp4", video.Url);
-                Assert.Equal("file", video.Title);
-                Assert.Equal(TimeSpan.FromMinutes(30), video.Duration);
-                Assert.Equal("video/mp4", video.Type);
-            }
+            Assert.NotNull(okResult);
+            Assert.Equal(200, okResult.StatusCode);
+            Assert.NotNull(items);
+            Assert.Single(items);
+
+            var video = items[0];
+            Assert.Equal(1, video.Id);
+            Assert.Equal("/video/test/file.mp4", video.Url);
+            Assert.Equal("file", video.Title);
+            Assert.Equal(TimeSpan.FromMinutes(30), video.Duration);
+            Assert.Equal("video/mp4", video.Type);
         }
 
         [Fact]
@@ -83,16 +81,15 @@ namespace PeterPedia.Tests.Server
         {
             var options = GetDbContextOptions();
 
-            using (var context = new PeterPediaContext(options))
-            {
-                var controller = CreateController(context);
+            using var context = new PeterPediaContext(options);
 
-                var result = await controller.Delete(0);
-                var notFoundResult = result as NotFoundResult;
+            var controller = CreateController(context);
 
-                Assert.NotNull(notFoundResult);
-                Assert.Equal(404, notFoundResult.StatusCode);
-            }
+            var result = await controller.Delete(0);
+            var notFoundResult = result as NotFoundResult;
+
+            Assert.NotNull(notFoundResult);
+            Assert.Equal(404, notFoundResult.StatusCode);
         }
 
         [Fact]
@@ -102,21 +99,20 @@ namespace PeterPedia.Tests.Server
 
             AddTestData(options);
 
-            using (var context = new PeterPediaContext(options))
-            {
-                var controller = CreateController(context);
+            using var context = new PeterPediaContext(options);
 
-                var result = await controller.Delete(1);
-                var okResult = result as OkResult;
+            var controller = CreateController(context);
 
-                Assert.NotNull(okResult);
-                Assert.Equal(200, okResult.StatusCode);
+            var result = await controller.Delete(1);
+            var okResult = result as OkResult;
 
-                var item = context.Videos.Where(r => r.Id == 1).SingleOrDefault();
-                Assert.Null(item);
+            Assert.NotNull(okResult);
+            Assert.Equal(200, okResult.StatusCode);
 
-                _fileServiceMock.Verify(m => m.Delete(It.IsAny<string>()));
-            }
+            var item = context.Videos.Where(r => r.Id == 1).SingleOrDefault();
+            Assert.Null(item);
+
+            _fileServiceMock.Verify(m => m.Delete(It.IsAny<string>()));
         }
 
         private DbContextOptions<PeterPediaContext> GetDbContextOptions([CallerMemberName] string callingMember = null)
@@ -139,23 +135,22 @@ namespace PeterPedia.Tests.Server
             return new VideoController(_logger, context, configuration, _fileServiceMock.Object);
         }
 
-        private void AddTestData(DbContextOptions<PeterPediaContext> options)
+        private static void AddTestData(DbContextOptions<PeterPediaContext> options)
         {
-            using (var context = new PeterPediaContext(options))
-            {
-                context.Videos.Add(new VideoEF
-                {
-                    Id = 1,
-                    AbsolutePath = "/test/file.mp4",
-                    Directory = "/test",
-                    Duration = TimeSpan.FromMinutes(30),
-                    FileName = "file.mp4",
-                    Title = "file",
-                    Type = "video/mp4",
-                });
+            using var context = new PeterPediaContext(options);
 
-                context.SaveChanges();
-            }
+            context.Videos.Add(new VideoEF
+            {
+                Id = 1,
+                AbsolutePath = "/test/file.mp4",
+                Directory = "/test",
+                Duration = TimeSpan.FromMinutes(30),
+                FileName = "file.mp4",
+                Title = "file",
+                Type = "video/mp4",
+            });
+
+            context.SaveChanges();
         }
     }
 }
