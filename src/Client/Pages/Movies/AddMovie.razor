@@ -1,0 +1,17 @@
+﻿<div id="add-movie-dialog" class="modal fade show" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add movie</h5>
+            </div>
+            <div class="modal-body">
+                <input class="form-input w-100" @ref="Input" @bind="MovieUrl" @bind:event="oninput" @onkeydown="InputKeyDown" placeholder="TheMovieDb id or URL" autofocus />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" @onclick="Close" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" @onclick="AddMovieButton" disabled=@IsTaskRunning>Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,15 +1,15 @@
-﻿.sidebar .nav-link {
-    color: rgba(255,255,255,.55);
-}
-
-    .sidebar .nav-link:hover {
-        color: rgba(255,255,255,.75);
-    }
-
-    .sidebar .nav-link.active {
-        color: #fff;
-    }
-
-#blazor-error-ui {
+﻿#blazor-error-ui {
     display: none;
 }
+
+/*.modal {
+    display: block !important;
+}*/
+
+/*.modal-content {
+    background-color: #000 !important;
+}
+
+.modal-title {
+    color: #fff !important;
+}*/

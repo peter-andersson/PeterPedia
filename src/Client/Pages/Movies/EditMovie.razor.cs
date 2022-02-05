@@ -1,44 +1,42 @@
 ﻿using Microsoft.AspNetCore.Components;
-using PeterPedia.Client.Services;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PeterPedia.Client.Pages.Movies;
 
-public partial class Edit : ComponentBase
+public partial class EditMovie : ComponentBase
 {
     [Inject]
     private MovieService MovieService { get; set; } = null!;
 
-    [Inject]
-    private NavigationManager NavManager { get; set; } = null!;
+    [Parameter, AllowNull]
+    public EventCallback<string> OnClose { get; set; }
 
-    [Parameter]
-    public int Id { get; set; }
+    [Parameter, AllowNull]
+    public EventCallback<string> OnSuccess { get; set; }
 
-    [Parameter]
-    public string ReturnUrl { get; set; } = null!;
+    [Parameter, AllowNull]
+    public Movie? Movie { get; set; }
 
-    private bool IsTaskRunning;
-    private PeterPedia.Shared.Movie Movie = null!;
+    public bool IsTaskRunning { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        ReturnUrl ??= "";
-
         IsTaskRunning = false;
-        var movie = await MovieService.Get(Id);
 
-        if (movie is null)
+        if (Movie is not null)
         {
-            NavManager.NavigateTo(ReturnUrl);
-        }
-        else
-        {
-            Movie = CreateCopy(movie);
+            Movie = CreateCopy(Movie);
         }
     }
 
-    private async Task Save()
+    public async Task Save()
     {
+        if (Movie is null)
+        {
+            await OnClose.InvokeAsync();
+            return;
+        }
+
         IsTaskRunning = true;
 
         var result = await MovieService.Update(Movie);
@@ -46,23 +44,23 @@ public partial class Edit : ComponentBase
         IsTaskRunning = false;
         if (result)
         {
-            NavManager.NavigateTo(ReturnUrl);
+            await OnSuccess.InvokeAsync();
         }
     }
 
-    private void Cancel()
+    public async Task Cancel()
     {
-        NavManager.NavigateTo(ReturnUrl);
+        await OnClose.InvokeAsync();
     }
-
-    private static PeterPedia.Shared.Movie CreateCopy(PeterPedia.Shared.Movie? movie)
+       
+    private static Movie CreateCopy(Movie? movie)
     {
         if (movie is null)
         {
             throw new ArgumentNullException(nameof(movie));
         }
 
-        var result = new PeterPedia.Shared.Movie()
+        var result = new Movie()
         {
             Id = movie.Id,
             Title = movie.Title,
@@ -76,5 +74,5 @@ public partial class Edit : ComponentBase
         };
 
         return result;
-    }
+    }    
 }

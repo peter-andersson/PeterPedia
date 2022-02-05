@@ -1,32 +1,7 @@
 ﻿@page "/movies/"
 
-<h2>Watchlist</h2>
+<button class="btn btn-success" @onclick="OpenAddDialog">Add movie</button>
 
-@if (MovieList == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <TableTemplate Items="MovieList" Context="movie" 
-        SearchEnabled="true" OnSearch="@FilterMovies"
-        PaginationEnabled="true" PageSize="20">
-        <TableHeader>
-            <th>Title</th>
-            <th>Original title</th>
-            <th>Original language</th>
-            <th>Runtime</th>
-            <th></th>
-        </TableHeader>
-        <RowTemplate>
-            <td>@movie.Title</td>
-            <td>@movie.OriginalLanguage</td>
-            <td>@movie.OriginalLanguage</td>
-            <td>@movie.RunTime</td>
-            <td>
-                <a class="link-success" href="movies/edit/@movie.Id">Edit</a>
-                <a class="ml-2 link-danger" href="movies/delete/@movie.Id">Delete</a>
-            </td>
-        </RowTemplate>
-    </TableTemplate>
-}
+<AddMovie OnClose="DialogClose" OnSuccess="DialogSuccess"></AddMovie>
+
+<Movies></Movies>

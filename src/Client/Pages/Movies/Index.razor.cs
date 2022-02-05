@@ -1,22 +1,45 @@
 ﻿using Microsoft.AspNetCore.Components;
-using PeterPedia.Client.Services;
+using Microsoft.JSInterop;
 
 namespace PeterPedia.Client.Pages.Movies;
 
 public partial class Index : ComponentBase
 {
     [Inject]
-    private MovieService MovieService { get; set; } = null!;
+    private IJSRuntime JS { get; set; } = null!;
 
-    public List<PeterPedia.Shared.Movie> MovieList { get; private set; } = null!;
+    private IJSObjectReference _module = null!;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await FilterMovies(string.Empty);
+        await base.OnAfterRenderAsync(firstRender);
+
+        _module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/movies.js");
     }
 
-    public async Task FilterMovies(string filter)
+    public async Task OpenAddDialog()
     {
-        MovieList = await MovieService.GetMovies(filter, watchList: true);
+        if (_module is not null)
+        {
+            await _module.InvokeVoidAsync("ShowAddModal");
+        }
+    }
+
+    public async Task DialogClose()
+    {
+        if (_module is not null)
+        {
+            await _module.InvokeVoidAsync("HideAddModal");
+        }
+    }
+
+    public async Task DialogSuccess()
+    {
+        if (_module is not null)
+        {
+            await _module.InvokeVoidAsync("HideAddModal");
+        }
+
+        StateHasChanged();
     }
 }
