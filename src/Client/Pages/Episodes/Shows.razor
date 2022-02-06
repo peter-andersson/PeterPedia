@@ -8,7 +8,7 @@
 }
 else
 {
-    <TableTemplate Items="ShowList" Context="show" 
+    <PPTable Items="ShowList" Context="show" 
         SearchEnabled="true" OnSearch="@FilterShows"
         PaginationEnabled="true" PageSize="20">
         <TableHeader>
@@ -28,5 +28,5 @@ else
                 <a class="link-danger ml-2" href="delete/@show.Id"></a>
             </td>
         </RowTemplate>
-    </TableTemplate>
+    </PPTable>
 }

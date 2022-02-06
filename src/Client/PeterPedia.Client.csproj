@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\js\movies.js" />
+    <None Include="wwwroot\js\dialog.js" />
   </ItemGroup>
 
 </Project>

@@ -12,7 +12,7 @@ else if (VideoList.Count() == 0)
 }
 else
 {
-    <TableTemplate Items="VideoList" Context="video" 
+    <PPTable Items="VideoList" Context="video" 
         SearchEnabled="true" OnSearch="@FilterVideos"
         PaginationEnabled="true" PageSize="20">
         <TableHeader>
@@ -23,5 +23,5 @@ else
             <td><a href="videos/player/@video.Id">@video.Title</a></td>
             <td>@video.Duration.ToString(@"hh\:mm\:ss")</td>
         </RowTemplate>
-    </TableTemplate>
+    </PPTable>
 }

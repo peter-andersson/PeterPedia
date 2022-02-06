@@ -8,7 +8,7 @@
 }
 else
 {
-    <TableTemplate Items="SubscriptionList" Context="subscription" 
+    <PPTable Items="SubscriptionList" Context="subscription" 
         SearchEnabled="true" OnSearch="@FilterSubscription"
         PaginationEnabled="true" PageSize="20">
         <TableHeader>
@@ -26,5 +26,5 @@ else
                 <a class="link-danger ml-2" href="subscription/delete/@subscription.Id">Delete</a>
             </td>
         </RowTemplate>
-    </TableTemplate>
+    </PPTable>
 }

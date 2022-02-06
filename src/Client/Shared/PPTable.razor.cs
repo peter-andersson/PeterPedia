@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace PeterPedia.Client.Shared;
 
-public partial class TableTemplate<T> : ComponentBase
+public partial class PPTable<T> : ComponentBase
 {
     [Parameter]
     public RenderFragment? TableHeader { get; set; }
