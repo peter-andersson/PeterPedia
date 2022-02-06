@@ -8,6 +8,9 @@ public partial class EditMovie : ComponentBase
     [Inject]
     private MovieService MovieService { get; set; } = null!;
 
+    [Parameter]
+    public string? Id { get; set; }
+
     [Parameter, AllowNull]
     public EventCallback<string> OnClose { get; set; }
 
