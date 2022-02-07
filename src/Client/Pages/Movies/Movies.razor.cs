@@ -43,7 +43,7 @@ public partial class Movies : ComponentBase
     {
         _currentFilter = filter;
         MovieList = await MovieService.GetMovies(_currentFilter, watchList: Watchlist);
-    }    
+    }
 
     public async Task ToggleUnwatched()
     {
