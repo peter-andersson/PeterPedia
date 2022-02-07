@@ -1,14 +1,14 @@
-﻿<Dialog Id="@Id" Title="Delete movie">
+﻿<Dialog Id="@Id" Title="Delete book">
     <Body>
-        @if (Movie is null)
+        @if (Book is null)
         {
-            <p>No movie to delete...</p>        
+            <p>No book to delete...</p>        
         }
         else
         {
-            <p class="text-danger">Do you really want to delete this movie? This action cannot be undone.</p>
+            <p class="text-danger">Do you really want to delete this book? This action cannot be undone.</p>
             <p>
-                Title: <span class="font-bold">@Movie.Title</span>
+                Title: <span class="font-bold">@Book.Title</span>
             </P>                 
         }
     </Body>

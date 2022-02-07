@@ -1,8 +1,8 @@
 ﻿@page "/books"
 
-@*<DeleteBook Id="@DeleteMovieElement" OnClose="DeleteDialogClose" OnSuccess="DeleteDialogSuccess" Book="SelectedBook"></DeleteBook>
+<DeleteBook Id="@DeleteBookElement" OnClose="DeleteDialogClose" OnSuccess="DeleteDialogSuccess" Book="SelectedBook"></DeleteBook>
 
-<EditBook Id="@EditBookElement" OnClose="EditDialogClose" OnSuccess="EditDialogSuccess"></EditBook>*@
+<EditBook Id="@EditBookElement" OnClose="EditDialogClose" OnSuccess="EditDialogSuccess" Book="SelectedBook"></EditBook>
 
 @if (BookList == null)
 {
@@ -17,20 +17,24 @@ else
     </div>
 
     <div class="row mt-2">
-        <div class="col-12">
+        <div class="col">
             <div class="form-check form-switch">
-                <input checked="@Reading" class="form-check-input" type="checkbox" role="switch" id="switch-unwatched" @onchange="ToggleReading">
-                <label class="form-check-label" for="switch-unwatched">Currently reading</label>
-            </div>
-            <div class="form-check form-switch">
-                <input checked="@WantToRead" class="form-check-input" type="checkbox" role="switch" id="switch-unwatched" @onchange="ToggleWantToRead">                
-                <label class="form-check-label" for="switch-unwatched">Want to read</label>
-            </div>
-            <div class="form-check form-switch">
-                <input checked="@Read" class="form-check-input" type="checkbox" role="switch" id="switch-unwatched" @onchange="ToggleRead">                
-                <label class="form-check-label" for="switch-unwatched">Read</label>
+                <input checked="@Reading" class="form-check-input" type="checkbox" role="switch" id="switch-reading" @onchange="ToggleReading">
+                <label class="form-check-label" for="switch-reading">Currently reading</label>
             </div>
         </div>
+        <div class="col">
+            <div class="form-check form-switch">
+                <input checked="@WantToRead" class="form-check-input" type="checkbox" role="switch" id="switch-want-to-read" @onchange="ToggleWantToRead">                
+                <label class="form-check-label" for="switch-want-to-read">Want to read</label>
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-check form-switch">
+                <input checked="@Read" class="form-check-input" type="checkbox" role="switch" id="switch-read" @onchange="ToggleRead">                
+                <label class="form-check-label" for="switch-read">Read</label>
+            </div>
+        </div>        
     </div>
     <div class="row mt-2">
         <Table Items="BookList" Context="book"

@@ -119,6 +119,8 @@ public partial class Books : ComponentBase
     {
         await HideDialog(DeleteBookElement);
 
+        await FilterBooks(_currentFilter);
+
         StateHasChanged();
     }
 

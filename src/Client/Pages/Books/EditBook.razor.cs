@@ -1,26 +1,28 @@
 ﻿using Microsoft.AspNetCore.Components;
-using PeterPedia.Shared;
-using PeterPedia.Client.Services;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PeterPedia.Client.Pages.Books;
 
-public partial class Form : ComponentBase
+public partial class EditBook : ComponentBase
 {
     [Inject]
     BookService BookService { get; set; } = null!;
 
-    [Inject]
-    NavigationManager NavManager { get; set; } = null!;
+    [Parameter]
+    public string? Id { get; set; }
 
     [Parameter]
-    public int? Id { get; set; }
+    public Book? Book { get; set; }
 
-    [Parameter]
-    public string ReturnUrl { get; set; } = string.Empty;
+    [Parameter, AllowNull]
+    public EventCallback<string> OnClose { get; set; }
+
+    [Parameter, AllowNull]
+    public EventCallback<string> OnSuccess { get; set; }
+
+    public bool IsTaskRunning { get; set; }
 
     private IList<Author> SelectedAuthor = new List<Author>();
-
-    private Book Book = null!;
 
     private readonly List<Author> Authors = new();
 
@@ -30,7 +32,7 @@ public partial class Form : ComponentBase
         {
             if (Book is null)
             {
-                return "Loading...";
+                return "Add book";
             }
 
             if (Book.Id > 0)
@@ -44,43 +46,28 @@ public partial class Form : ComponentBase
         }
     }
 
-    private bool IsTaskRunning = false;
-
     protected override async Task OnInitializedAsync()
     {
         await BookService.FetchData();
 
-        ReturnUrl ??= "";
-
-        Book? book = null;
-
-        if (Id.HasValue)
-        {
-            book = await BookService.Get(Id.Value);
-
-            if (book is null)
-            {
-                Book = new Book
-                {
-                    State = BookState.WantToRead
-                };
-            }
-            else
-            {
-                Book = await CreateCopy(book);
-            }
-        }
-
-        if (book is null)
-        {
-            Book = new Book
-            {
-                State = BookState.WantToRead
-            };
-        }
-
         Authors.Clear();
         Authors.AddRange(BookService.Authors);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        SelectedAuthor.Clear();
+
+        if (Book is null)
+        {
+            Book = new Book();
+        }
+        else
+        {
+            Book = await CreateCopy(Book);
+        }        
     }
 
     private async Task<IEnumerable<Author>> GetAuthor(string searchText)
@@ -100,8 +87,13 @@ public partial class Form : ComponentBase
 
     private async Task Save()
     {
-        IsTaskRunning = true;
+        if (Book is null)
+        {
+            return;
+        }
 
+        IsTaskRunning = true;
+        
         Book.Authors.Clear();
         foreach (var author in SelectedAuthor)
         {
@@ -121,22 +113,16 @@ public partial class Form : ComponentBase
         IsTaskRunning = false;
         if (result)
         {
-            if (Book.Id > 0)
-            {
-                NavManager.NavigateTo(ReturnUrl);
-            }
+            await OnSuccess.InvokeAsync();
         }
     }
 
-    private void Cancel()
+    private async Task Cancel()
     {
-        if (Book.Id > 0)
-        {
-            NavManager.NavigateTo(ReturnUrl);
-        }
+        await OnClose.InvokeAsync();
     }
 
-    private async Task<Book> CreateCopy(Book book)
+    public async Task<Book> CreateCopy(Book book)
     {
         var result = new Book()
         {

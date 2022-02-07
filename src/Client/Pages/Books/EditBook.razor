@@ -1,0 +1,41 @@
+﻿<Dialog Id="@Id" Title="@Title">
+    <Body>
+        @if (Book is null)
+        {
+            <p>No book to edit...</p>
+        }
+        else
+        {
+            <div class="mb-3">
+                <label class="form-label">Title</label>
+                <input class="form-control" type="text" @bind="@Book.Title" />
+            </div>
+            <div class="mb-3">
+                <label for="inputState" class="form-label">State</label>
+                <select id="inputState" class="form-select" @bind="@Book.State">
+                    <option value="@BookState.WantToRead">Want to read</option>
+                    <option value="@BookState.Reading">Reading</option>
+                    <option value="@BookState.Read">Read</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Select author</label>
+                <BlazoredTypeahead class="form-select" SearchMethod="GetAuthor" @bind-Values="SelectedAuthor"
+                    EnableDropDown="true" Disabled="false" placeholder="" MinimumLength="2"
+                    AddItemOnEmptyResultMethod="ItemAddedMethod">
+                    <SelectedTemplate Context="author">@author.Name</SelectedTemplate>
+                    <HelpTemplate>Please enter a minimum of 2 characters to perform a search.</HelpTemplate>
+                    <NotFoundTemplate Context="searchText">
+                        Add "@searchText" as a new author <br />
+                        The newly added author will be selected after being added.
+                    </NotFoundTemplate>
+                    <ResultTemplate Context="author">@author.Name</ResultTemplate>
+                </BlazoredTypeahead>
+            </div>               
+        }
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-secondary" @onclick="Cancel" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-success" @onclick="Save" disabled=@IsTaskRunning>Save</button>
+    </Footer>
+</Dialog>
