@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace PeterPedia.Client.Shared;
 
-public partial class PPDialog : ComponentBase
+public partial class Dialog : ComponentBase
 {
     [Parameter]
     public string? Title { get; set; }

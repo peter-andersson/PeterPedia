@@ -8,7 +8,7 @@
 }
 else
 {
-    <PPTable Items="Articles" Context="article" 
+    <Table Items="Articles" Context="article" 
         SearchEnabled="true" OnSearch="@FilterArticles"
         PaginationEnabled="true" PageSize="20">
         <TableHeader>
@@ -19,5 +19,5 @@ else
             <td><a href="@article.Url" class="text-white" target="_blank">@article.Title</a></td>
             <td>@article.ReadDate?.ToString("d MMM yyyy HH:mm:ss")</td>
         </RowTemplate>
-    </PPTable>
+    </Table>
 }

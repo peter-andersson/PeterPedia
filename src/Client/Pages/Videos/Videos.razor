@@ -1,0 +1,32 @@
+﻿@page "/videos"
+
+@if (VideoList == null)
+{
+    <Loader Text="Loading videos..."/>
+}
+else
+{
+    <div class="row mt-2">
+        <div class="col-12">
+            @if (VideoList.Count() == 0)
+            {
+                <p>Nothing to watch, add some new movies!</p>
+            }
+            else
+            {
+                <Table Items="VideoList" Context="video" 
+                    SearchEnabled="true" OnSearch="@FilterVideos"
+                    PaginationEnabled="true" PageSize="20">
+                    <TableHeader>
+                        <th>Title</th>
+                        <th>Duration</th>
+                    </TableHeader>
+                    <RowTemplate>
+                        <td class=""><a class="link-dark" href="videos/player/@video.Id">@video.Title</a></td>
+                        <td>@video.Duration.ToString(@"hh\:mm\:ss")</td>
+                    </RowTemplate>
+                </Table>
+            }
+        </div>
+    </div>
+}

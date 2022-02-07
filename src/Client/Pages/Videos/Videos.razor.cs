@@ -1,10 +1,8 @@
-﻿using PeterPedia.Shared;
-using Microsoft.AspNetCore.Components;
-using PeterPedia.Client.Services;
+﻿using Microsoft.AspNetCore.Components;
 
 namespace PeterPedia.Client.Pages.Videos;
 
-public partial class Index : ComponentBase
+public partial class Videos : ComponentBase
 {
     [Inject]
     public VideoService VideoService { get; set; } = null!;
