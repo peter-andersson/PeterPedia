@@ -26,12 +26,11 @@ public partial class AddMovie : ComponentBase
     {
         if (e.Code == "Enter" || e.Code == "NumpadEnter")
         {
-            await AddMovieButton();
+            await Add();
         }
-
     }
 
-    public async Task AddMovieButton()
+    public async Task Add()
     {
         if (string.IsNullOrEmpty(MovieUrl))
         {

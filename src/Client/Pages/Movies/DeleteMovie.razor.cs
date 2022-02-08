@@ -19,13 +19,8 @@ public partial class DeleteMovie : ComponentBase
 
     [Parameter, AllowNull]
     public Movie? Movie { get; set; }
-  
-    public bool IsTaskRunning { get; set; }
 
-    protected override void OnInitialized()
-    {
-        IsTaskRunning = false;
-    }
+    public bool IsTaskRunning { get; set; } = false;
 
     public async Task Delete()
     {

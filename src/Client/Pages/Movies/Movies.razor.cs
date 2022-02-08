@@ -64,7 +64,7 @@ public partial class Movies : ComponentBase
 
     public async Task AddDialogSuccess()
     {
-        await HideDialog(AddMovieElement);
+        await AddDialogClose();
 
         await FilterMovies(_currentFilter);
 
@@ -73,23 +73,23 @@ public partial class Movies : ComponentBase
 
     public async Task DeleteMovie(Movie movie)
     {
-        SelectedMovie = null;
-
         SelectedMovie = movie;
-
-        await FilterMovies(_currentFilter);
 
         await ShowDialog(DeleteMovieElement);
     }
 
     public async Task DeleteDialogClose()
     {
+        SelectedMovie = null;
+
         await HideDialog(DeleteMovieElement);
     }
 
     public async Task DeleteDialogSuccess()
     {
-        await HideDialog(DeleteMovieElement);
+        await DeleteDialogClose();
+
+        await FilterMovies(_currentFilter);
 
         StateHasChanged();
     }
@@ -103,20 +103,19 @@ public partial class Movies : ComponentBase
 
     public async Task EditDialogClose()
     {
+        SelectedMovie = null;
+
         await HideDialog(EditMovieElement);
     }
 
     public async Task EditDialogSuccess()
     {
-        SelectedMovie = null;
-
-        await HideDialog(EditMovieElement);
+        await EditDialogClose();
 
         await FilterMovies(_currentFilter);
 
         StateHasChanged();
     }
-
 
     private async Task ShowDialog(string element)
     {
