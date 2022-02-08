@@ -21,15 +21,8 @@ else
     <div class="row mt-2">
         <div class="col-12">
             <div class="form-check form-switch">
-                @if (Watchlist)
-                {
-                    <input class="form-check-input" type="checkbox" role="switch" id="switch-unwatched" @onchange="ToggleUnwatched" checked>
-                }
-                else
-                {
-                    <input class="form-check-input" type="checkbox" role="switch" id="switch-unwatched" @onchange="ToggleUnwatched" unchecked>
-                }
-                <label class="form-check-label" for="switch-unwatched">Display only unwatched movies</label>
+                <input checked="@Watchlist" class="form-check-input" type="checkbox" role="switch" id="switch-unwatched" @onchange="ToggleUnwatched">
+                <label class="form-check-label" for="switch-unwatched">Display only unwatched movies</label>                
             </div>
         </div>
     </div>
