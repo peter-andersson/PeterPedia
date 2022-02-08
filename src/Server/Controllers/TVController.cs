@@ -13,9 +13,7 @@ namespace PeterPedia.Server.Controllers;
 [Route("api/[controller]")]
 public partial class TVController : Controller
 {
-#pragma warning disable IDE0052 // Remove unread private members
     private readonly ILogger<TVController> _logger;
-#pragma warning restore IDE0052 // Remove unread private members
     private readonly PeterPediaContext _dbContext;
     private readonly TheMovieDatabaseService _tmdbService;
 
@@ -25,7 +23,7 @@ public partial class TVController : Controller
         _dbContext = dbContext;
         _tmdbService = tmdbService;
     }
-
+    
     [HttpGet]
     public async Task<IActionResult> Get()
     {
@@ -39,6 +37,19 @@ public partial class TVController : Controller
 
         return Ok(result);
     }
+
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetShow(int id)
+    {
+        var show = await _dbContext.Shows.Where(s => s.Id == id).Include(sh => sh.Seasons).ThenInclude(se => se.Episodes).AsSplitQuery().FirstOrDefaultAsync().ConfigureAwait(false);
+
+        if (show is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(ConvertToShow(show));
+    }    
 
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] AddShow data)

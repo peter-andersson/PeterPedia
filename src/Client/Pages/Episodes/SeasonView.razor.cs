@@ -16,7 +16,7 @@ public partial class SeasonView : ComponentBase
     public Season Season { get; set; } = null!;
 
     [Parameter]
-    public bool DisplayAllEpisodes { get; set; }
+    public bool DisplayAllEpisodes { get; set; }    
 
     private bool IsTaskRunning = false;
 

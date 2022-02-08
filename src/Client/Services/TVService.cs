@@ -160,7 +160,7 @@ public class TVService
 
         if (response.IsSuccessStatusCode)
         {
-            _toast.ShowSuccess($"Show  {show.Title} saved");
+            _toast.ShowSuccess($"Show {show.Title} saved");
 
             var serverShow = await _http.GetFromJsonAsync($"/api/TV/{show.Id}", Context.Show);
 

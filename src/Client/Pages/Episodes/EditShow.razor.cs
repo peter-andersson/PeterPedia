@@ -1,48 +1,47 @@
 ﻿using Microsoft.AspNetCore.Components;
-using PeterPedia.Client.Services;
-using PeterPedia.Shared;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PeterPedia.Client.Pages.Episodes;
 
-public partial class Edit : ComponentBase
+public partial class EditShow : ComponentBase
 {
     [Inject]
     private TVService TVService { get; set; } = null!;
 
-    [Inject]
-    private NavigationManager NavManager { get; set; } = null!;
-
     [Parameter]
-    public int Id { get; set; }
+    public string? Id { get; set; }
 
-    private bool IsTaskRunning;
+    [Parameter, AllowNull]
+    public EventCallback<string> OnClose { get; set; }
 
-    private Show Show = null!;
+    [Parameter, AllowNull]
+    public EventCallback<string> OnSuccess { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    [Parameter, AllowNull]
+    public Show? Show { get; set; }
+
+    public bool IsTaskRunning { get; set; }
+
+    protected override void OnParametersSet()
     {
+        base.OnParametersSet();
+
         IsTaskRunning = false;
-        var show = await TVService.Get(Id);
 
-        if (show is null)
+        if (Show is not null)
         {
-            NavManager.NavigateTo("shows");
+            Show = CreateCopy(Show);
         }
-        else
-        {
-            Show = CreateCopy(show);
-        }
-
-        TVService.RefreshRequested += Refresh;
-    }
-
-    private void Refresh()
-    {
-        StateHasChanged();
     }
 
     private async Task Save()
     {
+        if (Show is null)
+        {
+            await OnClose.InvokeAsync();
+            return;
+        }
+
         IsTaskRunning = true;
 
         var result = await TVService.Update(Show);
@@ -50,13 +49,13 @@ public partial class Edit : ComponentBase
         IsTaskRunning = false;
         if (result)
         {
-            NavManager.NavigateTo("shows");
+            await OnSuccess.InvokeAsync();
         }
     }
 
-    private void Cancel()
+    private async Task Cancel()
     {
-        NavManager.NavigateTo("shows");
+        await OnClose.InvokeAsync();
     }
 
     private static Show CreateCopy(Show show)

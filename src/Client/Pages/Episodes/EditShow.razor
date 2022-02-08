@@ -1,0 +1,35 @@
+﻿<Dialog Id="@Id" Title="Edit show">
+    <Body>
+        @if (Show is null)
+        {
+            <p>No show to edit...</p>        
+        }
+        else
+        {
+            <EditForm class="row align-items-center" Model="@Show" OnSubmit="@Save">
+                <div class="mb-3">
+                    <label class="control-label">Title</label>
+                    <InputText class="form-control" type="text" @bind-Value="@Show.Title"></InputText>
+                </div>
+                <div class="mb-3">
+                    <label class="control-label">Status: @Show.Status</label>
+                </div>
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" @bind="@Show.ForceRefresh" id="forceRefresh">
+                        <label class="form-check-label" for="forceRefresh">
+                            Force refresh
+                        </label>
+                    </div>
+                </div>               
+            </EditForm>
+            <p class="mt-2">
+                <a href="@Show.TheMovieDbUrl.ToString()" target="_blank">View on TMDb</a>
+            </p>
+        }
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-secondary" @onclick="Cancel" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-success" @onclick="Save" disabled=@IsTaskRunning>Save</button>
+    </Footer>
+</Dialog>

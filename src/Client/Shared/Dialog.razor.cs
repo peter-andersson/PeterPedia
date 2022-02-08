@@ -16,5 +16,8 @@ public partial class Dialog : ComponentBase
     public RenderFragment? Body { get; set; }
 
     [Parameter]
-    public RenderFragment? Footer { get; set; }   
+    public RenderFragment? Footer { get; set; }
+    
+    [Parameter]
+    public string? CssClass { get; set; }
 }
