@@ -1,15 +1,11 @@
-﻿#blazor-error-ui {
+﻿body {
+    background-color: #f7fafc;
+}
+
+#blazor-error-ui {
     display: none;
 }
 
-/*.modal {
-    display: block !important;
-}*/
-
-/*.modal-content {
-    background-color: #000 !important;
+.modal-content {
+    background-color: #f7fafc;
 }
-
-.modal-title {
-    color: #fff !important;
-}*/
