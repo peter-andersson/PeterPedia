@@ -1,23 +1,21 @@
 ﻿using Microsoft.AspNetCore.Components;
-using PeterPedia.Client.Services;
-using PeterPedia.Shared;
 
 namespace PeterPedia.Client.Pages.Reader;
 
-public partial class Unread : ComponentBase
+public partial class Reader : ComponentBase
 {
     [Inject]
     RSSService RSSService { get; set; } = null!;
 
     private List<Subscription> SubscriptionList = null!;
-    private Subscription? Subscription;
+    private Subscription? Subscription = null;
 
     protected override async Task OnInitializedAsync()
     {
         SubscriptionList = await RSSService.GetUnread();
     }
 
-    private void Load(Subscription subscription)
+    private void Load(Subscription? subscription)
     {
         Subscription = subscription;
     }

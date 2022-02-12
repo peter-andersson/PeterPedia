@@ -1,43 +1,44 @@
 ﻿using Microsoft.AspNetCore.Components;
 using PeterPedia.Client.Services;
 using PeterPedia.Shared;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PeterPedia.Client.Pages.Reader;
 
-public partial class Edit : ComponentBase
+public partial class EditSubscription : ComponentBase
 {
     [Inject]
     private RSSService RSSService { get; set; } = null!;
 
-    [Inject]
-    private NavigationManager NavManager { get; set; } = null!;
-
     [Parameter]
-    public int Id { get; set; }
+    public string? Id { get; set; }
 
-    private bool IsTaskRunning;
+    [Parameter, AllowNull]
+    public EventCallback<string> OnClose { get; set; }
 
-    private Subscription? Subscription;
+    [Parameter, AllowNull]
+    public EventCallback<string> OnSuccess { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    [Parameter, AllowNull]
+    public Subscription? Subscription { get; set; }
+
+    public bool IsTaskRunning { get; set; }
+
+    protected override void OnInitialized()
     {
         IsTaskRunning = false;
-        var subscription = await RSSService.GetSubscription(Id);
 
-        if (subscription is null)
+        if (Subscription is not null)
         {
-            NavManager.NavigateTo("subscriptions");
-        }
-        else
-        {
-            Subscription = CreateCopy(subscription);
+            Subscription = CreateCopy(Subscription);
         }
     }
 
-    private async Task Save()
+    public async Task Save()
     {
         if (Subscription is null)
         {
+            await OnClose.InvokeAsync();
             return;
         }
 
@@ -48,14 +49,14 @@ public partial class Edit : ComponentBase
         IsTaskRunning = false;
         if (result)
         {
-            NavManager.NavigateTo("subscriptions");
+            await OnSuccess.InvokeAsync();
         }
     }
 
-    private void Cancel()
+    public async Task Cancel()
     {
-        NavManager.NavigateTo("subscriptions");
-    }
+        await OnClose.InvokeAsync();
+    }    
 
     private static Subscription CreateCopy(Subscription subscription)
     {

@@ -1,17 +1,28 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using PeterPedia.Client.Services;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PeterPedia.Client.Pages.Reader;
 
-public partial class Add : ComponentBase
+public partial class AddSubscription : ComponentBase
 {
     [Inject]
     private RSSService RSSService { get; set; } = null!;
 
+    [Parameter]
+    public string? Id { get; set; }
+
+    [Parameter, AllowNull]
+    public EventCallback<string> OnClose { get; set; }
+
+    [Parameter, AllowNull]
+    public EventCallback<string> OnSuccess { get; set; }
+
+    public bool IsTaskRunning { get; set; } = false;
+
     private EditContext AddContext = null!;
+
     private string NewSubscriptionUrl = null!;
-    private bool IsTaskRunning;
 
     protected override void OnInitialized()
     {
@@ -20,11 +31,18 @@ public partial class Add : ComponentBase
         AddContext = new EditContext(NewSubscriptionUrl);
     }
 
-    private async Task AddSubscription()
+    private async Task Add()
     {
         IsTaskRunning = true;
 
         await RSSService.AddSubscription(NewSubscriptionUrl);
         IsTaskRunning = false;
+
+        await OnSuccess.InvokeAsync();
+    }
+
+    private async Task Close()
+    {
+        await OnClose.InvokeAsync();
     }
 }

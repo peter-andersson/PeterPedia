@@ -1,0 +1,57 @@
+﻿@page "/reader"
+
+@if (SubscriptionList == null)
+{
+    <Loader Text="Loading items..."/>
+}
+else
+{
+    <div class="row mt-2">
+        <div class="d-flex">
+            <a class="btn btn-primary" href="/reader/subscriptions">Manage subscriptions</a>
+            <a class="ms-2 btn btn-secondary" href="/reader/history">History</a>
+        </div>        
+    </div>
+
+    <div class="row mt-2">
+        @if (Subscription != null)
+        {
+            <h3>@Subscription.Title - @Subscription.Articles.Count</h3>
+            <div class="col-12 d-flex mt-2 mb-2 align-items-center">
+                <button class="btn btn-primary" @onclick="() => Load(null)">Return to list</button>
+                <span class="ms-3">Last updated: @Subscription.LastUpdate.ToLocalTime().ToString("d MMM yyyy HH:mm:ss")</span>
+            </div>
+            
+            <hr />
+            <div class="col-12">
+                @foreach (var article in Subscription.Articles)
+                {
+                    <ArticleView Article="article" OnArticleRemove="@ArticleRemoved"></ArticleView>
+                }
+            </div>
+        }
+        else if (SubscriptionList.Count > 0)
+        {
+            <div class="col-12">
+                <div class="list-group list-group-flush">
+                    @foreach (var subscription in SubscriptionList)
+                    {
+                        if (subscription.Articles.Count > 0)
+                        {
+                            <button class="list-group-item d-flex justify-content-between align-items-start" @onclick="() => Load(subscription)">
+                                <div class="ms-2 me-auto">@subscription.Title</div>
+                                <span class="badge bg-primary rounded-pill">@subscription.Articles.Count</span>
+                            </button>
+                        }
+                    }
+                </div>
+            </div>
+        }
+        else 
+        {
+            <div class="col-12">
+                No more items to read
+            </div>
+        }
+    </div>    
+}

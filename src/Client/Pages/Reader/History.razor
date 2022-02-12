@@ -1,13 +1,18 @@
 ﻿@page "/reader/history"
 
-<h2>Read articles</h2>
-
 @if (Articles == null)
 {
-    <p><em>Loading...</em></p>
+    <Loader Text="Loading items..."/>
 }
 else
 {
+    <div class="row mt-2">
+        <div class="col">
+            <a class="btn btn-primary" href="/reader">Return to reader</a>
+        </div>
+    </div>
+
+    <div class="row mt-2">
     <Table Items="Articles" Context="article" 
         SearchEnabled="true" OnSearch="@FilterArticles"
         PaginationEnabled="true" PageSize="20">
@@ -16,8 +21,9 @@ else
             <th>Read</th>
         </TableHeader>
         <RowTemplate>
-            <td><a href="@article.Url" class="text-white" target="_blank">@article.Title</a></td>
+            <td><a href="@article.Url" class="link-dark" target="_blank">@article.Title</a></td>
             <td>@article.ReadDate?.ToString("d MMM yyyy HH:mm:ss")</td>
         </RowTemplate>
     </Table>
+    </div>
 }
