@@ -13,7 +13,9 @@ namespace PeterPedia.Server.Controllers;
 [Route("api/[controller]")]
 public partial class TVController : Controller
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Used by source generator [LoggerMessaage]")]
     private readonly ILogger<TVController> _logger;
+
     private readonly PeterPediaContext _dbContext;
     private readonly TheMovieDatabaseService _tmdbService;
 

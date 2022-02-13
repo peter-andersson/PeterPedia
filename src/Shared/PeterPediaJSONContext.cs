@@ -18,6 +18,8 @@ namespace PeterPedia.Shared;
 [JsonSerializable(typeof(Subscription))]
 [JsonSerializable(typeof(Subscription[]))]
 [JsonSerializable(typeof(Video[]))]
+[JsonSerializable(typeof(Link))]
+[JsonSerializable(typeof(Link[]))]
 public partial class PeterPediaJSONContext : JsonSerializerContext
 {
 }

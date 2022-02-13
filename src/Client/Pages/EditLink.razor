@@ -1,0 +1,43 @@
+﻿<Dialog CssClass="modal-fullscreen modal-dialog-scrollable" Id="@Id" Title="Edit links">
+    <Body>
+        <EditForm class="form" Model="@Link" OnSubmit="@Save">
+            <div class="mb-3">
+                <label for="link-title" class="form-label">Title</label>
+                <InputText id="link-title" class="form-control" type="text" @bind-Value="@Link.Title"></InputText>
+            </div>
+            <div class="mb-3">
+                <label for="link-url" class="form-label">Url</label>
+                <InputText id="link-url" class="form-control" type="text" @bind-Value="@Link.Url"></InputText>
+            </div>
+            <div class="mb-3">
+                <button type="button" class="btn btn-danger" @onclick="Delete" disabled=@IsTaskRunning>Delete</button>
+                <button type="button" class="ms-2 btn btn-success" @onclick="Save" disabled=@IsTaskRunning>Save</button>                
+            </div>
+        </EditForm>
+        <hr />
+        <table class="table table-striped table-hoover">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Url</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var link in Links)
+                {
+                    <tr>
+                        <td>@link.Title</td>
+                        <td>@link.Url</td>
+                        <td>
+                            <a class="link-dark" href="javascript:void(0)" @onclick="() => Edit(link)">Edit</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-secondary" @onclick="Close" data-bs-dismiss="modal">Close</button>
+    </Footer>
+</Dialog>

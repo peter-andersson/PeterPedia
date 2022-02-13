@@ -12,9 +12,9 @@ namespace PeterPedia.Server.Controllers;
 [Route("/api/[controller]")]
 public partial class MovieController : Controller
 {
-#pragma warning disable IDE0052 // Remove unread private members
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Used by source generator [LoggerMessaage]")]
     private readonly ILogger<MovieController> _logger;
-#pragma warning restore IDE0052 // Remove unread private members
+
     private readonly PeterPediaContext _dbContext;
     private readonly TheMovieDatabaseService _tmdbService;
 

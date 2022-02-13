@@ -11,7 +11,9 @@ namespace PeterPedia.Server.Controllers;
 [Route("api/[controller]")]
 public partial class VideoController : Controller
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Used by source generator [LoggerMessaage]")]
     private readonly ILogger<VideoController> _logger;
+
     private readonly PeterPediaContext _dbContext;
     private readonly IConfiguration _configuration;
     private readonly IFileService _fileService;
