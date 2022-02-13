@@ -10,7 +10,3 @@ A collection of simple apps I use
 - Movie - Tracking watched movies. Using data from themoviedb.org
 - Reader - RSS reader.
 - VideoPlayer - Playback of video files.
-
-# Development
-## TailWind
-in the src folder run ./tw -i .\server\wwwroot\css\app.css -o .\server\wwwroot\css\app.min.css
