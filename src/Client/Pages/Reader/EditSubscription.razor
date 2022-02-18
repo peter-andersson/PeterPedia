@@ -12,6 +12,10 @@
                     <InputText class="form-control" type="text" @bind-Value="@Subscription.Title"></InputText>
                 </div>
                 <div class="mb-3">
+                    <label class="control-label">Group</label>
+                    <InputText class="form-control" type="text" @bind-Value="@Subscription.Group"></InputText>
+                </div>
+                <div class="mb-3">
                     <label class="control-label">Update interval in minutes(5 to 60)</label>
                     <InputNumber class="form-control" @bind-Value="@Subscription.UpdateIntervalMinute"></InputNumber>
                 </div>

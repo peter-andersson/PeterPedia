@@ -10,7 +10,8 @@ namespace PeterPedia.Server.Controllers;
 [Route("api/[controller]")]
 public partial class ArticleController : Controller
 {
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Used by source generator [LoggerMessaage]")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "Should not suppress this.")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Used by source generator [LoggerMessaage]")]    
     private readonly ILogger<ArticleController> _logger;
 
     private readonly PeterPediaContext _dbContext;
@@ -27,10 +28,39 @@ public partial class ArticleController : Controller
         var subscriptions = await _dbContext.Subscriptions.Include(s => s.Articles.Where(a => a.ReadDate == null).OrderBy(a => a.PublishDate)).AsSplitQuery().ToListAsync().ConfigureAwait(false);
         subscriptions = subscriptions.Where(s => s.Articles.Count > 0).ToList();
 
-        var result = new List<Subscription>(subscriptions.Count);
+        var tmpArticles = new Dictionary<string, UnreadArticle>();
+
         foreach (var subscription in subscriptions)
         {
-            result.Add(ConvertToSubscription(subscription));
+            if (tmpArticles.TryGetValue(subscription.Group ?? subscription.Title, out UnreadArticle? unreadArticle))
+            {
+                foreach (var article in subscription.Articles)
+                {
+                    unreadArticle.Articles.Add(ConvertToArticle(article));
+                }                
+            }
+            else
+            {
+                unreadArticle = new UnreadArticle()
+                {
+                    Group = subscription.Group ?? subscription.Title,
+                };
+
+                foreach (var article in subscription.Articles)
+                {
+                    unreadArticle.Articles.Add(ConvertToArticle(article));
+                }
+
+                tmpArticles.Add(subscription.Group ?? subscription.Title, unreadArticle);
+            }
+        }
+        
+        List<string> keys = tmpArticles.Keys.ToList();
+        keys.Sort();
+        var result = new List<UnreadArticle>(keys.Count);
+        foreach (string key in keys)
+        {
+            result.Add(tmpArticles[key]);
         }
 
         return Ok(result);

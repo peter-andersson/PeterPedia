@@ -1,8 +1,8 @@
 ﻿@page "/reader"
 
-@if (SubscriptionList == null)
+@if (UnreadArticles == null)
 {
-    <Loader Text="Loading items..."/>
+    <Loader Text="Loading articles..."/>
 }
 else
 {
@@ -14,33 +14,32 @@ else
     </div>
 
     <div class="row mt-2">
-        @if (Subscription != null)
+        @if (Unread != null)
         {
-            <h3>@Subscription.Title - @Subscription.Articles.Count</h3>
+            <h3>@Unread.Group - @Unread.Articles.Count</h3>
             <div class="col-12 d-flex mt-2 mb-2 align-items-center">
                 <button class="btn btn-primary" @onclick="() => Load(null)">Return to list</button>
-                <span class="ms-3">Last updated: @Subscription.LastUpdate.ToLocalTime().ToString("d MMM yyyy HH:mm:ss")</span>
             </div>
             
             <hr />
             <div class="col-12">
-                @foreach (var article in Subscription.Articles)
+                @foreach (var article in Unread.Articles)
                 {
                     <ArticleView Article="article" OnArticleRemove="@ArticleRemoved"></ArticleView>
                 }
             </div>
         }
-        else if (SubscriptionList.Count > 0)
+        else if (UnreadArticles.Count > 0)
         {
             <div class="col-12">
                 <div class="list-group list-group-flush">
-                    @foreach (var subscription in SubscriptionList)
+                    @foreach (var unread in UnreadArticles)
                     {
-                        if (subscription.Articles.Count > 0)
+                        if (unread.Articles.Count > 0)
                         {
-                            <button class="list-group-item d-flex justify-content-between align-items-start" @onclick="() => Load(subscription)">
-                                <div class="ms-2 me-auto">@subscription.Title</div>
-                                <span class="badge bg-primary rounded-pill">@subscription.Articles.Count</span>
+                            <button class="list-group-item d-flex justify-content-between align-items-start" @onclick="() => Load(unread)">
+                                <div class="ms-2 me-auto">@unread.Group</div>
+                                <span class="badge bg-primary rounded-pill">@unread.Articles.Count</span>
                             </button>
                         }
                     }

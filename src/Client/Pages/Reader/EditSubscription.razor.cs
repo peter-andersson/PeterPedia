@@ -64,6 +64,7 @@ public partial class EditSubscription : ComponentBase
         {
             Id = subscription.Id,
             Title = subscription.Title,
+            Group = subscription.Group,
             UpdateIntervalMinute = subscription.UpdateIntervalMinute,
             LastUpdate = subscription.LastUpdate,
             Url = subscription.Url,

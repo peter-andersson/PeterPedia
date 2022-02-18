@@ -91,6 +91,7 @@ public partial class SubscriptionController : Controller
         var subscriptionEF = new SubscriptionEF
         {
             Title = data.Title,
+            Group = null,
             Url = subscription.Url,
             UpdateIntervalMinute = GetUpdateInterval(data),
             LastUpdate = DateTime.UtcNow.AddYears(-1), // Make sure it gets updated in next refresh
@@ -163,6 +164,14 @@ public partial class SubscriptionController : Controller
         }
 
         existingSubscription.Title = subscription.Title;
+        if (string.IsNullOrWhiteSpace(subscription.Group))
+        {
+            existingSubscription.Group = null;
+        }
+        else
+        {
+            existingSubscription.Group = subscription.Group;
+        }        
 
         _dbContext.Subscriptions.Update(existingSubscription);
         await _dbContext.SaveChangesAsync().ConfigureAwait(false);
@@ -204,6 +213,7 @@ public partial class SubscriptionController : Controller
         {
             Id = subscriptionEF.Id,
             Title = subscriptionEF.Title,
+            Group = subscriptionEF.Group,
             Url = subscriptionEF.Url,
             LastUpdate = subscriptionEF.LastUpdate,
             UpdateIntervalMinute = subscriptionEF.UpdateIntervalMinute,

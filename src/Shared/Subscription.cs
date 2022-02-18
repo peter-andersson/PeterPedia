@@ -13,6 +13,8 @@ public class Subscription
 
     public string Title { get; set; }
 
+    public string? Group { get; set; }
+
     public string Url { get; set; }
 
     public int UpdateIntervalMinute { get; set; }

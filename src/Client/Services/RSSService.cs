@@ -35,16 +35,16 @@ public class RSSService
         }
     }
 
-    public async Task<List<Subscription>> GetUnread()
+    public async Task<List<UnreadArticle>> GetUnread()
     {
-        var unread = await _http.GetFromJsonAsync("/api/Article", Context.SubscriptionArray);
+        var unread = await _http.GetFromJsonAsync("/api/Article", Context.UnreadArticleArray);
 
         if (unread is not null)
         {
-            return unread.OrderBy(s => s.Title).ToList();
+            return unread.ToList();
         }
 
-        return new List<Subscription>();
+        return new List<UnreadArticle>();
     }
 
     public async Task<List<Article>> GetHistory()

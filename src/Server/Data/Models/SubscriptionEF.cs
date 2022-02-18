@@ -31,7 +31,7 @@ namespace PeterPedia.Server.Data.Models
                     value = string.Empty;
                 }
 
-                _title = value.Length > 100 ? value.Substring(0, 100) : value;
+                _title = value.Length > 100 ? value[..100] : value;
             }
         }
 
@@ -42,6 +42,8 @@ namespace PeterPedia.Server.Data.Models
 
         [Range(5, 60, ErrorMessage = "Value must be between 5 and 60")]
         public int UpdateIntervalMinute { get; set; }
+
+        public string? Group { get; set; }
 
         public DateTime LastUpdate { get; set; }
 

@@ -7,31 +7,31 @@ public partial class Reader : ComponentBase
     [Inject]
     RSSService RSSService { get; set; } = null!;
 
-    private List<Subscription> SubscriptionList = null!;
-    private Subscription? Subscription = null;
+    private List<UnreadArticle> UnreadArticles = null!;
+    private UnreadArticle? Unread = null;
 
     protected override async Task OnInitializedAsync()
     {
-        SubscriptionList = await RSSService.GetUnread();
+        UnreadArticles = await RSSService.GetUnread();
     }
 
-    private void Load(Subscription? subscription)
+    private void Load(UnreadArticle? unread)
     {
-        Subscription = subscription;
+        Unread = unread;
     }
 
     private void ArticleRemoved(Article article)
     {
-        if (Subscription is null)
+        if (Unread is null)
         {
             return;
         }
 
-        Subscription.Articles.Remove(article);
+        Unread.Articles.Remove(article);
 
-        if (Subscription.Articles.Count == 0)
+        if (Unread.Articles.Count == 0)
         {
-            Subscription = null;
+            Unread = null;
 
             StateHasChanged();
         }
