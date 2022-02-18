@@ -9,10 +9,10 @@ public partial class SeasonView : ComponentBase
     [Inject]
     private TVService TVService { get; set; } = null!;
 
-    [Parameter]
+    [CascadingParameter]
     public Show Show { get; set; } = null!;
 
-    [Parameter]
+    [CascadingParameter]
     public Season Season { get; set; } = null!;
 
     [Parameter]

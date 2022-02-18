@@ -9,10 +9,10 @@ public partial class EpisodeView : ComponentBase
     [Inject]
     private TVService TVService { get; set; } = null!;
 
-    [Parameter]
+    [CascadingParameter]
     public Show Show { get; set; } = null!;
 
-    [Parameter]
+    [CascadingParameter]
     public Episode Episode { get; set; } = null!;
 
     private bool IsTaskRunning = false;

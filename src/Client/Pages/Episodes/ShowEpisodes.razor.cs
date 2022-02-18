@@ -5,6 +5,9 @@ namespace PeterPedia.Client.Pages.Episodes;
 
 public partial class ShowEpisodes : ComponentBase
 {
+    [Inject]
+    private TVService TVService { get; set; } = null!;
+
     [Parameter]
     public string? Id { get; set; }
 
@@ -13,6 +16,16 @@ public partial class ShowEpisodes : ComponentBase
 
     [Parameter, AllowNull]
     public Show? Show { get; set; }
+
+    protected override void OnInitialized()
+    {
+        TVService.RefreshRequested += TVService_RefreshRequested;
+    }
+
+    private void TVService_RefreshRequested()
+    {
+        StateHasChanged();
+    }
 
     public string Title
     {
@@ -33,14 +46,4 @@ public partial class ShowEpisodes : ComponentBase
     {
         ShowAll = !ShowAll;
     }
-
-    //protected override async Task OnInitializedAsync()
-    //{    
-    //    TVService.RefreshRequested += Refresh;
-    //}
-
-    //private void Refresh()
-    //{
-    //    StateHasChanged();
-    //}
 }
