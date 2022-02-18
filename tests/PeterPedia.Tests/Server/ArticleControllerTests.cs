@@ -36,7 +36,7 @@ namespace PeterPedia.Tests.Server
 
                 var result = await controller.Get();
                 var okResult = result as OkObjectResult;
-                var subscriptions = okResult.Value as List<Subscription>;
+                var subscriptions = okResult.Value as List<UnreadArticle>;
 
                 Assert.NotNull(okResult);
                 Assert.Equal(200, okResult.StatusCode);
@@ -89,7 +89,7 @@ namespace PeterPedia.Tests.Server
 
                 var result = await controller.Get();
                 var okResult = result as OkObjectResult;
-                var subscriptions = okResult.Value as List<Subscription>;
+                var subscriptions = okResult.Value as List<UnreadArticle>;
 
                 Assert.NotNull(okResult);
                 Assert.Equal(200, okResult.StatusCode);
