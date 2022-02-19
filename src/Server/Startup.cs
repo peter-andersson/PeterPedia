@@ -71,6 +71,12 @@ public class Startup
             RequestPath = "/video"
         });
 
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(Configuration["PhotoPath"] ?? "/photos"),
+            RequestPath = "/photo"
+        });
+
         app.UseRouting();
 
         app.UseEndpoints(app =>

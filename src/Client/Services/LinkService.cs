@@ -122,6 +122,6 @@ public class LinkService
         if (links is not null)
         {
             _linkList.AddRange(links);
-        }       
+        }
     }
 }

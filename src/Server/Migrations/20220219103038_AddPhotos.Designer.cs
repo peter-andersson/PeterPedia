@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PeterPedia.Server.Data;
 
@@ -10,9 +11,10 @@ using PeterPedia.Server.Data;
 namespace PeterPedia.Server.Migrations
 {
     [DbContext(typeof(PeterPediaContext))]
-    partial class LPDAContextModelSnapshot : ModelSnapshot
+    [Migration("20220219103038_AddPhotos")]
+    partial class AddPhotos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.0");

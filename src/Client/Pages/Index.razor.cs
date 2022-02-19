@@ -20,6 +20,44 @@ public partial class Index : ComponentBase
     protected override async Task OnInitializedAsync()
     {
         Links = await LinkService.GetLinks();
+
+        Links.Add(new Link()
+        {
+            Title = "Books",
+            Url = "books"
+        });
+
+        Links.Add(new Link()
+        {
+            Title = "Episodes",
+            Url = "episodes"
+        });
+
+        Links.Add(new Link()
+        {
+            Title = "Movies",
+            Url = "movies"
+        });
+
+        Links.Add(new Link()
+        {
+            Title = "Photos",
+            Url = "photos"
+        });
+
+        Links.Add(new Link()
+        {
+            Title = "Reader",
+            Url = "reader"
+        });
+
+        Links.Add(new Link()
+        {
+            Title = "Videos",
+            Url = "videos"
+        });
+
+        Links.Sort((link1, link2) => link1.Title.CompareTo(link2.Title));
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

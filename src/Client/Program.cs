@@ -17,5 +17,6 @@ builder.Services.AddScoped<RSSService>();
 builder.Services.AddScoped<TVService>();
 builder.Services.AddScoped<VideoService>();
 builder.Services.AddScoped<LinkService>();
+builder.Services.AddScoped<PhotoService>();
 
 await builder.Build().RunAsync();

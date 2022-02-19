@@ -21,6 +21,7 @@ namespace PeterPedia.Shared;
 [JsonSerializable(typeof(Link))]
 [JsonSerializable(typeof(Link[]))]
 [JsonSerializable(typeof(UnreadArticle[]))]
+[JsonSerializable(typeof(Photo[]))]
 public partial class PeterPediaJSONContext : JsonSerializerContext
 {
 }

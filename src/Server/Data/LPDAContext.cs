@@ -11,6 +11,8 @@ namespace PeterPedia.Server.Data
         {
         }
 
+        public DbSet<AlbumEF> Albums { get; set; } = null!;
+
         public DbSet<ArticleEF> Articles { get; set; } = null!;
 
         public DbSet<AuthorEF> Authors { get; set; } = null!;
@@ -22,6 +24,8 @@ namespace PeterPedia.Server.Data
         public DbSet<LinkEF> Links { get; set; } = null!;
 
         public DbSet<MovieEF> Movies { get; set; } = null!;
+
+        public DbSet<PhotoEF> Photos { get; set; } = null!;
 
         public DbSet<SeasonEF> Seasons { get; set; } = null!;
 

@@ -10,6 +10,8 @@ namespace PeterPedia.Server.Jobs;
 [DisallowConcurrentExecution]
 public partial class VideoJob : IJob
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "Should not suppress this.")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Used by source generator [LoggerMessaage]")]
     private readonly ILogger<VideoJob> _logger;
     private readonly PeterPediaContext _dbContext;
     private readonly string _basePath;

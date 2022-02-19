@@ -27,7 +27,7 @@ namespace PeterPedia.Server.Data.Models
                     value = string.Empty;
                 }
 
-                _title = value.Length > 100 ? value.Substring(0, 100) : value;
+                _title = value.Length > 100 ? value[..100] : value;
             }
         }
 
@@ -49,7 +49,7 @@ namespace PeterPedia.Server.Data.Models
                     value = string.Empty;
                 }
 
-                _content = value.Length > 2000 ? value.Substring(0, 2000) : value;
+                _content = value.Length > 2000 ? value[..2000] : value;
             }
         }
 

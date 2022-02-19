@@ -123,31 +123,7 @@ public partial class ArticleController : Controller
 
         return article;
     }
-
-    private static Subscription ConvertToSubscription(SubscriptionEF subscriptionEF)
-    {
-        if (subscriptionEF is null)
-        {
-            throw new ArgumentNullException(nameof(subscriptionEF));
-        }
-
-        var subscription = new Subscription()
-        {
-            Id = subscriptionEF.Id,
-            Title = subscriptionEF.Title,
-            Url = subscriptionEF.Url,
-            LastUpdate = subscriptionEF.LastUpdate,
-            UpdateIntervalMinute = subscriptionEF.UpdateIntervalMinute,
-        };
-
-        foreach (var article in subscriptionEF.Articles)
-        {
-            subscription.Articles.Add(ConvertToArticle(article));
-        }
-
-        return subscription;
-    }
-
+   
 #pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable CA1822 // Mark members as static
 #pragma warning disable IDE0060 // Remove unused parameter
