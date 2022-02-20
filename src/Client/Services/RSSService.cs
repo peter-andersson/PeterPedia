@@ -1,6 +1,4 @@
 ﻿using System.Net.Http.Json;
-using PeterPedia.Shared;
-using Blazored.Toast.Services;
 using System.Text.Json;
 
 namespace PeterPedia.Client.Services;
@@ -78,7 +76,7 @@ public class RSSService
     {
         if (string.IsNullOrWhiteSpace(url))
         {
-            _toast.ShowError("Invalid url.");
+            await _toast.ShowError("Invalid url.");
             return false;
         }
 
@@ -102,7 +100,7 @@ public class RSSService
 
         if (response.IsSuccessStatusCode)
         {
-            _toast.ShowSuccess("Subscription added");
+            await _toast.ShowSuccess("Subscription added");
 
             var subscription = await response.Content.ReadFromJsonAsync(Context.Subscription);
             if (subscription is not null)
@@ -118,7 +116,7 @@ public class RSSService
         }
         else
         {
-            _toast.ShowError($"Failed to add subscription. StatusCode = {response.StatusCode}");
+            await _toast.ShowError($"Failed to add subscription. StatusCode = {response.StatusCode}");
 
             return false;
         }
@@ -129,7 +127,7 @@ public class RSSService
         var subscription = await GetSubscription(id);
         if (subscription is null)
         {
-            _toast.ShowError($"{id} is not a valid subscription id. Can't remove subscription.");
+            await _toast.ShowError($"{id} is not a valid subscription id. Can't remove subscription.");
             return false;
         }
 
@@ -137,7 +135,7 @@ public class RSSService
 
         if (response.IsSuccessStatusCode)
         {
-            _toast.ShowSuccess("Subscription deleted");
+            await _toast.ShowSuccess("Subscription deleted");
 
             Subscriptions.Remove(subscription);
 
@@ -145,7 +143,7 @@ public class RSSService
         }
         else
         {
-            _toast.ShowError($"Failed to delete subscription. StatusCode = {response.StatusCode}");
+            await _toast.ShowError($"Failed to delete subscription. StatusCode = {response.StatusCode}");
 
             return false;
         }
@@ -155,14 +153,14 @@ public class RSSService
     {
         if (subscription is null)
         {
-            _toast.ShowError("Invalid subscription, can't update");
+            await _toast.ShowError("Invalid subscription, can't update");
             return false;
         }
 
         var existingSubscription = await GetSubscription(subscription.Id);
         if (existingSubscription is null)
         {
-            _toast.ShowError("Can't update a subscription that doesn't exist.");
+            await _toast.ShowError("Can't update a subscription that doesn't exist.");
             return false;
         }
 
@@ -170,7 +168,7 @@ public class RSSService
 
         if (response.IsSuccessStatusCode)
         {
-            _toast.ShowSuccess("Subscription saved");
+            await _toast.ShowSuccess("Subscription saved");
 
             existingSubscription.Title = subscription.Title;
             existingSubscription.UpdateIntervalMinute = subscription.UpdateIntervalMinute;
@@ -179,7 +177,7 @@ public class RSSService
         }
         else
         {
-            _toast.ShowError($"Failed to save movie. StatusCode = {response.StatusCode}");
+            await _toast.ShowError($"Failed to save movie. StatusCode = {response.StatusCode}");
             return false;
         }
     }
@@ -199,7 +197,7 @@ public class RSSService
         }
         else
         {
-            _toast.ShowError("Failed to delete article.");
+            await _toast.ShowError("Failed to delete article.");
             return false;
         }
     }

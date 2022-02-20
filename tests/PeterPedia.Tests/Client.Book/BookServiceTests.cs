@@ -1,14 +1,7 @@
-using System;
 using Xunit;
-using System.Threading.Tasks;
-using PeterPedia.Shared;
 using Moq;
-using System.Net.Http;
-using System.Threading;
 using System.Net;
 using Moq.Protected;
-using Blazored.Toast;
-using Blazored.Toast.Services;
 using PeterPedia.Client.Services;
 
 namespace PeterPedia.Tests.Client.Book

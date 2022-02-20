@@ -13,6 +13,9 @@ public partial class Index : ComponentBase
     [Inject]
     public LinkService LinkService { get; set; } = null!;
 
+    [Inject]
+    public IToastService ToastService { get; set; }
+
     public List<Link> Links { get; set; } = null!;
 
     public string LinksElement { get; set; } = "edit-links-dialog";
@@ -65,6 +68,13 @@ public partial class Index : ComponentBase
         await base.OnAfterRenderAsync(firstRender);
 
         _module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/dialog.js");
+
+        if (firstRender)
+        {
+            await ToastService.ShowSuccess("Success");
+
+            await ToastService.ShowError("Error");
+        }
     }
 
     public async Task Edit()

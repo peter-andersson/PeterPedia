@@ -1,5 +1,4 @@
 ﻿using System.Net.Http.Json;
-using Blazored.Toast.Services;
 using System.Text.Json;
 
 namespace PeterPedia.Client.Services;
@@ -43,12 +42,12 @@ public class LinkService
             {
                 if (add)
                 {
-                    _toast.ShowSuccess($"Added link for {link.Title} - {link.Url}");
+                    await _toast.ShowSuccess($"Added link for {link.Title} - {link.Url}");
                     _linkList.Add(serverLink);
                 }
                 else
                 {
-                    _toast.ShowSuccess($"Updated link for {link.Title} - {link.Url}");
+                    await _toast.ShowSuccess($"Updated link for {link.Title} - {link.Url}");
 
                     Link? existingLink = _linkList.Where(l => l.Id == link.Id).FirstOrDefault();
                     if (existingLink is null)
@@ -66,14 +65,14 @@ public class LinkService
             }
             else
             {
-                _toast.ShowError($"Failed to upsert link. No movie from server.");
+                await _toast.ShowError($"Failed to upsert link. No movie from server.");
 
                 return false;
             }            
         }
         else
         {
-            _toast.ShowError($"Failed to upsert link. StatusCode = {response.StatusCode}");
+            await _toast.ShowError($"Failed to upsert link. StatusCode = {response.StatusCode}");
 
             return false;
         }
@@ -86,7 +85,7 @@ public class LinkService
         Link? link = _linkList.Where(l => l.Id == id).FirstOrDefault();
         if (link is null)
         {
-            _toast.ShowError($"{id} is not a valid link id. Can't remove link.");
+            await _toast.ShowError($"{id} is not a valid link id. Can't remove link.");
             return false;
         }
 
@@ -94,7 +93,7 @@ public class LinkService
 
         if (response.IsSuccessStatusCode)
         {
-            _toast.ShowSuccess($"Link {link.Title} deleted");
+            await _toast.ShowSuccess($"Link {link.Title} deleted");
 
             _linkList.Remove(link);
 
@@ -102,7 +101,7 @@ public class LinkService
         }
         else
         {
-            _toast.ShowError($"Failed to delete link. StatusCode = {response.StatusCode}");
+            await _toast.ShowError($"Failed to delete link. StatusCode = {response.StatusCode}");
 
             return false;
         }

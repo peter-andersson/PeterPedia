@@ -1,7 +1,5 @@
 ﻿using System.Net.Http.Json;
 using System.Text.RegularExpressions;
-using PeterPedia.Shared;
-using Blazored.Toast.Services;
 using System.Text.Json;
 
 namespace PeterPedia.Client.Services;
@@ -70,14 +68,14 @@ public class TVService
 
                 if (!int.TryParse(matches.Groups[1].Value, out id))
                 {
-                    _toast.ShowError("Can't add show, invalid show id.");
+                    await _toast.ShowError("Can't add show, invalid show id.");
                 }
             }
         }
 
         if (id == 0)
         {
-            _toast.ShowError("Can't add show, invalid show id.");
+            await _toast.ShowError("Can't add show, invalid show id.");
             return false;
         }
 
@@ -95,20 +93,20 @@ public class TVService
             {
                 Shows.Add(show);
 
-                _toast.ShowSuccess($"Show {show.Title} added");
+                await _toast.ShowSuccess($"Show {show.Title} added");
 
                 return true;
             }
             else
             {
-                _toast.ShowError("Failed to add show");
+                await _toast.ShowError("Failed to add show");
 
                 return false;
             }            
         }
         else
         {
-            _toast.ShowError($"Failed to add movie. StatusCode = {response.StatusCode}");
+            await _toast.ShowError($"Failed to add movie. StatusCode = {response.StatusCode}");
 
             return false;
         }
@@ -119,7 +117,7 @@ public class TVService
         var show = await Get(id);
         if (show is null)
         {
-            _toast.ShowError($"{id} is not a valid show id. Can't remove show.");
+            await _toast.ShowError($"{id} is not a valid show id. Can't remove show.");
             return false;
         }
 
@@ -127,7 +125,7 @@ public class TVService
 
         if (response.IsSuccessStatusCode)
         {
-            _toast.ShowSuccess($"Show {show.Title} deleted");
+            await _toast.ShowSuccess($"Show {show.Title} deleted");
 
             Shows.Remove(show);
 
@@ -135,7 +133,7 @@ public class TVService
         }
         else
         {
-            _toast.ShowError($"Failed to delete show. StatusCode = {response.StatusCode}");
+            await _toast.ShowError($"Failed to delete show. StatusCode = {response.StatusCode}");
 
             return false;
         }
@@ -145,14 +143,14 @@ public class TVService
     {
         if (show is null)
         {
-            _toast.ShowError("Invalid show, can't update");
+            await _toast.ShowError("Invalid show, can't update");
             return false;
         }
 
         var existingShow = await Get(show.Id);
         if (existingShow is null)
         {
-            _toast.ShowError("Can't update a show that doesn't exist.");
+            await _toast.ShowError("Can't update a show that doesn't exist.");
             return false;
         }
 
@@ -160,7 +158,7 @@ public class TVService
 
         if (response.IsSuccessStatusCode)
         {
-            _toast.ShowSuccess($"Show {show.Title} saved");
+            await _toast.ShowSuccess($"Show {show.Title} saved");
 
             var serverShow = await _http.GetFromJsonAsync($"/api/TV/{show.Id}", Context.Show);
 
@@ -176,7 +174,7 @@ public class TVService
         }
         else
         {
-            _toast.ShowError($"Failed to save show. StatusCode = {response.StatusCode}");
+            await _toast.ShowError($"Failed to save show. StatusCode = {response.StatusCode}");
             return false;
         }
     }
@@ -210,7 +208,7 @@ public class TVService
 
                     show.Calculate();
 
-                    _toast.ShowSuccess($"{show.Title} - Season {season.SeasonNumber} watched.");
+                    await _toast.ShowSuccess($"{show.Title} - Season {season.SeasonNumber} watched.");
 
                     return true;
                 }
@@ -218,7 +216,7 @@ public class TVService
         }
         else
         {
-            _toast.ShowError($"Failed to set season as watched. StatusCode = {response.StatusCode}");
+            await _toast.ShowError($"Failed to set season as watched. StatusCode = {response.StatusCode}");
         }
 
         return false;
@@ -253,7 +251,7 @@ public class TVService
 
                     show.Calculate();
 
-                    _toast.ShowSuccess($"{show.Title} - Season {season.SeasonNumber} unwatched.");
+                    await _toast.ShowSuccess($"{show.Title} - Season {season.SeasonNumber} unwatched.");
 
                     return true;
                 }
@@ -261,7 +259,7 @@ public class TVService
         }
         else
         {
-            _toast.ShowError($"Failed to set season as unwatched. StatusCode = {response.StatusCode}");
+            await _toast.ShowError($"Failed to set season as unwatched. StatusCode = {response.StatusCode}");
         }
 
         return false;
@@ -295,7 +293,7 @@ public class TVService
 
                         show.Calculate();
 
-                        _toast.ShowSuccess($"{show.Title} - S{season.SeasonNumber}E{episode.EpisodeNumber} watched.");
+                        await _toast.ShowSuccess($"{show.Title} - S{season.SeasonNumber}E{episode.EpisodeNumber} watched.");
 
                         return true;
                     }
@@ -304,7 +302,7 @@ public class TVService
         }
         else
         {
-            _toast.ShowError($"Failed to set episode as watched. StatusCode = {response.StatusCode}");
+            await _toast.ShowError($"Failed to set episode as watched. StatusCode = {response.StatusCode}");
         }
 
         return false;
@@ -338,7 +336,7 @@ public class TVService
 
                         show.Calculate();
 
-                        _toast.ShowSuccess($"{show.Title} - S{season.SeasonNumber}E{episode.EpisodeNumber} unwatched.");
+                        await _toast.ShowSuccess($"{show.Title} - S{season.SeasonNumber}E{episode.EpisodeNumber} unwatched.");
 
                         return true;
                     }
@@ -347,7 +345,7 @@ public class TVService
         }
         else
         {
-            _toast.ShowError($"Failed to set episode as unwatched. StatusCode = {response.StatusCode}");
+            await _toast.ShowError($"Failed to set episode as unwatched. StatusCode = {response.StatusCode}");
         }
 
         return false;

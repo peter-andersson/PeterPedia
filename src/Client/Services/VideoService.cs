@@ -1,6 +1,4 @@
-﻿using PeterPedia.Shared;
-using System.Net.Http.Json;
-using Blazored.Toast.Services;
+﻿using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace PeterPedia.Client.Services;
@@ -59,7 +57,7 @@ public class VideoService
         var video = Videos.Where(v => v.Id == id).SingleOrDefault();
         if (video is null)
         {
-            _toast.ShowError($"{id} is not a valid id. Can't remove item.");
+            await _toast.ShowError($"{id} is not a valid id. Can't remove item.");
             return false;
         }
 
@@ -67,7 +65,7 @@ public class VideoService
 
         if (response.IsSuccessStatusCode)
         {
-            _toast.ShowSuccess($"Removed video {video.Title}");
+            await _toast.ShowSuccess($"Removed video {video.Title}");
 
             Videos.Remove(video);
 
@@ -75,7 +73,7 @@ public class VideoService
         }
         else
         {
-            _toast.ShowSuccess($"Failed to delete item. StatusCode = {response.StatusCode}");
+            await _toast.ShowSuccess($"Failed to delete item. StatusCode = {response.StatusCode}");
 
             return false;
         }

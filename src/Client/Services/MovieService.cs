@@ -1,7 +1,5 @@
-﻿using PeterPedia.Shared;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using System.Text.RegularExpressions;
-using Blazored.Toast.Services;
 using System.Text.Json;
 
 namespace PeterPedia.Client.Services;
@@ -64,14 +62,14 @@ public class MovieService
 
                 if (!int.TryParse(matches.Groups[1].Value, out movieId))
                 {
-                    _toast.ShowError("Can't add movie, invalid movie id.");
+                    await _toast.ShowError("Can't add movie, invalid movie id.");
                 }
             }
         }
 
         if (movieId == 0)
         {
-            _toast.ShowError("Can't add movie, invalid movie id.");
+            await _toast.ShowError("Can't add movie, invalid movie id.");
             return false;
         }
 
@@ -88,7 +86,7 @@ public class MovieService
 
             if (movie is not null)
             {
-                _toast.ShowSuccess($"Movie {movie.Title} added");
+                await _toast.ShowSuccess($"Movie {movie.Title} added");
 
                 _movieList.Add(movie);
 
@@ -96,14 +94,14 @@ public class MovieService
             }
             else
             {
-                _toast.ShowError($"Failed to add movie. No movie from server.");
+                await _toast.ShowError($"Failed to add movie. No movie from server.");
 
                 return false;
             }            
         }
         else
         {
-            _toast.ShowError($"Failed to add movie. StatusCode = {response.StatusCode}");
+            await _toast.ShowError($"Failed to add movie. StatusCode = {response.StatusCode}");
 
             return false;
         }
@@ -114,7 +112,7 @@ public class MovieService
         var movie = await Get(id);
         if (movie is null)
         {
-            _toast.ShowError($"{id} is not a valid movie id. Can't remove movie.");
+            await _toast.ShowError($"{id} is not a valid movie id. Can't remove movie.");
             return false;
         }
 
@@ -122,7 +120,7 @@ public class MovieService
 
         if (response.IsSuccessStatusCode)
         {
-            _toast.ShowSuccess($"Movie {movie.Title} deleted");
+            await _toast.ShowSuccess($"Movie {movie.Title} deleted");
 
             _movieList.Remove(movie);
 
@@ -130,7 +128,7 @@ public class MovieService
         }
         else
         {
-            _toast.ShowError($"Failed to delete movie. StatusCode = {response.StatusCode}");
+            await _toast.ShowError($"Failed to delete movie. StatusCode = {response.StatusCode}");
 
             return false;
         }
@@ -140,14 +138,14 @@ public class MovieService
     {
         if (movie is null)
         {
-            _toast.ShowError("Invalid movie, can't update");
+            await _toast.ShowError("Invalid movie, can't update");
             return false;
         }
 
         var existingMovie = await Get(movie.Id);
         if (existingMovie is null)
         {
-            _toast.ShowError("Can't update a movie that doesn't exist.");
+            await _toast.ShowError("Can't update a movie that doesn't exist.");
             return false;
         }
 
@@ -155,7 +153,7 @@ public class MovieService
 
         if (response.IsSuccessStatusCode)
         {
-            _toast.ShowSuccess($"Movie {movie.Title} saved");
+            await _toast.ShowSuccess($"Movie {movie.Title} saved");
 
             existingMovie.Title = movie.Title;
             existingMovie.WatchedDate = movie.WatchedDate;
@@ -164,7 +162,7 @@ public class MovieService
         }
         else
         {
-            _toast.ShowError($"Failed to save movie. StatusCode = {response.StatusCode}");
+            await _toast.ShowError($"Failed to save movie. StatusCode = {response.StatusCode}");
             return false;
         }
     }    

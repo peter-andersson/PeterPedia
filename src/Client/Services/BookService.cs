@@ -1,7 +1,4 @@
-﻿
-using PeterPedia.Shared;
-using System.Net.Http.Json;
-using Blazored.Toast.Services;
+﻿using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace PeterPedia.Client.Services;
@@ -104,14 +101,14 @@ public class BookService
     {
         if (book is null)
         {
-            _toast.ShowError("Invalid book, can't update");
+            await _toast.ShowError("Invalid book, can't update");
             return false;
         }
 
         var existingBook = await Get(book.Id);
         if (existingBook is null)
         {
-            _toast.ShowError("Can't update a book that doesn't exist.");
+            await _toast.ShowError("Can't update a book that doesn't exist.");
             return false;
         }
 
@@ -119,7 +116,7 @@ public class BookService
 
         if (response.IsSuccessStatusCode)
         {
-            _toast.ShowSuccess($"Book {book.Title} saved");
+            await _toast.ShowSuccess($"Book {book.Title} saved");
 
             existingBook.Title = book.Title;
             existingBook.State = book.State;
@@ -135,7 +132,7 @@ public class BookService
         }
         else
         {
-            _toast.ShowError($"Failed to save book. StatusCode = {response.StatusCode}");
+            await _toast.ShowError($"Failed to save book. StatusCode = {response.StatusCode}");
             return false;
         }
     }
@@ -144,7 +141,7 @@ public class BookService
     {
         if (book is null)
         {
-            _toast.ShowError("Invalid book, can't add");
+            await _toast.ShowError("Invalid book, can't add");
             return false;
         }
 
@@ -152,7 +149,7 @@ public class BookService
 
         if (response.IsSuccessStatusCode)
         {
-            _toast.ShowSuccess($"Book {book.Title} added");
+            await _toast.ShowSuccess($"Book {book.Title} added");
 
             book = await response.Content.ReadFromJsonAsync(Context.Book);
 
@@ -167,7 +164,7 @@ public class BookService
         }
         else
         {
-            _toast.ShowError($"Failed to save book. StatusCode = {response.StatusCode}");
+            await _toast.ShowError($"Failed to save book. StatusCode = {response.StatusCode}");
             return false;
         }
     }
@@ -177,7 +174,7 @@ public class BookService
         var book = await Get(id);
         if (book is null)
         {
-            _toast.ShowError($"{id} is not a valid book id. Can't remove book.");
+            await _toast.ShowError($"{id} is not a valid book id. Can't remove book.");
             return false;
         }
 
@@ -185,7 +182,7 @@ public class BookService
 
         if (response.IsSuccessStatusCode)
         {
-            _toast.ShowSuccess("Book deleted");
+            await _toast.ShowSuccess("Book deleted");
 
             Books.Remove(book);
 
@@ -193,7 +190,7 @@ public class BookService
         }
         else
         {
-            _toast.ShowSuccess($"Failed to delete book. StatusCode = {response.StatusCode}");
+            await _toast.ShowSuccess($"Failed to delete book. StatusCode = {response.StatusCode}");
 
             return false;
         }
