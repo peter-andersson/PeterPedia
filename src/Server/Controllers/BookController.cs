@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace PeterPedia.Server.Controllers;
@@ -20,9 +20,9 @@ public partial class BookController : Controller
 
     [HttpGet]
     [Route("{*lastUpdated:datetime}")]
-    public async Task<IActionResult> Get(DateTime lastUpdated)
+    public async Task<IActionResult> GetAsync(DateTime lastUpdated)
     {
-        var books = await _dbContext.Books
+        List<BookEF>? books = await _dbContext.Books
             .Include(b => b.Authors)
             .AsSplitQuery()
             .Where(b => b.LastUpdated.GetValueOrDefault(DateTime.MaxValue) > lastUpdated)
@@ -30,7 +30,7 @@ public partial class BookController : Controller
             .ConfigureAwait(false);
 
         var result = new List<Book>(books.Count);
-        foreach (var book in books)
+        foreach (BookEF? book in books)
         {
             result.Add(ConvertToBook(book));
         }
@@ -39,7 +39,7 @@ public partial class BookController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] Book book)
+    public async Task<IActionResult> PostAsync([FromBody] Book book)
     {
         if (book is null)
         {
@@ -63,7 +63,7 @@ public partial class BookController : Controller
                 continue;
             }
 
-            var author = await _dbContext.Authors.Where(a => a.Name == name.Trim()).AsTracking().FirstOrDefaultAsync();
+            AuthorEF? author = await _dbContext.Authors.Where(a => a.Name == name.Trim()).AsTracking().FirstOrDefaultAsync();
 
             if (author is null)
             {
@@ -89,7 +89,7 @@ public partial class BookController : Controller
     }
 
     [HttpPut]
-    public async Task<IActionResult> Put([FromBody] Book book)
+    public async Task<IActionResult> PutAsync([FromBody] Book book)
     {
         if (book is null)
         {
@@ -98,7 +98,7 @@ public partial class BookController : Controller
 
         LogUpdateBook(book);
 
-        var bookEF = await _dbContext.Books.Where(b => b.Id == book.Id).Include(b => b.Authors).AsSplitQuery().AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
+        BookEF? bookEF = await _dbContext.Books.Where(b => b.Id == book.Id).Include(b => b.Authors).AsSplitQuery().AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
         if (bookEF is null)
         {
             LogNotFound(book.Id);
@@ -113,7 +113,7 @@ public partial class BookController : Controller
                 continue;
             }
 
-            var author = await _dbContext.Authors.Where(a => a.Name == name.Trim()).AsTracking().FirstOrDefaultAsync();
+            AuthorEF? author = await _dbContext.Authors.Where(a => a.Name == name.Trim()).AsTracking().FirstOrDefaultAsync();
 
             if (author is null)
             {
@@ -141,7 +141,7 @@ public partial class BookController : Controller
     }
 
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> DeleteAsync(int id)
     {
         LogDeleteBook(id);
         if (id <= 0)
@@ -149,7 +149,7 @@ public partial class BookController : Controller
             return BadRequest();
         }
 
-        var bookEF = await _dbContext.Books.Where(b => b.Id == id).AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
+        BookEF? bookEF = await _dbContext.Books.Where(b => b.Id == id).AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
 
         if (bookEF is null)
         {
@@ -180,7 +180,7 @@ public partial class BookController : Controller
             State = (BookState)bookEF.State,
         };
 
-        foreach (var author in bookEF.Authors)
+        foreach (AuthorEF? author in bookEF.Authors)
         {
             book.Authors.Add(author.Name);
         }

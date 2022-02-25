@@ -1,4 +1,4 @@
-﻿namespace PeterPedia.Shared;
+namespace PeterPedia.Shared;
 
 public enum BookState
 {
@@ -27,23 +27,17 @@ public class Book
 
     public BookState State { get; set; }
 
-    public string StateText 
-    { 
-        get
-        {
-            return State switch
-            {
-                BookState.WantToRead => "Want to read",
-                BookState.Reading => "Reading",
-                BookState.Read => "Read",
-                _ => string.Empty,
-            };
-        }
-    }
+    public string StateText => State switch
+    {
+        BookState.WantToRead => "Want to read",
+        BookState.Reading => "Reading",
+        BookState.Read => "Read",
+        _ => string.Empty,
+    };
 
     public bool SearchAuthor(string searchString)
     {
-        foreach (string author in Authors)
+        foreach (var author in Authors)
         {
             if (author.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             {
