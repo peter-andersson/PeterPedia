@@ -12,6 +12,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Shared\MainLayout.razor.css" />
+    <None Remove="Shared\NavMenu.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Shared\MainLayout.razor.css" />
+    <Content Include="Shared\NavMenu.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Blazored.Typeahead" Version="4.6.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.2" PrivateAssets="all" />
