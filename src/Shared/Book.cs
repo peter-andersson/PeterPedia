@@ -23,6 +23,8 @@ public class Book
 
     public List<string> Authors { get; set; }
 
+    public DateTime? LastUpdated { get; set; }
+
     public BookState State { get; set; }
 
     public string StateText 

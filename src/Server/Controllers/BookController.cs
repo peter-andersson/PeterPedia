@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PeterPedia.Server.Data;
-using PeterPedia.Shared;
-using PeterPedia.Server.Data.Models;
 
 namespace PeterPedia.Server.Controllers;
 
@@ -22,9 +19,15 @@ public partial class BookController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    [Route("{*lastUpdated:datetime}")]
+    public async Task<IActionResult> Get(DateTime lastUpdated)
     {
-        var books = await _dbContext.Books.Include(b => b.Authors).AsSplitQuery().ToListAsync().ConfigureAwait(false);
+        var books = await _dbContext.Books
+            .Include(b => b.Authors)
+            .AsSplitQuery()
+            .Where(b => b.LastUpdated.GetValueOrDefault(DateTime.MaxValue) > lastUpdated)
+            .ToListAsync()
+            .ConfigureAwait(false);
 
         var result = new List<Book>(books.Count);
         foreach (var book in books)
@@ -49,6 +52,7 @@ public partial class BookController : Controller
         {
             Title = book.Title,
             State = (int)book.State,
+            LastUpdated = DateTime.UtcNow,
             Authors = new List<AuthorEF>(),
         };
 
@@ -127,6 +131,7 @@ public partial class BookController : Controller
 
         bookEF.State = (int)book.State;
         bookEF.Title = book.Title;
+        bookEF.LastUpdated = DateTime.UtcNow;
 
         _dbContext.Books.Update(bookEF);
         await _dbContext.SaveChangesAsync().ConfigureAwait(false);
@@ -171,6 +176,7 @@ public partial class BookController : Controller
         {
             Id = bookEF.Id,
             Title = bookEF.Title,
+            LastUpdated = bookEF.LastUpdated,
             State = (BookState)bookEF.State,
         };
 
