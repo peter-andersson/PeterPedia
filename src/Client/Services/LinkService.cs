@@ -1,12 +1,12 @@
-﻿using System.Net.Http.Json;
+using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace PeterPedia.Client.Services;
 
 public class LinkService
 {
-    private static readonly JsonSerializerOptions Options = new(JsonSerializerDefaults.Web);
-    private static readonly PeterPediaJSONContext Context = new(Options);
+    private static readonly JsonSerializerOptions s_Options = new(JsonSerializerDefaults.Web);
+    private static readonly PeterPediaJSONContext s_Context = new(s_Options);
 
     private readonly HttpClient _http;
     private readonly IToastService _toast;
@@ -19,24 +19,24 @@ public class LinkService
         _toast = toastService;
     }
 
-    public async Task<List<Link>> GetLinks()
+    public async Task<List<Link>> GetLinksAsync()
     {
-        await FetchLinks();
+        await FetchLinksAsync();
        
         return _linkList.OrderBy(l => l.Title).ToList();
     }
    
-    public async Task<bool> Upsert(Link link)
+    public async Task<bool> UpsertAsync(Link link)
     {
-        await FetchLinks();
+        await FetchLinksAsync();
 
-        bool add = link.Id == 0;
+        var add = link.Id == 0;
 
-        using var response = await _http.PostAsJsonAsync("/api/Link", link, Context.Link);
+        using HttpResponseMessage? response = await _http.PostAsJsonAsync("/api/Link", link, s_Context.Link);
 
         if (response.IsSuccessStatusCode)
         {
-            Link? serverLink = await response.Content.ReadFromJsonAsync(Context.Link);
+            Link? serverLink = await response.Content.ReadFromJsonAsync(s_Context.Link);
 
             if (serverLink is not null)
             {
@@ -78,9 +78,9 @@ public class LinkService
         }
     }
 
-    public async Task<bool> Delete(int id)
+    public async Task<bool> DeleteAsync(int id)
     {
-        await FetchLinks();
+        await FetchLinksAsync();
 
         Link? link = _linkList.Where(l => l.Id == id).FirstOrDefault();
         if (link is null)
@@ -89,7 +89,7 @@ public class LinkService
             return false;
         }
 
-        using var response = await _http.DeleteAsync($"/api/Link/{id}");
+        using HttpResponseMessage? response = await _http.DeleteAsync($"/api/Link/{id}");
 
         if (response.IsSuccessStatusCode)
         {
@@ -107,14 +107,14 @@ public class LinkService
         }
     }   
 
-    private async Task FetchLinks()
+    private async Task FetchLinksAsync()
     {
         if (_linkList.Count > 0)
         {
             return;
         }
 
-        Link[]? links = await _http.GetFromJsonAsync("/api/Link", Context.LinkArray);
+        Link[]? links = await _http.GetFromJsonAsync("/api/Link", s_Context.LinkArray);
 
         _linkList.Clear();
 
