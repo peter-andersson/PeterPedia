@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "peterpedia.client",
   "version": "1.0.0",
   "description": "",
@@ -8,7 +8,7 @@
     "css": "npm-run-all css-compile css-prefix css-minify",
     "css-compile": "sass --style expanded --source-map --embed-sources --no-error-css scss/peterpedia.scss wwwroot/css/peterpedia.css",
     "css-minify": "cleancss -O1 --format breakWith=lf --with-rebase --source-map --source-map-inline-sources --output wwwroot/css/ --batch --batch-suffix \".min\" \"wwwroot/css/*.css\" \"!wwwroot/css/*.min.css\"",
-    "css-prefix": "postcss --config build/postcss.config.js --replace \"wwwroot/css/*.css\"",
+    "css-prefix": "postcss --config build/postcss.config.js --replace \"wwwroot/css/*.css\""
   },
   "repository": {
     "type": "git",
@@ -28,6 +28,7 @@
     "npm-run-all": "^4.1.5",
     "postcss": "^8.4.6",
     "postcss-cli": "^9.1.0",
-    "sass": "^1.49.8"
+    "sass": "^1.49.8",
+    "typescript": "^4.5.5"
   }
 }
