@@ -4,14 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npm-run-all --parallel css js",
+    "build": "npm-run-all --parallel css",
     "css": "npm-run-all css-compile css-prefix css-minify",
     "css-compile": "sass --style expanded --source-map --embed-sources --no-error-css scss/peterpedia.scss wwwroot/css/peterpedia.css",
     "css-minify": "cleancss -O1 --format breakWith=lf --with-rebase --source-map --source-map-inline-sources --output wwwroot/css/ --batch --batch-suffix \".min\" \"wwwroot/css/*.css\" \"!wwwroot/css/*.min.css\"",
     "css-prefix": "postcss --config build/postcss.config.js --replace \"wwwroot/css/*.css\"",
-    "js": "npm-run-all --parallel js-*",
-    "js-bootstrap": "xcopy /I /Y node_modules\\bootstrap\\dist\\js\\bootstrap.bundle.min.js* wwwroot\\js\\lib\\",
-    "js-idb": "xcopy /I /Y node_modules\\idb\\build\\umd.js* wwwroot\\js\\lib\\"
   },
   "repository": {
     "type": "git",
