@@ -11,13 +11,13 @@ using PeterPedia.Server.Data;
 namespace PeterPedia.Server.Migrations
 {
     [DbContext(typeof(PeterPediaContext))]
-    [Migration("20220225203318_BookLastUpdate")]
-    partial class BookLastUpdate
+    [Migration("20220305115043_BookLastUpdated")]
+    partial class BookLastUpdated
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.0");
+            modelBuilder.HasAnnotation("ProductVersion", "6.0.2");
 
             modelBuilder.Entity("AuthorEFBookEF", b =>
                 {
@@ -91,6 +91,12 @@ namespace PeterPedia.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateOnly?>("DateOfBirth")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -106,7 +112,7 @@ namespace PeterPedia.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime?>("LastUpdated")
+                    b.Property<DateTime>("LastUpdated")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("State")

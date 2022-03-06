@@ -15,7 +15,7 @@ public partial class History : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        _articles = await RSSService.GetHistory();
+        _articles = await RSSService.GetHistoryAsync();
 
         FilterArticles(string.Empty);
     }

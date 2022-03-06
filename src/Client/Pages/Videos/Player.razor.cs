@@ -24,7 +24,7 @@ public partial class Player : ComponentBase
 
     public async Task Delete()
     {
-        if (await VideoService.Delete(Id))
+        if (await VideoService.DeleteAsync(Id))
         {
             NavManager.NavigateTo("videos");
         }

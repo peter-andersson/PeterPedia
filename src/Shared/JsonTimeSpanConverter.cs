@@ -8,19 +8,12 @@ public class JsonTimeSpanConverter : JsonConverter<TimeSpan>
 {
     public override TimeSpan Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        string? value = reader.GetString();
+        var value = reader.GetString();
 
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return TimeSpan.FromSeconds(0);
-        }
-
-        if (TimeSpan.TryParseExact(value, "c", CultureInfo.InvariantCulture, out TimeSpan timeSpan))
-        {
-            return timeSpan;
-        }
-
-        return TimeSpan.FromSeconds(0);
+        return 
+            TimeSpan.TryParseExact(value, "c", CultureInfo.InvariantCulture, out TimeSpan timeSpan)
+            ? timeSpan
+            : TimeSpan.FromSeconds(0);
     }
 
 

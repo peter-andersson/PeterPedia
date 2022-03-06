@@ -2,53 +2,60 @@ namespace PeterPedia.Shared;
 
 public enum BookState
 {
-    WantToRead = 1,
+    ToRead = 1,
     Reading = 2,
-    Read = 3,
+    HaveRead = 3,
 }
 
 public class Book
 {
     public Book()
     {
-        Authors = new List<string>();
+        Authors = new List<Author>();
         Title = string.Empty;
-        AuthorText = string.Empty;
-        CurrentAuthor = string.Empty;
     }
 
     public int Id { get; set; }
 
     public string Title { get; set; }
 
-    public List<string> Authors { get; set; }
+    public List<Author> Authors { get; set; }
 
-    public DateTime? LastUpdated { get; set; }
+    public DateTime LastUpdated { get; set; }
 
     public BookState State { get; set; }
 
+    public string? CoverUrl { get; set; }
+
     public string StateText => State switch
     {
-        BookState.WantToRead => "Want to read",
+        BookState.ToRead => "To be read",
         BookState.Reading => "Reading",
-        BookState.Read => "Read",
+        BookState.HaveRead => "Have read",
         _ => string.Empty,
     };
 
-    public bool SearchAuthor(string searchString)
+
+    public bool Search(string searchString)
     {
-        foreach (var author in Authors)
+        if (string.IsNullOrEmpty(searchString))
         {
-            if (author.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        }
+
+        if (Title.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        foreach (Author author in Authors)
+        {
+            if (author.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
         }
 
         return false;
-    }
-
-    public string AuthorText { get; set; }
-
-    public string CurrentAuthor { get; set; }
+    }  
 }

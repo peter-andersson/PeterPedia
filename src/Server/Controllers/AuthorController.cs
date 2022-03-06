@@ -1,16 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PeterPedia.Shared;
-using PeterPedia.Server.Data;
-using PeterPedia.Server.Data.Models;
 
 namespace PeterPedia.Server.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 public partial class AuthorController : Controller
-{
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Used by source generator [LoggerMessaage]")]
+{    
     private readonly ILogger<AuthorController> _logger;
 
     private readonly PeterPediaContext _dbContext;
@@ -22,12 +19,20 @@ public partial class AuthorController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> GetAsync([FromQuery]string lastupdate)
     {
-        var authors = await _dbContext.Authors.ToListAsync().ConfigureAwait(false);
+        if (!DateTime.TryParseExact(lastupdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime lastUpdated))
+        {
+            return BadRequest("Invalid date format");
+        }        
+
+        List<AuthorEF>? authors = await _dbContext.Authors
+            .Where(a => a.LastUpdated > lastUpdated || a.LastUpdated == DateTime.MinValue)
+            .ToListAsync()
+            .ConfigureAwait(false);
 
         var result = new List<Author>(authors.Count);
-        foreach (var author in authors)
+        foreach (AuthorEF? author in authors)
         {
             result.Add(ConvertToAuthor(author));
         }
@@ -36,7 +41,7 @@ public partial class AuthorController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] Author author)
+    public async Task<IActionResult> PostAsync([FromBody] Author author)
     {
         if (author is null)
         {
@@ -45,7 +50,7 @@ public partial class AuthorController : Controller
 
         LogAddAuthor(author);
 
-        var existingAuthor = await _dbContext.Authors.Where(s => s.Name == author.Name.Trim()).FirstOrDefaultAsync().ConfigureAwait(false);
+        AuthorEF? existingAuthor = await _dbContext.Authors.Where(s => s.Name == author.Name.Trim()).FirstOrDefaultAsync().ConfigureAwait(false);
         if (existingAuthor != null)
         {
             LogAuthorExists(existingAuthor);
@@ -55,6 +60,8 @@ public partial class AuthorController : Controller
         var authorEF = new AuthorEF
         {
             Name = author.Name.Trim(),
+            DateOfBirth = author.DateOfBirth,
+            LastUpdated = DateTime.UtcNow,
         };
 
         _dbContext.Authors.Add(authorEF);
@@ -65,7 +72,7 @@ public partial class AuthorController : Controller
     }
 
     [HttpPut]
-    public async Task<IActionResult> Put([FromBody] Author author)
+    public async Task<IActionResult> PutAsync([FromBody] Author author)
     {
         if (author is null)
         {
@@ -74,26 +81,30 @@ public partial class AuthorController : Controller
 
         LogUpdateAuthor(author);
 
-        var existingAuthor = await _dbContext.Authors.Where(s => s.Id == author.Id).AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
+        AuthorEF? existingAuthor = await _dbContext.Authors.Where(s => s.Id == author.Id).AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
         if (existingAuthor is null)
         {
             LogNotFound(author.Id);
             return NotFound();
         }
 
-        if (author.Name.Trim() != existingAuthor.Name)
+        if ((author.Name.Trim() != existingAuthor.Name) ||
+            (author.DateOfBirth != existingAuthor.DateOfBirth))
         {
             existingAuthor.Name = author.Name.Trim();
+            existingAuthor.DateOfBirth = author.DateOfBirth;
+            existingAuthor.LastUpdated = DateTime.UtcNow;
+
             _dbContext.Authors.Update(existingAuthor);
             await _dbContext.SaveChangesAsync().ConfigureAwait(false);
             LogAuthorUpdated(existingAuthor);
         }
 
-        return Ok();
+        return Ok(ConvertToAuthor(existingAuthor));
     }
 
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> DeleteAsync(int id)
     {
         LogDeleteAuthor(id);
         if (id <= 0)
@@ -101,7 +112,7 @@ public partial class AuthorController : Controller
             return BadRequest();
         }
 
-        var author = await _dbContext.Authors.Where(a => a.Id == id).AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
+        AuthorEF? author = await _dbContext.Authors.Where(a => a.Id == id).AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
 
         if (author is null)
         {
@@ -114,7 +125,7 @@ public partial class AuthorController : Controller
 
         LogAuthorDeleted(author);
 
-        return Ok();
+        return NoContent();
     }
 
     private static Author ConvertToAuthor(AuthorEF authorEF)
@@ -128,6 +139,8 @@ public partial class AuthorController : Controller
         {
             Id = authorEF.Id,
             Name = authorEF.Name,
+            DateOfBirth = authorEF.DateOfBirth ?? DateOnly.MinValue,
+            LastUpdated = authorEF.LastUpdated,
         };
 
         return author;

@@ -12,7 +12,7 @@ public partial class Reader : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        UnreadArticles = await RSSService.GetUnread();
+        UnreadArticles = await RSSService.GetUnreadAsync();
     }
 
     private void Load(UnreadArticle? unread)

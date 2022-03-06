@@ -1,0 +1,5 @@
+﻿<div class="book">
+  <div class="card bg-dark text-white" @onclick="() => SelectBookAsync(Book)">
+    <img src="/images/books/@($"{Book.Id}.jpg")" class="card-img" alt="@Book.Title">
+  </div>
+</div>

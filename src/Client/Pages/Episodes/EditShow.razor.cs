@@ -44,7 +44,7 @@ public partial class EditShow : ComponentBase
 
         IsTaskRunning = true;
 
-        var result = await TVService.Update(Show);
+        var result = await TVService.UpdateAsync(Show);
 
         IsTaskRunning = false;
         if (result)

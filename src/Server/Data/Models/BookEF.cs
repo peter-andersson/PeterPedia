@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PeterPedia.Server.Data.Models
 {
@@ -11,7 +11,7 @@ namespace PeterPedia.Server.Data.Models
 
         public int State { get; set; }
 
-        public DateTime? LastUpdated { get; set; }
+        public DateTime LastUpdated { get; set; }
 
         public ICollection<AuthorEF> Authors { get; set; } = null!;
     }

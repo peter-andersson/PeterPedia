@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <TypeScriptCompileOnSaveEnabled>False</TypeScriptCompileOnSaveEnabled>
+    <TypeScriptCompileOnSaveEnabled>False</TypeScriptCompileOnSaveEnabled>    
   </PropertyGroup>
 
   <PropertyGroup>
@@ -16,6 +16,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <TypeSCriptToolsVersion>Latest</TypeSCriptToolsVersion>
     <TypeScriptNoEmitOnError>true</TypeScriptNoEmitOnError>
     <TypeScriptNoImplicitReturns>true</TypeScriptNoImplicitReturns>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
@@ -23,10 +24,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\js\toast.js" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <None Remove="Pages\Books\Authors.razor.css" />
     <None Remove="Shared\MainLayout.razor.css" />
     <None Remove="Shared\NavMenu.razor.css" />
   </ItemGroup>
@@ -37,7 +35,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazored.Typeahead" Version="4.6.0" />
+    <PackageReference Include="Blazored.Modal" Version="6.0.1" />
+    <PackageReference Include="Blazored.Toast" Version="3.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.2" PrivateAssets="all" />
   </ItemGroup>
@@ -51,7 +50,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\js\toast.js" />
     <None Include="wwwroot\js\dialog.js" />
   </ItemGroup>
 

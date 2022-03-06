@@ -42,7 +42,7 @@ public partial class EditMovie : ComponentBase
 
         IsTaskRunning = true;
 
-        var result = await MovieService.Update(Movie);
+        var result = await MovieService.UpdateAsync(Movie);
 
         IsTaskRunning = false;
         if (result)

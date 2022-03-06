@@ -52,7 +52,7 @@ public partial class Episodes : ComponentBase
     {
         _currentFilter = filter;
 
-        await TVService.FetchData();
+        await TVService.FetchDataAsync();
 
         IEnumerable<Show> shows;
 

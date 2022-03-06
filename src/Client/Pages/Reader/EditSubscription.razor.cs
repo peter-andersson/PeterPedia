@@ -44,7 +44,7 @@ public partial class EditSubscription : ComponentBase
 
         IsTaskRunning = true;
 
-        var result = await RSSService.UpdateSubscription(Subscription);
+        var result = await RSSService.UpdateSubscriptionAsync(Subscription);
 
         IsTaskRunning = false;
         if (result)

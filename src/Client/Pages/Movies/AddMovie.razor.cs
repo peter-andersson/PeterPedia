@@ -39,7 +39,7 @@ public partial class AddMovie : ComponentBase
 
         IsTaskRunning = true;
 
-        var result = await MovieService.Add(MovieUrl);
+        var result = await MovieService.AddAsync(MovieUrl);
         IsTaskRunning = false;
 
         if (result)

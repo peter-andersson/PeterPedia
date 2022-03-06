@@ -1,18 +1,12 @@
-using Microsoft.OpenApi.Models;
-using PeterPedia.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using PeterPedia.Server.Services;
 using Microsoft.Extensions.FileProviders;
-using PeterPedia.Shared;
 
 namespace PeterPedia.Server;
 
 public class Startup
 {
-    public Startup(IConfiguration configuration)
-    {
-        Configuration = configuration;
-    }
+    public Startup(IConfiguration configuration) => Configuration = configuration;
 
     public IConfiguration Configuration { get; }
 
@@ -23,11 +17,6 @@ public class Startup
 
         services.AddControllersWithViews().AddJsonOptions(options => options.JsonSerializerOptions.AddContext<PeterPediaJSONContext>()); ;
         services.AddRazorPages();
-
-        services.AddSwaggerGen(c =>
-                    {
-                        c.SwaggerDoc("v1", new OpenApiInfo { Title = "PeterPedia.Server", Version = "v1" });
-                    });
 
         services.AddHttpClient();
 
@@ -59,9 +48,6 @@ public class Startup
             app.UseExceptionHandler("/Error");
         }
 
-        app.UseSwagger();
-        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "LPDA.Api v1"));
-
         app.UseBlazorFrameworkFiles();
         app.UseStaticFiles();
 
@@ -75,6 +61,12 @@ public class Startup
         {
             FileProvider = new PhysicalFileProvider(Configuration["PhotoPath"] ?? "/photos"),
             RequestPath = "/photo"
+        });
+
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(Configuration["ImagePath"] ?? "/images"),
+            RequestPath = "/images"
         });
 
         app.UseRouting();

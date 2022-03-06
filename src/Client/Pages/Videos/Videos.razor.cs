@@ -11,7 +11,7 @@ public partial class Videos : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        await VideoService.FetchData();
+        await VideoService.FetchDataAsync();
 
         FilterVideos(string.Empty);
     }

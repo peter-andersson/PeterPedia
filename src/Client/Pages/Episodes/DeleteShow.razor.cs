@@ -37,7 +37,7 @@ public partial class DeleteShow : ComponentBase
 
         IsTaskRunning = true;
 
-        await TVService.Delete(Show.Id);
+        await TVService.DeleteAsync(Show.Id);
 
         IsTaskRunning = false;
 

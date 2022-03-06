@@ -29,7 +29,7 @@ public partial class Subscriptions : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        await RSSService.FetchData();
+        await RSSService.FetchDataAsync();
 
         FilterSubscription(string.Empty);
     }

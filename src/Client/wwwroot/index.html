@@ -2,20 +2,20 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>PeterPedia</title>
-    <base href="/" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>PeterPedia</title>
+  <base href="/" />
 
-    <link href="css/peterpedia.css" rel="stylesheet" />
+  <link href="_content/Blazored.Modal/blazored-modal.css" rel="stylesheet" />
+  <link href="_content/Blazored.Toast/blazored-toast.min.css" rel="stylesheet" />
 
-    <link href="PeterPedia.Client.styles.css" rel="stylesheet" />
+  <link href="css/peterpedia.css" rel="stylesheet" />
+  <link href="PeterPedia.Client.styles.css" rel="stylesheet" />
 
-    <link href="/_content/Blazored.Typeahead/blazored-typeahead.css" rel="stylesheet" />
-
-    <link href="site.webmanifest" rel="manifest" />
-    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
-    <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
+  <link href="site.webmanifest" rel="manifest" />
+  <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
+  <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
 </head>
 
 <body>
@@ -42,10 +42,12 @@
   </div>
 
   <script src="_framework/blazor.webassembly.js"></script>
+  <script src="_content/Blazored.Modal/blazored.modal.js"></script>
 
-  <script src="/_content/Blazored.Typeahead/blazored-typeahead.js"></script>
   <script src="js/lib/bootstrap.bundle.min.js"></script>
   <script src="js/lib/idb.js"></script>
+  <script src="js/authorStore.js"></script>
+  <script src="js/bookStore.js"></script>
 
   <script>navigator.serviceWorker.register('service-worker.js');</script>
 </body>

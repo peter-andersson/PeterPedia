@@ -32,7 +32,7 @@ public partial class DeleteMovie : ComponentBase
 
         IsTaskRunning = true;
 
-        await MovieService.Delete(Movie.Id);
+        await MovieService.DeleteAsync(Movie.Id);
 
         IsTaskRunning = false;
 

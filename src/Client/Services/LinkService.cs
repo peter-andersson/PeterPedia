@@ -42,12 +42,12 @@ public class LinkService
             {
                 if (add)
                 {
-                    await _toast.ShowSuccess($"Added link for {link.Title} - {link.Url}");
+                    _toast.ShowSuccess($"Added link for {link.Title} - {link.Url}");
                     _linkList.Add(serverLink);
                 }
                 else
                 {
-                    await _toast.ShowSuccess($"Updated link for {link.Title} - {link.Url}");
+                    _toast.ShowSuccess($"Updated link for {link.Title} - {link.Url}");
 
                     Link? existingLink = _linkList.Where(l => l.Id == link.Id).FirstOrDefault();
                     if (existingLink is null)
@@ -65,14 +65,14 @@ public class LinkService
             }
             else
             {
-                await _toast.ShowError($"Failed to upsert link. No movie from server.");
+                _toast.ShowError($"Failed to upsert link. No movie from server.");
 
                 return false;
             }            
         }
         else
         {
-            await _toast.ShowError($"Failed to upsert link. StatusCode = {response.StatusCode}");
+            _toast.ShowError($"Failed to upsert link. StatusCode = {response.StatusCode}");
 
             return false;
         }
@@ -85,7 +85,7 @@ public class LinkService
         Link? link = _linkList.Where(l => l.Id == id).FirstOrDefault();
         if (link is null)
         {
-            await _toast.ShowError($"{id} is not a valid link id. Can't remove link.");
+            _toast.ShowError($"{id} is not a valid link id. Can't remove link.");
             return false;
         }
 
@@ -93,7 +93,7 @@ public class LinkService
 
         if (response.IsSuccessStatusCode)
         {
-            await _toast.ShowSuccess($"Link {link.Title} deleted");
+            _toast.ShowSuccess($"Link {link.Title} deleted");
 
             _linkList.Remove(link);
 
@@ -101,7 +101,7 @@ public class LinkService
         }
         else
         {
-            await _toast.ShowError($"Failed to delete link. StatusCode = {response.StatusCode}");
+            _toast.ShowError($"Failed to delete link. StatusCode = {response.StatusCode}");
 
             return false;
         }

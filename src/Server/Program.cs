@@ -1,4 +1,4 @@
-﻿using PeterPedia.Server.Jobs;
+using PeterPedia.Server.Jobs;
 using Quartz;
 
 namespace PeterPedia.Server;
@@ -7,13 +7,13 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        var host = CreateHostBuilder(args)
+        IHost? host = CreateHostBuilder(args)
                                     .ConfigureLogging((hostingContext, logging) =>
                                     {
                                         logging.ClearProviders();
                                         logging.AddConsole();
 
-                                        var configuration = hostingContext.Configuration.GetSection("Logging");
+                                        IConfigurationSection? configuration = hostingContext.Configuration.GetSection("Logging");
                                         logging.AddFile(configuration);
                                     })
                                     .Build();
@@ -43,25 +43,22 @@ public class Program
                 services.AddQuartzHostedService(
                     q => q.WaitForJobsToComplete = true);
             })
-            .ConfigureWebHostDefaults(webBuilder =>
-            {
-                webBuilder.UseStartup<Startup>();
-            });
+            .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
     }
 
     private static void CreateDbIfNotExists(IHost host)
     {
-        using var scope = host.Services.CreateScope();
-        var services = scope.ServiceProvider;
+        using IServiceScope? scope = host.Services.CreateScope();
+        IServiceProvider? services = scope.ServiceProvider;
 
         try
         {
-            var lpdaContext = services.GetRequiredService<PeterPediaContext>();
+            PeterPediaContext? lpdaContext = services.GetRequiredService<PeterPediaContext>();
             DbInitializer.Initialize(lpdaContext);
         }
         catch (Exception ex)
         {
-            var logger = services.GetRequiredService<ILogger<Program>>();
+            ILogger<Program>? logger = services.GetRequiredService<ILogger<Program>>();
             logger.LogError(ex, "An error occurred creating the DB.");
 
             throw;

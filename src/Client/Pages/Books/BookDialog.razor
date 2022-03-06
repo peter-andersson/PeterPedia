@@ -1,0 +1,65 @@
+﻿<div class="row">
+    <div class="col">
+        <EditForm Model="@EditBookModel" OnValidSubmit="@HandleValidSubmitAsync" autocomplete="off">
+            <div class="mb-3">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+            </div>
+
+            <div class="mb-3">
+                <label class="visually-hidden" for="book-title">Title</label>
+                <InputText type="text" class="form-control" id="book-title" placeholder="Title" @bind-Value="EditBookModel.Title" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="book-state">State</label>
+                <InputSelect class="form-control" id="book-state" @bind-Value="EditBookModel.State">
+                    <option value="ToRead">To be read</option>
+                    <option value="Reading">Reading</option>
+                    <option value="HaveRead">Have read</option>
+                </InputSelect>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="book-cover">URL to download cover from</label>
+                <InputText type="text" class="form-control" id="book-cover" @bind-Value="EditBookModel.CoverUrl" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="book-author">Selected authors</label>
+                <ul class="list-group mt-2">
+                    @foreach (Author author in EditBookModel.SelectedAuthors)
+                    {
+                        <li class="list-group-item">
+                            <button type="button" class="btn btn-sm btn-danger" @onclick="() => RemoveAuthor(author)">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                    <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
+                                </svg>
+                            </button>
+                            @author.Name [<small>@author.DateOfBirth.ToString("dd MMM yyyy")</small>]
+                        </li>
+                    }
+                </ul>
+            </div>
+
+            <div class="mb-3">
+                <button type="submit" class="btn btn-success" disabled="@IsTaskRunning">@SubmitButtonText</button>
+                @if (Book.Id > 0)
+                {
+                    <button type="button" class="btn btn-danger ms-2" @onclick="DeleteAsync" disabled="@IsTaskRunning">Delete</button>
+                }
+                <button type="button" class="btn btn-secondary ms-2" @onclick="CloseAsync">Cancel</button>
+            </div>
+        </EditForm>
+    </div>
+
+    <div class="col me-2">
+        <input type="text" class="form-control" @bind="Filter" @bind:event="oninput" @onkeypress="FilterKeyPress" placeholder="Filter">
+        <ul class="list-group mt-2">
+            @foreach (Author author in AuthorList)
+            {
+                <li class="list-group-item">@author.Name [<small>@author.DateOfBirth.ToString("dd MMM yyyy")</small>]</li>
+            }
+        </ul>
+    </div>
+</div>

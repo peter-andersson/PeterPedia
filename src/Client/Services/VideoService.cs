@@ -1,12 +1,12 @@
-﻿using System.Net.Http.Json;
+using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace PeterPedia.Client.Services;
 
 public class VideoService
 {
-    private static readonly JsonSerializerOptions Options = new(JsonSerializerDefaults.Web);
-    private static readonly PeterPediaJSONContext Context = new(Options);
+    private static readonly JsonSerializerOptions s_Options = new(JsonSerializerDefaults.Web);
+    private static readonly PeterPediaJSONContext s_Context = new(s_Options);
 
     private readonly HttpClient _http;
 
@@ -20,11 +20,11 @@ public class VideoService
 
     public List<Video> Videos { get; private set; } = new List<Video>();
 
-    public async Task FetchData()
+    public async Task FetchDataAsync()
     {
         if (Videos.Count == 0)
         {
-            Video[]? items = await _http.GetFromJsonAsync("/api/Video", Context.VideoArray);
+            Video[]? items = await _http.GetFromJsonAsync("/api/Video", s_Context.VideoArray);
 
             if (items is not null)
             {
@@ -39,33 +39,26 @@ public class VideoService
     {
         if (Videos.Count == 0)
         {
-            await FetchData();
+            await FetchDataAsync();
         }
 
-        if (Videos.Count > 0)
-        {
-            return Videos.Where(v => v.Id == id).SingleOrDefault();
-        }
-        else
-        {
-            return null;
-        }
+        return Videos.Count > 0 ? Videos.Where(v => v.Id == id).SingleOrDefault() : null;
     }
 
-    public async Task<bool> Delete(int id)
+    public async Task<bool> DeleteAsync(int id)
     {
-        var video = Videos.Where(v => v.Id == id).SingleOrDefault();
+        Video? video = Videos.Where(v => v.Id == id).SingleOrDefault();
         if (video is null)
         {
-            await _toast.ShowError($"{id} is not a valid id. Can't remove item.");
+            _toast.ShowError($"{id} is not a valid id. Can't remove item.");
             return false;
         }
 
-        using var response = await _http.DeleteAsync($"/api/Video/{id}");
+        using HttpResponseMessage response = await _http.DeleteAsync($"/api/Video/{id}");
 
         if (response.IsSuccessStatusCode)
         {
-            await _toast.ShowSuccess($"Removed video {video.Title}");
+            _toast.ShowSuccess($"Removed video {video.Title}");
 
             Videos.Remove(video);
 
@@ -73,7 +66,7 @@ public class VideoService
         }
         else
         {
-            await _toast.ShowSuccess($"Failed to delete item. StatusCode = {response.StatusCode}");
+            _toast.ShowSuccess($"Failed to delete item. StatusCode = {response.StatusCode}");
 
             return false;
         }

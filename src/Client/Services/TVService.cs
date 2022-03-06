@@ -1,4 +1,4 @@
-﻿using System.Net.Http.Json;
+using System.Net.Http.Json;
 using System.Text.RegularExpressions;
 using System.Text.Json;
 
@@ -6,8 +6,8 @@ namespace PeterPedia.Client.Services;
 
 public class TVService
 {
-    private static readonly JsonSerializerOptions Options = new(JsonSerializerDefaults.Web);
-    private static readonly PeterPediaJSONContext Context = new(Options);
+    private static readonly JsonSerializerOptions s_Options = new(JsonSerializerDefaults.Web);
+    private static readonly PeterPediaJSONContext s_Context = new(s_Options);
 
     private readonly HttpClient _http;
     private readonly IToastService _toast;
@@ -22,16 +22,13 @@ public class TVService
 
     public event Action? RefreshRequested;
 
-    public void CallRequestRefresh()
-    {
-        RefreshRequested?.Invoke();
-    }
+    public void CallRequestRefresh() => RefreshRequested?.Invoke();
 
-    public async Task FetchData()
+    public async Task FetchDataAsync()
     {
         if (Shows is null)
         {
-            var shows = await _http.GetFromJsonAsync("/api/TV", Context.ShowArray);
+            Show[]? shows = await _http.GetFromJsonAsync("/api/TV", s_Context.ShowArray);
 
             if (shows is not null)
             {
@@ -41,22 +38,17 @@ public class TVService
         }
     }
 
-    public async Task<Show?> Get(int id)
+    public async Task<Show?> GetAsync(int id)
     {
         if (Shows is null)
         {
-            await FetchData();
+            await FetchDataAsync();
         }
 
-        if (Shows is not null)
-        {
-            return Shows.Where(s => s.Id == id).FirstOrDefault();
-        }
-
-        return null;
+        return Shows is not null ? Shows.Where(s => s.Id == id).FirstOrDefault() : null;
     }
 
-    public async Task<bool> Add(string url)
+    public async Task<bool> AddAsync(string url)
     {
         var showRegex = new Regex("^https://www.themoviedb.org/tv/(\\d+)");
 
@@ -68,14 +60,14 @@ public class TVService
 
                 if (!int.TryParse(matches.Groups[1].Value, out id))
                 {
-                    await _toast.ShowError("Can't add show, invalid show id.");
+                    _toast.ShowError("Can't add show, invalid show id.");
                 }
             }
         }
 
         if (id == 0)
         {
-            await _toast.ShowError("Can't add show, invalid show id.");
+            _toast.ShowError("Can't add show, invalid show id.");
             return false;
         }
 
@@ -84,40 +76,40 @@ public class TVService
             Id = id,
         };
 
-        using var response = await _http.PostAsJsonAsync("/api/TV", postBody, Context.AddShow);
+        using HttpResponseMessage response = await _http.PostAsJsonAsync("/api/TV", postBody, s_Context.AddShow);
 
         if (response.IsSuccessStatusCode)
         {
-            var show = await response.Content.ReadFromJsonAsync(Context.Show);
+            Show? show = await response.Content.ReadFromJsonAsync(s_Context.Show);
             if (show is not null)
             {
                 Shows.Add(show);
 
-                await _toast.ShowSuccess($"Show {show.Title} added");
+                _toast.ShowSuccess($"Show {show.Title} added");
 
                 return true;
             }
             else
             {
-                await _toast.ShowError("Failed to add show");
+                _toast.ShowError("Failed to add show");
 
                 return false;
             }            
         }
         else
         {
-            await _toast.ShowError($"Failed to add movie. StatusCode = {response.StatusCode}");
+            _toast.ShowError($"Failed to add movie. StatusCode = {response.StatusCode}");
 
             return false;
         }
     }
 
-    public async Task<bool> Delete(int id)
+    public async Task<bool> DeleteAsync(int id)
     {
-        var show = await Get(id);
+        Show? show = await GetAsync(id);
         if (show is null)
         {
-            await _toast.ShowError($"{id} is not a valid show id. Can't remove show.");
+            _toast.ShowError($"{id} is not a valid show id. Can't remove show.");
             return false;
         }
 
@@ -125,7 +117,7 @@ public class TVService
 
         if (response.IsSuccessStatusCode)
         {
-            await _toast.ShowSuccess($"Show {show.Title} deleted");
+            _toast.ShowSuccess($"Show {show.Title} deleted");
 
             Shows.Remove(show);
 
@@ -133,34 +125,34 @@ public class TVService
         }
         else
         {
-            await _toast.ShowError($"Failed to delete show. StatusCode = {response.StatusCode}");
+            _toast.ShowError($"Failed to delete show. StatusCode = {response.StatusCode}");
 
             return false;
         }
     }
 
-    public async Task<bool> Update(Show show)
+    public async Task<bool> UpdateAsync(Show show)
     {
         if (show is null)
         {
-            await _toast.ShowError("Invalid show, can't update");
+            _toast.ShowError("Invalid show, can't update");
             return false;
         }
 
-        var existingShow = await Get(show.Id);
+        var existingShow = await GetAsync(show.Id);
         if (existingShow is null)
         {
-            await _toast.ShowError("Can't update a show that doesn't exist.");
+            _toast.ShowError("Can't update a show that doesn't exist.");
             return false;
         }
 
-        using var response = await _http.PutAsJsonAsync("/api/TV", show, Context.Show);
+        using HttpResponseMessage response = await _http.PutAsJsonAsync("/api/TV", show, s_Context.Show);
 
         if (response.IsSuccessStatusCode)
         {
-            await _toast.ShowSuccess($"Show {show.Title} saved");
+            _toast.ShowSuccess($"Show {show.Title} saved");
 
-            var serverShow = await _http.GetFromJsonAsync($"/api/TV/{show.Id}", Context.Show);
+            Show? serverShow = await _http.GetFromJsonAsync($"/api/TV/{show.Id}", s_Context.Show);
 
             if (serverShow is not null)
             {
@@ -174,14 +166,14 @@ public class TVService
         }
         else
         {
-            await _toast.ShowError($"Failed to save show. StatusCode = {response.StatusCode}");
+            _toast.ShowError($"Failed to save show. StatusCode = {response.StatusCode}");
             return false;
         }
     }
 
-    public async Task<bool> WatchSeason(int showId, int seasonId)
+    public async Task<bool> WatchSeasonAsync(int showId, int seasonId)
     {
-        var show = await Get(showId);
+        var show = await GetAsync(showId);
         if (show is null)
         {
             return false;
@@ -194,21 +186,21 @@ public class TVService
             Watched = true,
         };
 
-        using var response = await _http.PostAsJsonAsync("/api/TV/watch", data, Context.ShowWatchData);
+        using HttpResponseMessage response = await _http.PostAsJsonAsync("/api/TV/watch", data, s_Context.ShowWatchData);
         if (response.IsSuccessStatusCode)
         {
-            foreach (var season in show.Seasons)
+            foreach (Season season in show.Seasons)
             {
                 if (season.Id == seasonId)
                 {
-                    foreach (var episode in season.Episodes)
+                    foreach (Episode episode in season.Episodes)
                     {
                         episode.Watched = true;
                     }
 
                     show.Calculate();
 
-                    await _toast.ShowSuccess($"{show.Title} - Season {season.SeasonNumber} watched.");
+                    _toast.ShowSuccess($"{show.Title} - Season {season.SeasonNumber} watched.");
 
                     return true;
                 }
@@ -216,15 +208,15 @@ public class TVService
         }
         else
         {
-            await _toast.ShowError($"Failed to set season as watched. StatusCode = {response.StatusCode}");
+            _toast.ShowError($"Failed to set season as watched. StatusCode = {response.StatusCode}");
         }
 
         return false;
     }
 
-    public async Task<bool> UnwatchSeason(int showId, int seasonId)
+    public async Task<bool> UnwatchSeasonAsync(int showId, int seasonId)
     {
-        var show = await Get(showId);
+        Show? show = await GetAsync(showId);
         if (show is null)
         {
             return false;
@@ -237,7 +229,7 @@ public class TVService
             Watched = false,
         };
 
-        using var response = await _http.PostAsJsonAsync("/api/TV/watch", data, Context.ShowWatchData);
+        using HttpResponseMessage response = await _http.PostAsJsonAsync("/api/TV/watch", data, s_Context.ShowWatchData);
         if (response.IsSuccessStatusCode)
         {
             foreach (var season in show.Seasons)
@@ -251,7 +243,7 @@ public class TVService
 
                     show.Calculate();
 
-                    await _toast.ShowSuccess($"{show.Title} - Season {season.SeasonNumber} unwatched.");
+                    _toast.ShowSuccess($"{show.Title} - Season {season.SeasonNumber} unwatched.");
 
                     return true;
                 }
@@ -259,15 +251,15 @@ public class TVService
         }
         else
         {
-            await _toast.ShowError($"Failed to set season as unwatched. StatusCode = {response.StatusCode}");
+            _toast.ShowError($"Failed to set season as unwatched. StatusCode = {response.StatusCode}");
         }
 
         return false;
     }
 
-    public async Task<bool> WatchEpisode(int showId, int episodeId)
+    public async Task<bool> WatchEpisodeAsync(int showId, int episodeId)
     {
-        var show = await Get(showId);
+        Show? show = await GetAsync(showId);
         if (show is null)
         {
             return false;
@@ -280,12 +272,12 @@ public class TVService
             Watched = true,
         };
 
-        using var response = await _http.PostAsJsonAsync("/api/tv/watch", data, Context.ShowWatchData);
+        using HttpResponseMessage response = await _http.PostAsJsonAsync("/api/tv/watch", data, s_Context.ShowWatchData);
         if (response.IsSuccessStatusCode)
         {
-            foreach (var season in show.Seasons)
+            foreach (Season season in show.Seasons)
             {
-                foreach (var episode in season.Episodes)
+                foreach (Episode episode in season.Episodes)
                 {
                     if (episode.Id == episodeId)
                     {
@@ -293,7 +285,7 @@ public class TVService
 
                         show.Calculate();
 
-                        await _toast.ShowSuccess($"{show.Title} - S{season.SeasonNumber}E{episode.EpisodeNumber} watched.");
+                        _toast.ShowSuccess($"{show.Title} - S{season.SeasonNumber}E{episode.EpisodeNumber} watched.");
 
                         return true;
                     }
@@ -302,15 +294,15 @@ public class TVService
         }
         else
         {
-            await _toast.ShowError($"Failed to set episode as watched. StatusCode = {response.StatusCode}");
+            _toast.ShowError($"Failed to set episode as watched. StatusCode = {response.StatusCode}");
         }
 
         return false;
     }
 
-    public async Task<bool> UnwatchEpisode(int showId, int episodeId)
+    public async Task<bool> UnwatchEpisodeAsync(int showId, int episodeId)
     {
-        var show = await Get(showId);
+        Show? show = await GetAsync(showId);
         if (show is null)
         {
             return false;
@@ -323,12 +315,12 @@ public class TVService
             Watched = false,
         };
 
-        using var response = await _http.PostAsJsonAsync("/api/TV/watch", data, Context.ShowWatchData);
+        using HttpResponseMessage response = await _http.PostAsJsonAsync("/api/TV/watch", data, s_Context.ShowWatchData);
         if (response.IsSuccessStatusCode)
         {
-            foreach (var season in show.Seasons)
+            foreach (Season season in show.Seasons)
             {
-                foreach (var episode in season.Episodes)
+                foreach (Episode episode in season.Episodes)
                 {
                     if (episode.Id == episodeId)
                     {
@@ -336,7 +328,7 @@ public class TVService
 
                         show.Calculate();
 
-                        await _toast.ShowSuccess($"{show.Title} - S{season.SeasonNumber}E{episode.EpisodeNumber} unwatched.");
+                        _toast.ShowSuccess($"{show.Title} - S{season.SeasonNumber}E{episode.EpisodeNumber} unwatched.");
 
                         return true;
                     }
@@ -345,7 +337,7 @@ public class TVService
         }
         else
         {
-            await _toast.ShowError($"Failed to set episode as unwatched. StatusCode = {response.StatusCode}");
+            _toast.ShowError($"Failed to set episode as unwatched. StatusCode = {response.StatusCode}");
         }
 
         return false;

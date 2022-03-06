@@ -35,7 +35,7 @@ public partial class AddSubscription : ComponentBase
     {
         IsTaskRunning = true;
 
-        await RSSService.AddSubscription(NewSubscriptionUrl);
+        await RSSService.AddSubscriptionAsync(NewSubscriptionUrl);
         IsTaskRunning = false;
 
         await OnSuccess.InvokeAsync();

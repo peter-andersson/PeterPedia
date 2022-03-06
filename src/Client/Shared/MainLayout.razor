@@ -1,6 +1,9 @@
 ﻿@inherits LayoutComponentBase
 
-<Toast></Toast>
+@using Blazored.Toast.Configuration
+
+<BlazoredToasts Position="ToastPosition.BottomLeft"
+                Timeout="2" />
 
 <div class="page">
     <div class="sidebar">

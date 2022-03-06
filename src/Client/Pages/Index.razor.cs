@@ -22,7 +22,7 @@ public partial class Index : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        Links = await LinkService.GetLinks();
+        Links = await LinkService.GetLinksAsync();
 
         Links.Add(new Link()
         {

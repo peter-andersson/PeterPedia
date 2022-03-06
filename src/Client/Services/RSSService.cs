@@ -1,12 +1,12 @@
-﻿using System.Net.Http.Json;
+using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace PeterPedia.Client.Services;
 
 public class RSSService
 {
-    private static readonly JsonSerializerOptions Options = new(JsonSerializerDefaults.Web);
-    private static readonly PeterPediaJSONContext Context = new(Options);
+    private static readonly JsonSerializerOptions s_Options = new(JsonSerializerDefaults.Web);
+    private static readonly PeterPediaJSONContext s_Context = new(s_Options);
 
     private readonly HttpClient _http;
     private readonly IToastService _toast;
@@ -19,11 +19,11 @@ public class RSSService
 
     public List<Subscription> Subscriptions { get; private set; } = null!;
 
-    public async Task FetchData()
+    public async Task FetchDataAsync()
     {
         if (Subscriptions is null)
         {
-            var subscriptions = await _http.GetFromJsonAsync("/api/Subscription", Context.SubscriptionArray);
+            Subscription[]? subscriptions = await _http.GetFromJsonAsync("/api/Subscription", s_Context.SubscriptionArray);
 
             if (subscriptions is not null)
             {
@@ -33,56 +33,41 @@ public class RSSService
         }
     }
 
-    public async Task<List<UnreadArticle>> GetUnread()
+    public async Task<List<UnreadArticle>> GetUnreadAsync()
     {
-        var unread = await _http.GetFromJsonAsync("/api/Article", Context.UnreadArticleArray);
+        UnreadArticle[]? unread = await _http.GetFromJsonAsync("/api/Article", s_Context.UnreadArticleArray);
 
-        if (unread is not null)
-        {
-            return unread.ToList();
-        }
-
-        return new List<UnreadArticle>();
+        return unread is not null ? unread.ToList() : new List<UnreadArticle>();
     }
 
-    public async Task<List<Article>> GetHistory()
+    public async Task<List<Article>> GetHistoryAsync()
     {
-        var articles = await _http.GetFromJsonAsync("/api/Article/history", Context.ArticleArray);
+        Article[]? articles = await _http.GetFromJsonAsync("/api/Article/history", s_Context.ArticleArray);
 
-        if (articles is not null)
-        {
-            return articles.ToList();
-        }
-
-        return new List<Article>();
+        return articles is not null ? articles.ToList() : new List<Article>();
     }
 
-    public async Task<Subscription?> GetSubscription(int id)
+    public async Task<Subscription?> GetSubscriptionAsync(int id)
     {
         if (Subscriptions is null)
         {
-            await FetchData();
+            await FetchDataAsync();
         }
 
-        if (Subscriptions is not null)
-        {
-            return Subscriptions.Where(b => b.Id == id).FirstOrDefault();
-        }
-
-        return null;
+        return Subscriptions is not null ? Subscriptions.Where(b => b.Id == id).FirstOrDefault() : null;
     }
 
-    public async Task<bool> AddSubscription(string url)
+    public async Task<bool> AddSubscriptionAsync(string url)
     {
         if (string.IsNullOrWhiteSpace(url))
         {
-            await _toast.ShowError("Invalid url.");
+            _toast.ShowError("Invalid url.");
             return false;
         }
 
         if (Subscriptions is null)
         {
-            await FetchData();
+            await FetchDataAsync();
         }
 
         if (Subscriptions is null)
@@ -96,13 +81,13 @@ public class RSSService
             Title = string.Empty,
         };
 
-        using var response = await _http.PostAsJsonAsync("/api/subscription", postBody, Context.Subscription);
+        using HttpResponseMessage response = await _http.PostAsJsonAsync("/api/subscription", postBody, s_Context.Subscription);
 
         if (response.IsSuccessStatusCode)
         {
-            await _toast.ShowSuccess("Subscription added");
+            _toast.ShowSuccess("Subscription added");
 
-            var subscription = await response.Content.ReadFromJsonAsync(Context.Subscription);
+            var subscription = await response.Content.ReadFromJsonAsync(s_Context.Subscription);
             if (subscription is not null)
             {
                 Subscriptions.Add(subscription);
@@ -116,26 +101,26 @@ public class RSSService
         }
         else
         {
-            await _toast.ShowError($"Failed to add subscription. StatusCode = {response.StatusCode}");
+            _toast.ShowError($"Failed to add subscription. StatusCode = {response.StatusCode}");
 
             return false;
         }
     }
 
-    public async Task<bool> DeleteSubscription(int id)
+    public async Task<bool> DeleteSubscriptionAsync(int id)
     {
-        var subscription = await GetSubscription(id);
+        var subscription = await GetSubscriptionAsync(id);
         if (subscription is null)
         {
-            await _toast.ShowError($"{id} is not a valid subscription id. Can't remove subscription.");
+            _toast.ShowError($"{id} is not a valid subscription id. Can't remove subscription.");
             return false;
         }
 
-        using var response = await _http.DeleteAsync($"/api/Subscription/{id}");
+        using HttpResponseMessage response = await _http.DeleteAsync($"/api/Subscription/{id}");
 
         if (response.IsSuccessStatusCode)
         {
-            await _toast.ShowSuccess("Subscription deleted");
+            _toast.ShowSuccess("Subscription deleted");
 
             Subscriptions.Remove(subscription);
 
@@ -143,32 +128,32 @@ public class RSSService
         }
         else
         {
-            await _toast.ShowError($"Failed to delete subscription. StatusCode = {response.StatusCode}");
+            _toast.ShowError($"Failed to delete subscription. StatusCode = {response.StatusCode}");
 
             return false;
         }
     }
 
-    public async Task<bool> UpdateSubscription(Subscription subscription)
+    public async Task<bool> UpdateSubscriptionAsync(Subscription subscription)
     {
         if (subscription is null)
         {
-            await _toast.ShowError("Invalid subscription, can't update");
+            _toast.ShowError("Invalid subscription, can't update");
             return false;
         }
 
-        var existingSubscription = await GetSubscription(subscription.Id);
+        var existingSubscription = await GetSubscriptionAsync(subscription.Id);
         if (existingSubscription is null)
         {
-            await _toast.ShowError("Can't update a subscription that doesn't exist.");
+            _toast.ShowError("Can't update a subscription that doesn't exist.");
             return false;
         }
 
-        using var response = await _http.PutAsJsonAsync("/api/Subscription", subscription, Context.Subscription);
+        using HttpResponseMessage response = await _http.PutAsJsonAsync("/api/Subscription", subscription, s_Context.Subscription);
 
         if (response.IsSuccessStatusCode)
         {
-            await _toast.ShowSuccess("Subscription saved");
+            _toast.ShowSuccess("Subscription saved");
 
             existingSubscription.Title = subscription.Title;
             existingSubscription.UpdateIntervalMinute = subscription.UpdateIntervalMinute;
@@ -177,19 +162,19 @@ public class RSSService
         }
         else
         {
-            await _toast.ShowError($"Failed to save movie. StatusCode = {response.StatusCode}");
+            _toast.ShowError($"Failed to save movie. StatusCode = {response.StatusCode}");
             return false;
         }
     }
 
-    public async Task<bool> DeleteArticle(int id)
+    public async Task<bool> DeleteArticleAsync(int id)
     {
         if (id == 0)
         {
             return false;
         }
 
-        using var response = await _http.GetAsync($"/api/article/read/{id}");
+        using HttpResponseMessage response = await _http.GetAsync($"/api/article/read/{id}");
 
         if (response.IsSuccessStatusCode)
         {
@@ -197,13 +182,8 @@ public class RSSService
         }
         else
         {
-            await _toast.ShowError("Failed to delete article.");
+            _toast.ShowError("Failed to delete article.");
             return false;
         }
-    }
-
-    public async Task<int> GetArticleCount()
-    {
-        return await _http.GetFromJsonAsync<int>("/api/Article/stats");
     }
 }

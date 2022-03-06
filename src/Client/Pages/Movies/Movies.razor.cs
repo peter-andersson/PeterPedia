@@ -42,7 +42,7 @@ public partial class Movies : ComponentBase
     public async Task FilterMovies(string filter)
     {
         _currentFilter = filter;
-        MovieList = await MovieService.GetMovies(_currentFilter, watchList: Watchlist);
+        MovieList = await MovieService.GetMoviesAsync(_currentFilter, watchList: Watchlist);
     }
 
     public async Task ToggleUnwatched()

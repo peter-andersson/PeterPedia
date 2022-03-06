@@ -39,7 +39,7 @@ public partial class AddShow : ComponentBase
     {
         IsTaskRunning = true;
 
-        var result = await TVService.Add(TVUrl);
+        var result = await TVService.AddAsync(TVUrl);
         IsTaskRunning = false;
         if (result)
         {

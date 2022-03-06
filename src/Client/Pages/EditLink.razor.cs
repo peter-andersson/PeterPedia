@@ -31,7 +31,7 @@ public partial class EditLink : ComponentBase
     {
         IsTaskRunning = true;
 
-        await LinkService.Upsert(Link);
+        await LinkService.UpsertAsync(Link);
 
         Link = new Link();
         IsTaskRunning = false;
@@ -46,7 +46,7 @@ public partial class EditLink : ComponentBase
 
         IsTaskRunning = true;
 
-        await LinkService.Delete(Link.Id);
+        await LinkService.DeleteAsync(Link.Id);
 
         Links.Remove(Link);
 

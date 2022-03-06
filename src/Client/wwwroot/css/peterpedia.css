@@ -11272,4 +11272,12 @@ textarea.form-control-lg {
   z-index: 9999999;
 }
 
+.invalid {
+  outline: 1px solid red;
+}
+
+.validation-message {
+  color: red;
+}
+
 /*# sourceMappingURL=peterpedia.css.map */

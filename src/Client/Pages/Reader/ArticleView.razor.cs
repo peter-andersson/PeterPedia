@@ -25,7 +25,7 @@ public partial class ArticleView
         }
 
         IsTaskRunning = true;
-        var result = await RSSService.DeleteArticle(Article.Id);
+        var result = await RSSService.DeleteArticleAsync(Article.Id);
         IsTaskRunning = false;
 
         if (result)

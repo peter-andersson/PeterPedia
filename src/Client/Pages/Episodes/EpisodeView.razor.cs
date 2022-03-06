@@ -21,7 +21,7 @@ public partial class EpisodeView : ComponentBase
     {
         IsTaskRunning = true;
 
-        var result = await TVService.WatchEpisode(Show.Id, Episode.Id);
+        var result = await TVService.WatchEpisodeAsync(Show.Id, Episode.Id);
         IsTaskRunning = false;
         if (result)
         {
@@ -47,7 +47,7 @@ public partial class EpisodeView : ComponentBase
     {
         IsTaskRunning = true;
 
-        var result = await TVService.UnwatchEpisode(Show.Id, Episode.Id);
+        var result = await TVService.UnwatchEpisodeAsync(Show.Id, Episode.Id);
         IsTaskRunning = false;
         if (result)
         {

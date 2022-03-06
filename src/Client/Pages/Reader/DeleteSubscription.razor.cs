@@ -32,7 +32,7 @@ public partial class DeleteSubscription : ComponentBase
 
         IsTaskRunning = true;
 
-        await RSSService.DeleteSubscription(Subscription.Id);
+        await RSSService.DeleteSubscriptionAsync(Subscription.Id);
 
         IsTaskRunning = false;
 

@@ -1,0 +1,20 @@
+﻿@page "/books/authors"
+
+<h4 class="mt-2">Authors</h4>
+<div class="d-flex">
+  <button class="btn btn-success flex-shrink-0 me-2" @onclick="AddAuthor">Add author</button>
+  <input type="text" class="form-control" @bind="Filter" @bind:event="oninput" placeholder="Filter">
+</div>
+      
+<div class="row row-cols-1 row-cols-md-4 g-4 mt-2">  
+  @foreach (Author author in AuthorList)
+  {
+    <div class="col">
+      <div class="card" @onclick="() => SelectAuthor(author)">
+        <div class="card-body">
+          @author.Name [<small>@author.DateOfBirth.ToString("dd MMM yyyy")</small>] 
+        </div>
+      </div>
+    </div>
+  }
+</div>

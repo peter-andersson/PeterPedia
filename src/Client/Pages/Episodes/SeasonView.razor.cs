@@ -23,7 +23,7 @@ public partial class SeasonView : ComponentBase
     public async Task WatchSeason()
     {
         IsTaskRunning = true;
-        var result = await TVService.WatchSeason(Show.Id, Season.Id);
+        var result = await TVService.WatchSeasonAsync(Show.Id, Season.Id);
         IsTaskRunning = false;
 
         if (result)
@@ -49,7 +49,7 @@ public partial class SeasonView : ComponentBase
     public async Task UnwatchSeason()
     {
         IsTaskRunning = true;
-        var result = await TVService.UnwatchSeason(Show.Id, Season.Id);
+        var result = await TVService.UnwatchSeasonAsync(Show.Id, Season.Id);
         IsTaskRunning = false;
 
         if (result)
