@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Microsoft.EntityFrameworkCore;
 using PeterPedia.Server.Data;
@@ -266,9 +266,25 @@ public partial class TVController : Controller
         show.ETag = tmdbShow.ETag;
         show.Status = tmdbShow.Status;
 
-        foreach (var tmdbSeason in tmdbShow.Seasons)
+        // Remove season no longer valid
+        var i = 0;
+        while (i < show.Seasons.Count)
         {
-            var season = show.Seasons.Where(s => s.SeasonNumber == tmdbSeason.SeasonNumber).SingleOrDefault();
+            SeasonEF season = show.Seasons[i];
+
+            TMDbSeason? tmdbSeason = tmdbShow.Seasons.Where(s => s.SeasonNumber == season.SeasonNumber).SingleOrDefault();
+            if (tmdbSeason is null)
+            {
+                show.Seasons.Remove(season);
+                continue;
+            }
+
+            i += 1;
+        }        
+
+        foreach (TMDbSeason tmdbSeason in tmdbShow.Seasons)
+        {
+            SeasonEF? season = show.Seasons.Where(s => s.SeasonNumber == tmdbSeason.SeasonNumber).SingleOrDefault();
             if (season is null)
             {
                 season = new SeasonEF()
@@ -279,9 +295,24 @@ public partial class TVController : Controller
                 show.Seasons.Add(season);
             }
 
-            foreach (var tmdbEpisode in tmdbSeason.Episodes)
+            i = 0;
+            while (i < season.Episodes.Count)
             {
-                var episode = season.Episodes.Where(e => e.EpisodeNumber == tmdbEpisode.EpisodeNumber).SingleOrDefault();
+                EpisodeEF episode = season.Episodes[i];
+
+                TMDbEpisode? tmdbEpisode = tmdbSeason.Episodes.Where(e => e.EpisodeNumber == episode.EpisodeNumber).SingleOrDefault();
+                if (tmdbEpisode is null)
+                {
+                    season.Episodes.Remove(episode);
+                    continue;
+                }
+
+                i += 1;
+            }
+
+            foreach (TMDbEpisode? tmdbEpisode in tmdbSeason.Episodes)
+            {
+                EpisodeEF? episode = season.Episodes.Where(e => e.EpisodeNumber == tmdbEpisode.EpisodeNumber).SingleOrDefault();
                 if (episode is null)
                 {
                     episode = new EpisodeEF()
