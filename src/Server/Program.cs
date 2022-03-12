@@ -1,67 +1,129 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.FileProviders;
+using NLog;
+using NLog.Web;
 using PeterPedia.Server.Jobs;
+using PeterPedia.Server.Services;
 using Quartz;
 
-namespace PeterPedia.Server;
+Logger logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
+logger.Debug("init main");
 
-public class Program
+try
 {
-    public static void Main(string[] args)
+    WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+    // Add services to the container.
+    builder.Services.AddControllersWithViews().AddJsonOptions(options => options.JsonSerializerOptions.AddContext<PeterPediaJSONContext>());
+    builder.Services.AddRazorPages();
+
+    builder.Services.AddHttpClient();
+    builder.Services.AddMemoryCache();
+
+    builder.Services.AddDbContext<PeterPediaContext>(options =>
     {
-        IHost? host = CreateHostBuilder(args)
-                                    .ConfigureLogging((hostingContext, logging) =>
-                                    {
-                                        logging.ClearProviders();
-                                        logging.AddConsole();
+        options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+        options.UseSqlite(builder.Configuration.GetConnectionString("PeterPedia"));
+    });
 
-                                        IConfigurationSection? configuration = hostingContext.Configuration.GetSection("Logging");
-                                        logging.AddFile(configuration);
-                                    })
-                                    .Build();
+    builder.Services.AddSingleton(x =>
+        new TheMovieDatabaseService(
+            builder.Configuration["TheMovieDbAccessToken"],
+            x.GetRequiredService<IHttpClientFactory>(),
+            x.GetRequiredService<IMemoryCache>()
+        ));
 
-        CreateDbIfNotExists(host);
+    builder.Services.AddScoped<IFileService, FileService>();
 
-        host.Run();
+    builder.Services.AddQuartz(q =>
+    {
+        q.UseMicrosoftDependencyInjectionJobFactory();
+
+        q.AddJobAndTrigger<RemoveArticleJob>(builder.Configuration);
+        q.AddJobAndTrigger<RefreshArticleJob>(builder.Configuration);
+        q.AddJobAndTrigger<VideoJob>(builder.Configuration);
+        q.AddJobAndTrigger<ShowUpdateJob>(builder.Configuration);
+        q.AddJobAndTrigger<PhotoJob>(builder.Configuration);
+        q.AddJobAndTrigger<MovieUpdateJob>(builder.Configuration);
+    });
+
+    builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+
+    // NLog: Setup NLog for Dependency injection
+    builder.Logging.ClearProviders();
+    builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+    builder.Host.UseNLog();
+
+    WebApplication app = builder.Build();
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseDeveloperExceptionPage();
+        app.UseWebAssemblyDebugging();
+    }
+    else
+    {
+        app.UseExceptionHandler("/Error");
     }
 
-    public static IHostBuilder CreateHostBuilder(string[] args)
+    app.UseBlazorFrameworkFiles();
+    app.UseStaticFiles();
+
+    app.UseStaticFiles(new StaticFileOptions
     {
-        return 
-            Host.CreateDefaultBuilder(args)
-            .ConfigureServices((hostContext, services) =>
-            {
-                services.AddQuartz(q =>
-                {
-                    q.UseMicrosoftDependencyInjectionJobFactory();
+        FileProvider = new PhysicalFileProvider(builder.Configuration["VideoPath"] ?? "/video"),
+        RequestPath = "/video"
+    });
 
-                    q.AddJobAndTrigger<RemoveArticleJob>(hostContext.Configuration);
-                    q.AddJobAndTrigger<RefreshArticleJob>(hostContext.Configuration);
-                    q.AddJobAndTrigger<VideoJob>(hostContext.Configuration);
-                    q.AddJobAndTrigger<ShowUpdateJob>(hostContext.Configuration);
-                    q.AddJobAndTrigger<PhotoJob>(hostContext.Configuration);
-                });
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(builder.Configuration["PhotoPath"] ?? "/photos"),
+        RequestPath = "/photo"
+    });
 
-                services.AddQuartzHostedService(
-                    q => q.WaitForJobsToComplete = true);
-            })
-            .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(builder.Configuration["ImagePath"] ?? "/images"),
+        RequestPath = "/images"
+    });
+
+    app.UseRouting();
+
+    app.UseEndpoints(app =>
+    {
+        app.MapRazorPages();
+        app.MapControllers();
+        app.MapFallbackToFile("index.html");
+    });
+
+    CreateDbIfNotExists(logger, app);
+
+    app.Run();
+}
+catch (Exception exception)
+{
+    // NLog: catch setup errors
+    logger.Error(exception, "Stopped program because of exception");
+    throw;
+}
+finally
+{
+    // Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
+    LogManager.Shutdown();
+}
+
+static void CreateDbIfNotExists(Logger logger, WebApplication app)
+{
+    try
+    {
+        PeterPediaContext? lpdaContext = app.Services.GetRequiredService<PeterPediaContext>();
+        DbInitializer.Initialize(lpdaContext);
     }
-
-    private static void CreateDbIfNotExists(IHost host)
+    catch (Exception ex)
     {
-        using IServiceScope? scope = host.Services.CreateScope();
-        IServiceProvider? services = scope.ServiceProvider;
+        logger.Error(ex, "An error occurred creating the DB.");
 
-        try
-        {
-            PeterPediaContext? lpdaContext = services.GetRequiredService<PeterPediaContext>();
-            DbInitializer.Initialize(lpdaContext);
-        }
-        catch (Exception ex)
-        {
-            ILogger<Program>? logger = services.GetRequiredService<ILogger<Program>>();
-            logger.LogError(ex, "An error occurred creating the DB.");
-
-            throw;
-        }
-    }        
+        throw;
+    }
 }
