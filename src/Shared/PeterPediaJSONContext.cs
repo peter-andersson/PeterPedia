@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
 namespace PeterPedia.Shared;
 
@@ -10,6 +10,7 @@ namespace PeterPedia.Shared;
 [JsonSerializable(typeof(Author[]))]
 [JsonSerializable(typeof(Book))]
 [JsonSerializable(typeof(Book[]))]
+[JsonSerializable(typeof(DeleteLog[]))]
 [JsonSerializable(typeof(Movie))]
 [JsonSerializable(typeof(Movie[]))]
 [JsonSerializable(typeof(Show))]

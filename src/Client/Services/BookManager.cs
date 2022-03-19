@@ -107,46 +107,11 @@ public class BookManager : IBookManager
 
     public async Task RefreshAsync()
     {
-        Book? mostRecentlyUpdated = await _js.InvokeAsync<Book>("bookStore.getFirstFromIndex", "lastUpdated", "prev");
-        DateTime since = mostRecentlyUpdated?.LastUpdated ?? DateTime.MinValue;
-        var json = await _http.GetStringAsync($"/api/Book?lastupdate={since:yyyyMMddHHmmss}");
-        bool changed = false;
-        if (!string.IsNullOrWhiteSpace(json))
-        {
-            await _js.InvokeVoidAsync("bookStore.putAllFromJson", json);
-
-            Book[]? books = JsonSerializer.Deserialize(json, s_Context.BookArray);
-
-            if (books is not null)
-            {
-                foreach (Book book in books)
-                {
-                    Book? existing = Get(book.Id);
-
-                    if (existing is not null)
-                    {
-                        existing.Title = book.Title;
-                        existing.State = book.State;
-                        existing.Authors = book.Authors;
-                        existing.LastUpdated = book.LastUpdated;
-
-                        changed = true;
-                    }
-                    else
-                    {
-                        _books.Add(book);
-
-                        changed = true;
-                    }
-                }
-            }
-        }
-
-        if (changed)
+        if (await FetchChangedBooksAsync() || await FetchDeletedBooksAsync())
         {
             BookChanged?.Invoke();
         }
-    }
+    }    
 
     public async Task<bool> UpdateAsync(Book book)
     {        
@@ -189,6 +154,85 @@ public class BookManager : IBookManager
             return false;
         }
     }
-   
+
+    private async Task<bool> FetchChangedBooksAsync()
+    {
+        Book? mostRecentlyUpdated = await _js.InvokeAsync<Book>("bookStore.getFirstFromIndex", "lastUpdated", "prev");
+        DateTime since = mostRecentlyUpdated?.LastUpdated ?? DateTime.MinValue;
+        var json = await _http.GetStringAsync($"/api/Book?lastupdate={since:yyyyMMddHHmmss}");
+        var changed = false;
+        if (!string.IsNullOrWhiteSpace(json))
+        {
+            await _js.InvokeVoidAsync("bookStore.putAllFromJson", json);
+
+            Book[]? books = JsonSerializer.Deserialize(json, s_Context.BookArray);
+
+            if (books is not null)
+            {
+                foreach (Book book in books)
+                {
+                    Book? existing = Get(book.Id);
+
+                    if (existing is not null)
+                    {
+                        existing.Title = book.Title;
+                        existing.State = book.State;
+                        existing.Authors = book.Authors;
+                        existing.LastUpdated = book.LastUpdated;
+
+                        changed = true;
+                    }
+                    else
+                    {
+                        _books.Add(book);
+
+                        changed = true;
+                    }
+                }
+            }
+        }
+
+        return changed;        
+    }
+
+    private async Task<bool> FetchDeletedBooksAsync()
+    {
+        var changed = false;
+        DeleteLog? latestDeletion = await _js.InvokeAsync<DeleteLog>("bookStore.getDeleted");
+        DateTime since = latestDeletion?.Deleted ?? DateTime.MinValue;
+        var json = await _http.GetStringAsync($"/api/Book/deleted?deleted={since:yyyyMMddHHmmss}");
+        if (!string.IsNullOrWhiteSpace(json))
+        {
+            DeleteLog[]? deletions = JsonSerializer.Deserialize(json, s_Context.DeleteLogArray);
+
+            if (deletions is not null && deletions.Length > 0)
+            {
+                DeleteLog? maxDeleteTime = null;
+
+                foreach (DeleteLog deletion in deletions)
+                {
+                    Book? existing = Get(deletion.Id);
+                    if (existing is not null)
+                    {
+                        _books.Remove(existing);
+                        changed = true;
+                    }
+
+                    if ((maxDeleteTime is null) || (maxDeleteTime.Deleted < deletion.Deleted))
+                    {
+                        maxDeleteTime = deletion;
+                    }
+                }
+
+                if (maxDeleteTime is not null)
+                {
+                    await _js.InvokeVoidAsync("bookStore.putDeleted", maxDeleteTime);
+                }
+            }
+        }
+
+        return changed;
+    }
+
     private Book? Get(int id) => _books.FirstOrDefault(b => b.Id == id);   
 }

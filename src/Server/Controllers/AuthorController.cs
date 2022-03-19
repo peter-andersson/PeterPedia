@@ -1,6 +1,5 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace PeterPedia.Server.Controllers;
 
@@ -10,12 +9,12 @@ public partial class AuthorController : Controller
 {    
     private readonly ILogger<AuthorController> _logger;
 
-    private readonly PeterPediaContext _dbContext;
+    private readonly IAuthorManager _authorManager;
 
-    public AuthorController(ILogger<AuthorController> logger, PeterPediaContext dbContext)
+    public AuthorController(ILogger<AuthorController> logger, IAuthorManager authorManager)
     {
         _logger = logger;
-        _dbContext = dbContext;
+        _authorManager = authorManager;
     }
 
     [HttpGet]
@@ -26,16 +25,20 @@ public partial class AuthorController : Controller
             return BadRequest("Invalid date format");
         }        
 
-        List<AuthorEF>? authors = await _dbContext.Authors
-            .Where(a => a.LastUpdated > lastUpdated || a.LastUpdated == DateTime.MinValue)
-            .ToListAsync()
-            .ConfigureAwait(false);
+        IList<Author> result = await _authorManager.GetAsync(lastUpdated);
 
-        var result = new List<Author>(authors.Count);
-        foreach (AuthorEF? author in authors)
+        return Ok(result);
+    }
+
+    [HttpGet("deleted")]
+    public async Task<IActionResult> GetDeletedAsync([FromQuery] string deleted)
+    {
+        if (!DateTime.TryParseExact(deleted, "yyyyMMddHHmmss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime since))
         {
-            result.Add(ConvertToAuthor(author));
+            return BadRequest("Invalid date format");
         }
+
+        IList<DeleteLog> result = await _authorManager.GetDeletedAsync(since);
 
         return Ok(result);
     }
@@ -48,27 +51,40 @@ public partial class AuthorController : Controller
             return BadRequest();
         }
 
-        LogAddAuthor(author);
+        Log.AuthorAdd(_logger, author);
 
-        AuthorEF? existingAuthor = await _dbContext.Authors.Where(s => s.Name == author.Name.Trim()).FirstOrDefaultAsync().ConfigureAwait(false);
-        if (existingAuthor != null)
+        AuthorResult result = await _authorManager.AddAsync(author);
+        if (result.Success)
         {
-            LogAuthorExists(existingAuthor);
+            return Ok(result.Author);
+        }
+        else
+        {
+            Log.AuthorAddFailed(_logger, author, result.ErrorMessage);
             return Conflict();
+        }        
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteAsync(int id)
+    {
+        if (id <= 0)
+        {
+            return BadRequest();
         }
 
-        var authorEF = new AuthorEF
+        Log.AuthorDelete(_logger, id);
+
+        AuthorResult result = await _authorManager.DeleteAsync(id);
+        if (result.Success)
         {
-            Name = author.Name.Trim(),
-            DateOfBirth = author.DateOfBirth,
-            LastUpdated = DateTime.UtcNow,
-        };
-
-        _dbContext.Authors.Add(authorEF);
-        await _dbContext.SaveChangesAsync().ConfigureAwait(false);
-        LogAuthorAdded(authorEF);
-
-        return Ok(ConvertToAuthor(authorEF));
+            return NoContent();
+        }
+        else
+        {
+            Log.AuthorDeleteFailed(_logger, id, result.ErrorMessage);
+            return NotFound();
+        }
     }
 
     [HttpPut]
@@ -79,100 +95,17 @@ public partial class AuthorController : Controller
             return BadRequest();
         }
 
-        LogUpdateAuthor(author);
+        Log.AuthorUpdate(_logger, author);
 
-        AuthorEF? existingAuthor = await _dbContext.Authors.Where(s => s.Id == author.Id).AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
-        if (existingAuthor is null)
+        AuthorResult result = await _authorManager.UpdateAsync(author);
+        if (result.Success)
         {
-            LogNotFound(author.Id);
+            return Ok(result.Author);
+        }
+        else
+        {
+            Log.AuthorUpdateFailed(_logger, author, result.ErrorMessage);
             return NotFound();
         }
-
-        if ((author.Name.Trim() != existingAuthor.Name) ||
-            (author.DateOfBirth != existingAuthor.DateOfBirth))
-        {
-            existingAuthor.Name = author.Name.Trim();
-            existingAuthor.DateOfBirth = author.DateOfBirth;
-            existingAuthor.LastUpdated = DateTime.UtcNow;
-
-            _dbContext.Authors.Update(existingAuthor);
-            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
-            LogAuthorUpdated(existingAuthor);
-        }
-
-        return Ok(ConvertToAuthor(existingAuthor));
-    }
-
-    [HttpDelete("{id:int}")]
-    public async Task<IActionResult> DeleteAsync(int id)
-    {
-        LogDeleteAuthor(id);
-        if (id <= 0)
-        {
-            return BadRequest();
-        }
-
-        AuthorEF? author = await _dbContext.Authors.Where(a => a.Id == id).AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
-
-        if (author is null)
-        {
-            LogNotFound(id);
-            return NotFound();
-        }
-
-        _dbContext.Authors.Remove(author);
-        await _dbContext.SaveChangesAsync().ConfigureAwait(false);
-
-        LogAuthorDeleted(author);
-
-        return NoContent();
-    }
-
-    private static Author ConvertToAuthor(AuthorEF authorEF)
-    {
-        if (authorEF is null)
-        {
-            throw new ArgumentNullException(nameof(authorEF));
-        }
-
-        var author = new Author()
-        {
-            Id = authorEF.Id,
-            Name = authorEF.Name,
-            DateOfBirth = authorEF.DateOfBirth ?? DateOnly.MinValue,
-            LastUpdated = authorEF.LastUpdated,
-        };
-
-        return author;
-    }
-
-#pragma warning disable IDE0079 // Remove unnecessary suppression
-#pragma warning disable CA1822 // Mark members as static
-#pragma warning disable IDE0060 // Remove unused parameter
-    [LoggerMessage(0, LogLevel.Debug, "Adding new author {author}")]
-    partial void LogAddAuthor(Author author);
-
-    [LoggerMessage(1, LogLevel.Debug, "Author {author} already exists.")]
-    partial void LogAuthorExists(AuthorEF author);
-
-    [LoggerMessage(2, LogLevel.Debug, "Author {author} added.")]
-    partial void LogAuthorAdded(AuthorEF author);
-
-    [LoggerMessage(3, LogLevel.Debug, "Update author {author}")]
-    partial void LogUpdateAuthor(Author author);
-
-    [LoggerMessage(4, LogLevel.Debug, "Author {author} updated.")]
-    partial void LogAuthorUpdated(AuthorEF author);
-
-    [LoggerMessage(5, LogLevel.Debug, "Author with id {id} not found.")]
-    partial void LogNotFound(int id);
-
-    [LoggerMessage(6, LogLevel.Debug, "Delete author with id {id}.")]
-    partial void LogDeleteAuthor(int id);
-
-    [LoggerMessage(7, LogLevel.Debug, "Delete author {author}.")]
-    partial void LogAuthorDeleted(AuthorEF author);
-#pragma warning restore CA1822 // Mark members as static
-#pragma warning restore IDE0060 // Remove unused parameter
-#pragma warning restore IDE0079 // Remove unnecessary suppression
+    }    
 }

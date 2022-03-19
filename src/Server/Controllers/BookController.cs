@@ -1,6 +1,5 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PeterPedia.Server.Services;
 
 namespace PeterPedia.Server.Controllers;
 
@@ -8,36 +7,37 @@ namespace PeterPedia.Server.Controllers;
 [Route("api/[controller]")]
 public partial class BookController : Controller
 {
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Used by source generator [LoggerMessaage]")]
     private readonly ILogger<BookController> _logger;
+    private readonly IBookManager _bookManager;
 
-    private readonly PeterPediaContext _dbContext;
-    private readonly IFileService _fileService;
-    private readonly IConfiguration _configuration;
-
-    public BookController(ILogger<BookController> logger, PeterPediaContext dbContext, IFileService fileService, IConfiguration configuration)
+    public BookController(ILogger<BookController> logger, IBookManager bookManager)
     {
         _logger = logger;
-        _dbContext = dbContext;
-        _fileService = fileService;
-        _configuration = configuration;
+        _bookManager = bookManager;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAsync([FromQuery]DateTime lastUpdated)
+    public async Task<IActionResult> GetAsync([FromQuery]string lastupdate)
     {
-        List<BookEF>? books = await _dbContext.Books
-            .Include(b => b.Authors)
-            .AsSplitQuery()
-            .Where(b => b.LastUpdated > lastUpdated || b.LastUpdated == DateTime.MinValue)
-            .ToListAsync()
-            .ConfigureAwait(false);
-
-        var result = new List<Book>(books.Count);
-        foreach (BookEF? book in books)
+        if (!DateTime.TryParseExact(lastupdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime lastUpdated))
         {
-            result.Add(ConvertToBook(book));
+            return BadRequest("Invalid date format");
         }
+
+        IList<Book> result = await _bookManager.GetAsync(lastUpdated);
+
+        return Ok(result);        
+    }
+
+    [HttpGet("deleted")]
+    public async Task<IActionResult> GetDeletedAsync([FromQuery] string deleted)
+    {
+        if (!DateTime.TryParseExact(deleted, "yyyyMMddHHmmss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime since))
+        {
+            return BadRequest("Invalid date format");
+        }
+
+        IList<DeleteLog> result = await _bookManager.GetDeletedAsync(since);
 
         return Ok(result);
     }
@@ -50,33 +50,18 @@ public partial class BookController : Controller
             return BadRequest();
         }
 
-        LogAddBook(book);
+        Log.BookAdd(_logger, book);
 
-        var bookEF = new BookEF
+        BookResult result = await _bookManager.AddAsync(book);
+        if (result.Success)
         {
-            Title = book.Title,
-            State = (int)book.State,
-            LastUpdated = DateTime.UtcNow,
-            Authors = new List<AuthorEF>(),
-        };
-
-        foreach (Author author in book.Authors)
-        {
-            AuthorEF? authorEF = await _dbContext.Authors.Where(a => a.Name == author.Name.Trim() && a.DateOfBirth == author.DateOfBirth).AsTracking().FirstOrDefaultAsync();
-            if (authorEF is not null)
-            {
-                bookEF.Authors.Add(authorEF);
-            }
+            return Ok(result.Book);
         }
-
-        _dbContext.Books.Add(bookEF);
-        await _dbContext.SaveChangesAsync().ConfigureAwait(false);
-
-        LogBookAdded(bookEF);
-
-        await DownloadCoverAsync(book.CoverUrl, bookEF.Id);
-
-        return Ok(ConvertToBook(bookEF));
+        else
+        {
+            Log.BookAddFailed(_logger, book, result.ErrorMessage);
+            return StatusCode(500);
+        }
     }
 
     [HttpPut]
@@ -87,149 +72,39 @@ public partial class BookController : Controller
             return BadRequest();
         }
 
-        LogUpdateBook(book);
+        Log.BookUpdate(_logger, book);
 
-        BookEF? bookEF = await _dbContext.Books.Where(b => b.Id == book.Id).Include(b => b.Authors).AsSplitQuery().AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
-        if (bookEF is null)
+        BookResult result = await _bookManager.UpdateAsync(book);
+        if (result.Success)
         {
-            LogNotFound(book.Id);
+            return Ok(result.Book);
+        }
+        else
+        {
+            Log.BookUpdateFailed(_logger, book, result.ErrorMessage);
             return NotFound();
         }
-
-        bookEF.Authors.Clear();
-        foreach (Author author in book.Authors)
-        {
-            AuthorEF? authorEF = await _dbContext.Authors.Where(a => a.Name == author.Name.Trim() && (a.DateOfBirth == null || (a.DateOfBirth == author.DateOfBirth))).AsTracking().FirstOrDefaultAsync();
-            if (authorEF is not null)
-            {
-                bookEF.Authors.Add(authorEF);
-            }
-        }
-
-        bookEF.State = (int)book.State;
-        bookEF.Title = book.Title;
-        bookEF.LastUpdated = DateTime.UtcNow;
-
-        _dbContext.Books.Update(bookEF);
-        await _dbContext.SaveChangesAsync().ConfigureAwait(false);
-        LogBookUpdated(bookEF);
-
-        await DownloadCoverAsync(book.CoverUrl, bookEF.Id);
-
-        return Ok(ConvertToBook(bookEF));
     }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteAsync(int id)
     {
-        LogDeleteBook(id);
         if (id <= 0)
         {
             return BadRequest();
         }
 
-        BookEF? bookEF = await _dbContext.Books.Where(b => b.Id == id).AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
+        Log.BookDelete(_logger, id);
 
-        if (bookEF is null)
+        BookResult result = await _bookManager.DeleteAsync(id);
+        if (result.Success)
         {
-            LogNotFound(id);
+            return NoContent();
+        }
+        else
+        {
+            Log.BookDeleteFailed(_logger, id, result.ErrorMessage);
             return NotFound();
         }
-
-        _dbContext.Books.Remove(bookEF);
-        await _dbContext.SaveChangesAsync().ConfigureAwait(false);
-
-        LogBookDeleted(bookEF);
-
-        return Ok();
     }
-
-    private static Book ConvertToBook(BookEF bookEF)
-    {
-        if (bookEF is null)
-        {
-            throw new ArgumentNullException(nameof(bookEF));
-        }
-
-        var book = new Book()
-        {
-            Id = bookEF.Id,
-            Title = bookEF.Title,
-            LastUpdated = bookEF.LastUpdated,
-            State = (BookState)bookEF.State,
-        };
-
-        foreach (AuthorEF? author in bookEF.Authors)
-        {
-            book.Authors.Add(ConvertToAuthor(author));
-        }
-
-        return book;
-    }
-
-    private static Author ConvertToAuthor(AuthorEF authorEF)
-    {
-        if (authorEF is null)
-        {
-            throw new ArgumentNullException(nameof(authorEF));
-        }
-
-        var author = new Author()
-        {
-            Id = authorEF.Id,
-            Name = authorEF.Name,
-            DateOfBirth = authorEF.DateOfBirth ?? DateOnly.MinValue,
-            LastUpdated = authorEF.LastUpdated,
-        };
-
-        return author;
-    }
-
-    private async Task DownloadCoverAsync(string? url, int id)
-    {
-        if (string.IsNullOrWhiteSpace(url))
-        {
-            return;
-        }
-
-        try
-        {
-            var filename = Path.Combine(_configuration["ImagePath"], "books", $"{id}.jpg");
-            await _fileService.DownloadImageAsync(url, filename);
-        }
-        catch (Exception ex)
-        {
-            LogFailedDownload(url, ex);
-        }
-    }
-
-#pragma warning disable IDE0079 // Remove unnecessary suppression
-#pragma warning disable CA1822 // Mark members as static
-#pragma warning disable IDE0060 // Remove unused parameter
-    [LoggerMessage(0, LogLevel.Debug, "Adding new book {book}")]
-    partial void LogAddBook(Book book);
-
-    [LoggerMessage(1, LogLevel.Debug, "Book {book} added.")]
-    partial void LogBookAdded(BookEF book);
-
-    [LoggerMessage(2, LogLevel.Debug, "Update book {book}")]
-    partial void LogUpdateBook(Book book);
-
-    [LoggerMessage(3, LogLevel.Debug, "Book {book} updated.")]
-    partial void LogBookUpdated(BookEF book);
-
-    [LoggerMessage(4, LogLevel.Debug, "Book with id {id} not found.")]
-    partial void LogNotFound(int id);
-
-    [LoggerMessage(5, LogLevel.Debug, "Delete book with id {id}.")]
-    partial void LogDeleteBook(int id);
-
-    [LoggerMessage(6, LogLevel.Debug, "Delete book {book}.")]
-    partial void LogBookDeleted(BookEF book);
-
-    [LoggerMessage(7, LogLevel.Error, "Failed to download cover from {url}.")]
-    partial void LogFailedDownload(string url, Exception e);
-#pragma warning restore CA1822 // Mark members as static
-#pragma warning restore IDE0060 // Remove unused parameter
-#pragma warning restore IDE0079 // Remove unnecessary suppression
 }

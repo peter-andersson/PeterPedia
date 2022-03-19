@@ -107,38 +107,7 @@ public class AuthorManager : IAuthorManager
 
     public async Task RefreshAsync()
     {
-        Author? mostRecentlyUpdated = await _js.InvokeAsync<Author>("authorStore.getFirstFromIndex", "lastUpdated", "prev");
-        DateTime since = mostRecentlyUpdated?.LastUpdated ?? DateTime.MinValue;
-        var json = await _http.GetStringAsync($"/api/Author?lastupdate={since:yyyyMMddHHmmss}");
-        var changed = false;
-        if (!string.IsNullOrWhiteSpace(json))
-        {
-            await _js.InvokeVoidAsync("authorStore.putAllFromJson", json);
-
-            Author[]? authors = JsonSerializer.Deserialize(json, s_Context.AuthorArray);
-
-            if (authors is not null)
-            {
-                foreach (Author author in authors)
-                {
-                    Author? existing = Get(author.Id);
-
-                    if (existing is not null)
-                    {
-                        existing.Name = author.Name;
-                        existing.DateOfBirth = author.DateOfBirth;
-                        existing.LastUpdated = author.LastUpdated;
-                    }
-                    else
-                    {
-                        _authors.Add(author);
-                        changed = true;
-                    }
-                }
-            }
-        }
-
-        if (changed)
+        if (await FetchChangedAuthorsAsync() || await FetchDeletedAuthorsAsync())
         {
             AuthorChanged?.Invoke();
         }
@@ -186,4 +155,80 @@ public class AuthorManager : IAuthorManager
     }
 
     private Author? Get(int id) => _authors.FirstOrDefault(a => a.Id == id);
+
+    private async Task<bool> FetchChangedAuthorsAsync()
+    {
+        var changed = false;
+        Author? mostRecentlyUpdated = await _js.InvokeAsync<Author>("authorStore.getFirstFromIndex", "lastUpdated", "prev");
+        DateTime since = mostRecentlyUpdated?.LastUpdated ?? DateTime.MinValue;
+        var json = await _http.GetStringAsync($"/api/Author?lastupdate={since:yyyyMMddHHmmss}");
+
+        if (!string.IsNullOrWhiteSpace(json))
+        {
+            await _js.InvokeVoidAsync("authorStore.putAllFromJson", json);
+
+            Author[]? authors = JsonSerializer.Deserialize(json, s_Context.AuthorArray);
+
+            if (authors is not null)
+            {
+                foreach (Author author in authors)
+                {
+                    Author? existing = Get(author.Id);
+
+                    if (existing is not null)
+                    {
+                        existing.Name = author.Name;
+                        existing.DateOfBirth = author.DateOfBirth;
+                        existing.LastUpdated = author.LastUpdated;
+                    }
+                    else
+                    {
+                        _authors.Add(author);
+                        changed = true;
+                    }
+                }
+            }
+        }
+
+        return changed;
+    }
+
+    private async Task<bool> FetchDeletedAuthorsAsync()
+    {
+        var changed = false;
+        DeleteLog? latestDeletion = await _js.InvokeAsync<DeleteLog>("authorStore.getDeleted");
+        DateTime since = latestDeletion?.Deleted ?? DateTime.MinValue;
+        var json = await _http.GetStringAsync($"/api/Author/deleted?deleted={since:yyyyMMddHHmmss}");
+        if (!string.IsNullOrWhiteSpace(json))
+        {
+            DeleteLog[]? deletions = JsonSerializer.Deserialize(json, s_Context.DeleteLogArray);
+
+            if (deletions is not null && deletions.Length > 0)
+            {
+                DeleteLog? maxDeleteTime = null;
+
+                foreach (DeleteLog deletion in deletions)
+                {
+                    Author? existing = Get(deletion.Id);
+                    if (existing is not null)
+                    {
+                        _authors.Remove(existing);
+                        changed = true;
+                    }
+
+                    if ((maxDeleteTime is null) || (maxDeleteTime.Deleted < deletion.Deleted))
+                    {
+                        maxDeleteTime = deletion;
+                    }
+                }
+
+                if (maxDeleteTime is not null)
+                {
+                    await _js.InvokeVoidAsync("authorStore.putDeleted", maxDeleteTime);
+                }
+            }
+        }
+
+        return changed;
+    }
 }

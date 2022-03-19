@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
 namespace PeterPedia.Client.Pages;
@@ -9,6 +9,9 @@ public partial class Index : ComponentBase
 
     [Inject]
     private IJSRuntime JS { get; set; } = null!;
+
+    [Inject]
+    private SyncService _syncService { get; set; } = null!;
 
     [Inject]
     public LinkService LinkService { get; set; } = null!;
@@ -22,6 +25,8 @@ public partial class Index : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
+        _syncService.Start();
+
         Links = await LinkService.GetLinksAsync();
 
         Links.Add(new Link()
