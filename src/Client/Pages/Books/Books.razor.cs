@@ -20,7 +20,7 @@ public partial class Books : ComponentBase, IDisposable
 
     private List<Book> ToBeRead => _bookList.Where(b => b.State == BookState.ToRead).ToList();
 
-    private ModalOptions _options = new()
+    private readonly ModalOptions _options = new()
     {
         Class = "blazored-modal w-75",
         ContentScrollable = true,
@@ -32,6 +32,7 @@ public partial class Books : ComponentBase, IDisposable
 
         await RefreshBooksAsync();
     }
+
     private async Task RefreshBooksAsync()
     {
         List<Book> books = await BookManager.GetAsync();

@@ -214,6 +214,7 @@ public class BookManager : IBookManager
                     Book? existing = Get(deletion.Id);
                     if (existing is not null)
                     {
+                        await _js.InvokeVoidAsync("bookStore.delete", existing.Id);
                         _books.Remove(existing);
                         changed = true;
                     }

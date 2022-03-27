@@ -50,7 +50,7 @@ public partial class BookController : Controller
             return BadRequest();
         }
 
-        Log.BookAdd(_logger, book);
+        LogMessage.BookAdd(_logger, book);
 
         BookResult result = await _bookManager.AddAsync(book);
         if (result.Success)
@@ -59,7 +59,7 @@ public partial class BookController : Controller
         }
         else
         {
-            Log.BookAddFailed(_logger, book, result.ErrorMessage);
+            LogMessage.BookAddFailed(_logger, book, result.ErrorMessage);
             return StatusCode(500);
         }
     }
@@ -72,7 +72,7 @@ public partial class BookController : Controller
             return BadRequest();
         }
 
-        Log.BookUpdate(_logger, book);
+        LogMessage.BookUpdate(_logger, book);
 
         BookResult result = await _bookManager.UpdateAsync(book);
         if (result.Success)
@@ -81,7 +81,7 @@ public partial class BookController : Controller
         }
         else
         {
-            Log.BookUpdateFailed(_logger, book, result.ErrorMessage);
+            LogMessage.BookUpdateFailed(_logger, book, result.ErrorMessage);
             return NotFound();
         }
     }
@@ -94,7 +94,7 @@ public partial class BookController : Controller
             return BadRequest();
         }
 
-        Log.BookDelete(_logger, id);
+        LogMessage.BookDelete(_logger, id);
 
         BookResult result = await _bookManager.DeleteAsync(id);
         if (result.Success)
@@ -103,7 +103,7 @@ public partial class BookController : Controller
         }
         else
         {
-            Log.BookDeleteFailed(_logger, id, result.ErrorMessage);
+            LogMessage.BookDeleteFailed(_logger, id, result.ErrorMessage);
             return NotFound();
         }
     }

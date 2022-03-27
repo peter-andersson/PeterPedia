@@ -51,7 +51,7 @@ public partial class AuthorController : Controller
             return BadRequest();
         }
 
-        Log.AuthorAdd(_logger, author);
+        LogMessage.AuthorAdd(_logger, author);
 
         AuthorResult result = await _authorManager.AddAsync(author);
         if (result.Success)
@@ -60,7 +60,7 @@ public partial class AuthorController : Controller
         }
         else
         {
-            Log.AuthorAddFailed(_logger, author, result.ErrorMessage);
+            LogMessage.AuthorAddFailed(_logger, author, result.ErrorMessage);
             return Conflict();
         }        
     }
@@ -73,7 +73,7 @@ public partial class AuthorController : Controller
             return BadRequest();
         }
 
-        Log.AuthorDelete(_logger, id);
+        LogMessage.AuthorDelete(_logger, id);
 
         AuthorResult result = await _authorManager.DeleteAsync(id);
         if (result.Success)
@@ -82,7 +82,7 @@ public partial class AuthorController : Controller
         }
         else
         {
-            Log.AuthorDeleteFailed(_logger, id, result.ErrorMessage);
+            LogMessage.AuthorDeleteFailed(_logger, id, result.ErrorMessage);
             return NotFound();
         }
     }
@@ -95,7 +95,7 @@ public partial class AuthorController : Controller
             return BadRequest();
         }
 
-        Log.AuthorUpdate(_logger, author);
+        LogMessage.AuthorUpdate(_logger, author);
 
         AuthorResult result = await _authorManager.UpdateAsync(author);
         if (result.Success)
@@ -104,7 +104,7 @@ public partial class AuthorController : Controller
         }
         else
         {
-            Log.AuthorUpdateFailed(_logger, author, result.ErrorMessage);
+            LogMessage.AuthorUpdateFailed(_logger, author, result.ErrorMessage);
             return NotFound();
         }
     }    

@@ -212,6 +212,7 @@ public class AuthorManager : IAuthorManager
                     Author? existing = Get(deletion.Id);
                     if (existing is not null)
                     {
+                        await _js.InvokeVoidAsync("authorStore.delete", existing.Id);
                         _authors.Remove(existing);
                         changed = true;
                     }

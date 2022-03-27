@@ -6,6 +6,8 @@
 
   const db = idb.openDB("Books", 2, {
     upgrade(db) {
+      db.deleteObjectStore(bookStore);
+
       db.createObjectStore(bookStore, { keyPath: "id" }).createIndex("lastUpdated", "lastUpdated");
       db.createObjectStore(deleteStore, { keyPath: "deleted" });
     },
