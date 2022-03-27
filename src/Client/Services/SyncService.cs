@@ -4,12 +4,14 @@ public class SyncService
 {    
     private readonly IAuthorManager _authorManager;
     private readonly IBookManager _bookManager;
+    private readonly IMovieManager _movieManager;
     private System.Timers.Timer _timer = null!;
 
-    public SyncService(IAuthorManager authorManager, IBookManager bookManager)
+    public SyncService(IAuthorManager authorManager, IBookManager bookManager, IMovieManager movieManager)
     {            
         _authorManager = authorManager;
         _bookManager = bookManager;
+        _movieManager = movieManager;
     }
 
     public void Start()
@@ -26,5 +28,7 @@ public class SyncService
         await _authorManager.RefreshAsync();
 
         await _bookManager.RefreshAsync();
+
+        await _movieManager.RefreshAsync();
     }
 }

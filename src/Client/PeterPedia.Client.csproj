@@ -24,6 +24,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Remove="node_modules\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Pages\Books\Authors.razor.css" />
     <None Remove="Shared\MainLayout.razor.css" />
     <None Remove="Shared\NavMenu.razor.css" />

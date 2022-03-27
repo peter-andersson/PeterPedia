@@ -1,7 +1,7 @@
 namespace PeterPedia.Server.Helpers;
 
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Used by source generator")]
-public static partial class Log
+public static partial class LogMessage
 {    
     [LoggerMessage(0, LogLevel.Error, "Failed to fetch data from themoviedb.org")]
     public static partial void TheMovieDbFailed(ILogger logger);
@@ -9,23 +9,20 @@ public static partial class Log
     [LoggerMessage(1, LogLevel.Debug, "Add movie {id}")]
     public static partial void AddMovie(ILogger logger, int id);
 
-    [LoggerMessage(2, LogLevel.Information, "Add movie entity {movie}")]
-    public static partial void AddMovieEntity(ILogger logger, MovieEF movie);
+    [LoggerMessage(2, LogLevel.Error, "Failed to add movie {movie}, error {message}")]
+    public static partial void MovieAddFailed(ILogger logger, AddMovie movie, string message);
 
     [LoggerMessage(3, LogLevel.Debug, "Update movie {movie}")]
-    public static partial void UpdateMovie(ILogger logger, Movie movie);
+    public static partial void MovieUpdate(ILogger logger, Movie movie);
 
-    [LoggerMessage(4, LogLevel.Information, "Update movie entity {movie}")]
-    public static partial void UpdateMovieEntity(ILogger logger, MovieEF movie);
-
-    [LoggerMessage(5, LogLevel.Debug, "Movie with id {id} not found.")]
-    public static partial void MovieNotFound(ILogger logger, int id);
+    [LoggerMessage(4, LogLevel.Error, "Failed to update movie {movie}, error {message}")]
+    public static partial void MovieUpdateFailed(ILogger logger, Movie movie, string message);
 
     [LoggerMessage(6, LogLevel.Debug, "Delete movie with id {id}")]
-    public static partial void DeleteMovie(ILogger logger, int id);
+    public static partial void MovieDelete(ILogger logger, int id);
 
-    [LoggerMessage(7, LogLevel.Information, "Delete movie entity {movie}")]
-    public static partial void DeleteMovieEntity(ILogger logger, MovieEF movie);
+    [LoggerMessage(7, LogLevel.Error, "Failed to delete movie with id {id}, error {message}")]
+    public static partial void MovieDeleteFailed(ILogger logger, int id, string message);
 
     [LoggerMessage(8, LogLevel.Error, "Failed to download from {url}.")]
     public static partial void FailedDownload(ILogger logger, string url, Exception e);

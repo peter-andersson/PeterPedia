@@ -11,13 +11,13 @@ public partial class Index : ComponentBase
     private IJSRuntime JS { get; set; } = null!;
 
     [Inject]
-    private SyncService _syncService { get; set; } = null!;
+    private SyncService SyncService { get; set; } = null!;
 
     [Inject]
     public LinkService LinkService { get; set; } = null!;
 
     [Inject]
-    public IToastService ToastService { get; set; }
+    public IToastService ToastService { get; set; } = null!;
 
     public List<Link> Links { get; set; } = null!;
 
@@ -25,7 +25,7 @@ public partial class Index : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        _syncService.Start();
+        SyncService.Start();
 
         Links = await LinkService.GetLinksAsync();
 
@@ -75,17 +75,11 @@ public partial class Index : ComponentBase
         _module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/dialog.js");
     }
 
-    public async Task Edit()
-    {
-        await ShowDialog(LinksElement);
-    }
+    public async Task EditAsync() => await ShowDialogAsync(LinksElement);
 
-    public async Task DialogClose()
-    {
-        await HideDialog(LinksElement);
-    }
+    public async Task DialogCloseAsync() => await HideDialogAsync(LinksElement);
 
-    private async Task ShowDialog(string element)
+    private async Task ShowDialogAsync(string element)
     {
         if (string.IsNullOrWhiteSpace(element))
         {
@@ -98,7 +92,7 @@ public partial class Index : ComponentBase
         }
     }
 
-    private async Task HideDialog(string element)
+    private async Task HideDialogAsync(string element)
     {
         if (string.IsNullOrWhiteSpace(element))
         {

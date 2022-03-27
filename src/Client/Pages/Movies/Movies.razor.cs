@@ -1,145 +1,57 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
+using Microsoft.AspNetCore.Components;
 
 namespace PeterPedia.Client.Pages.Movies;
 
-public partial class Movies : ComponentBase
+public partial class Movies : ComponentBase, IDisposable
 {
-    private IJSObjectReference _module = null!;
-
     [Inject]
-    private MovieService MovieService { get; set; } = null!;
+    private IMovieManager MovieManager { get; set; } = null!;
 
-    [Inject]
-    private IJSRuntime JS { get; set; } = null!;    
+    [CascadingParameter]
+    private IModalService Modal { get; set; } = null!;
 
-    public List<Movie> MovieList { get; private set; } = null!;
+    public string Filter { get; set; } = string.Empty;
 
-    public bool Watchlist { get; set; } = true;
+    private readonly List<Movie> _movies = new();
 
-    public Movie? SelectedMovie { get; set; } = null;
+    private List<Movie> AllMovies => _movies.Where(m => m.Search(Filter)).ToList();
 
-    public string AddMovieElement { get; } = "add-movie-dialog";
-
-    public string DeleteMovieElement { get; } = "delete-movie-dialog";
-
-    public string EditMovieElement { get; } = "edit-movie-dialog";
-
-    private string _currentFilter = string.Empty;
+    private List<Movie> WatchList => _movies.Where(m => !m.WatchedDate.HasValue).ToList();
 
     protected override async Task OnInitializedAsync()
     {
-        await FilterMovies(string.Empty);
+        MovieManager.MovieChanged += async () => await RefreshMoviesAsync();
+
+        await RefreshMoviesAsync();
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private async Task RefreshMoviesAsync()
     {
-        await base.OnAfterRenderAsync(firstRender);
+        List<Movie> movies = await MovieManager.GetAsync();
 
-        _module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/dialog.js");
-    }
-
-    public async Task FilterMovies(string filter)
-    {
-        _currentFilter = filter;
-        MovieList = await MovieService.GetMoviesAsync(_currentFilter, watchList: Watchlist);
-    }
-
-    public async Task ToggleUnwatched()
-    {
-        Watchlist = !Watchlist;
-
-        await FilterMovies(string.Empty);
-    }
-
-    public async Task AddMovie()
-    {
-        await ShowDialog(AddMovieElement);
-    }
-
-    public async Task AddDialogClose()
-    {
-        await HideDialog(AddMovieElement);
-    }
-
-    public async Task AddDialogSuccess()
-    {
-        await AddDialogClose();
-
-        await FilterMovies(_currentFilter);
+        _movies.Clear();
+        _movies.AddRange(movies.OrderBy(a => a.Title).ToList());
 
         StateHasChanged();
     }
 
-    public async Task DeleteMovie(Movie movie)
+    public void AddMovie() => _ = Modal.Show<AddMovieDialog>("Add movie", new ModalOptions()
     {
-        SelectedMovie = movie;
+        Class = "blazored-modal w-50",
+    });
 
-        await ShowDialog(DeleteMovieElement);
+    private void SelectMovie(Movie movie)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add("Movie", movie);
+
+        Modal.Show<MovieDialog>("Edit movie", parameters);
     }
 
-    public async Task DeleteDialogClose()
+    public void Dispose()
     {
-        SelectedMovie = null;
+        MovieManager.MovieChanged -= async () => await RefreshMoviesAsync();
 
-        await HideDialog(DeleteMovieElement);
-    }
-
-    public async Task DeleteDialogSuccess()
-    {
-        await DeleteDialogClose();
-
-        await FilterMovies(_currentFilter);
-
-        StateHasChanged();
-    }
-
-    public async Task EditMovie(Movie movie)
-    {
-        SelectedMovie = movie;
-
-        await ShowDialog(EditMovieElement);
-    }
-
-    public async Task EditDialogClose()
-    {
-        SelectedMovie = null;
-
-        await HideDialog(EditMovieElement);
-    }
-
-    public async Task EditDialogSuccess()
-    {
-        await EditDialogClose();
-
-        await FilterMovies(_currentFilter);
-
-        StateHasChanged();
-    }
-
-    private async Task ShowDialog(string element)
-    {
-        if (string.IsNullOrWhiteSpace(element))
-        {
-            return;
-        }
-
-        if (_module is not null)
-        {
-            await _module.InvokeVoidAsync("ShowDialog", element);
-        }
-    }
-
-    private async Task HideDialog(string element)
-    {
-        if (string.IsNullOrWhiteSpace(element))
-        {
-            return;
-        }
-
-        if (_module is not null)
-        {
-            await _module.InvokeVoidAsync("HideDialog", element);
-        }
-    }
+        GC.SuppressFinalize(this);
+    }    
 }

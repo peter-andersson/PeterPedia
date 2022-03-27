@@ -1,0 +1,53 @@
+﻿<EditForm class="form" Model="@EditMovie" OnValidSubmit="@SaveAsync">
+    <div class="row">
+        <div class="col-12 mb-2">
+            <div class="form-floating">
+                <InputText id="movie-title" class="form-control" type="text" @bind-Value="EditMovie.Title"></InputText>
+                <label for="movie-title">Title</label>
+            </div>
+        </div>
+        <div class="col-12 mb-2">
+            <div class="form-floating">
+                <input id="movie-original-title" class="form-control" type="text" value="@Movie.OriginalTitle" disabled />
+                <label for="movie-original-title">Original title</label>
+            </div>
+        </div>
+        <div class="col-6 mb-2">
+            <div class="form-floating">                
+                <input id="movie-original-language" class="form-control" type="text" value="@Movie.OriginalLanguage" disabled />
+                <label for="movie-language">Original language</label>
+            </div>
+        </div>
+        <div class="col-6 mb-2">
+            <div class="form-floating">                
+                <input id="movie-runtime" class="form-control" type="text" value="@Movie.RunTime" disabled />
+                <label for="movie-runtime">Run time</label>
+            </div>
+        </div>
+        <div class="col-6 mb-2">
+            <div class="form-floating">                
+                <input id="movie-release-date" class="form-control" type="text" value="@Movie.ReleaseDate?.ToString("dd MMM yyyy")" disabled />
+                <label for="movie-release-date">Release date</label>
+            </div>
+        </div>
+        <div class="col-6 mb-2">
+            <div class="form-floating">                
+                <InputDate id="movie-date" class="form-control" @bind-Value="EditMovie.WatchedDate" @bind-Value:format="dd MMM yyyy"></InputDate>
+                <label for="movie-date">Watch date</label>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <p class="mt-2">
+            <a href="@Movie.TheMovieDbUrl.ToString()" target="_blank">View on TMDb</a>
+            <a class="ml-2" href="@Movie.ImdbUrl.ToString()" target="_blank">View on IMDB</a>
+        </p>
+    </div>
+    <div class="row">
+        <div class="d-flex">
+            <button type="submit" class="btn btn-success" disabled=@IsTaskRunning>Save</button>
+            <button type="button" class="btn btn-danger ms-2" @onclick="DeleteAsync" disabled="@IsTaskRunning">Delete</button>
+            <button type="button" class="btn btn-secondary ms-2" @onclick="CloseAsync">Cancel</button>
+        </div>
+    </div>
+</EditForm>

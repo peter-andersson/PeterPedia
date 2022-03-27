@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PeterPedia.Server.Data;
 
@@ -10,12 +11,13 @@ using PeterPedia.Server.Data;
 namespace PeterPedia.Server.Migrations
 {
     [DbContext(typeof(PeterPediaContext))]
-    partial class LPDAContextModelSnapshot : ModelSnapshot
+    [Migration("20220312110750_MovieLastUpdate")]
+    partial class MovieLastUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.3");
+            modelBuilder.HasAnnotation("ProductVersion", "6.0.2");
 
             modelBuilder.Entity("AuthorEFBookEF", b =>
                 {
@@ -123,26 +125,6 @@ namespace PeterPedia.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("book");
-                });
-
-            modelBuilder.Entity("PeterPedia.Server.Data.Models.DeleteLogEF", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("DataId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("Deleted")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("delete");
                 });
 
             modelBuilder.Entity("PeterPedia.Server.Data.Models.EpisodeEF", b =>

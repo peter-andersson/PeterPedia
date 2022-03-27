@@ -1,9 +1,0 @@
-﻿<Dialog Id="@Id" Title="Add movie">
-    <Body>
-        <input class="form-input w-100" @bind="MovieUrl" @bind:event="oninput" @onkeydown="InputKeyDown" placeholder="TheMovieDb id or URL" autofocus />
-    </Body>
-    <Footer>
-        <button type="button" class="btn btn-secondary" @onclick="Close" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-success" @onclick="Add" disabled=@IsTaskRunning>Add</button>
-    </Footer>
-</Dialog>

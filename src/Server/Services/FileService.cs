@@ -5,13 +5,20 @@ public interface IFileService
     void Delete(string path);
 
     Task DownloadImageAsync(string url, string filename);
+
+    bool FileExists(string filename);
 }
 
 public class FileService : IFileService
 {
     private readonly HttpClient _httpClient;
+    private readonly ILogger<FileService> _logger;
 
-    public FileService(IHttpClientFactory httpClientFactory) => _httpClient = httpClientFactory.CreateClient();
+    public FileService(ILogger<FileService> logger, IHttpClientFactory httpClientFactory)
+    {
+        _logger = logger;
+        _httpClient = httpClientFactory.CreateClient();
+    }
 
     public void Delete(string path)
     {
@@ -20,6 +27,8 @@ public class FileService : IFileService
             File.Delete(path);
         }
     }
+
+    public bool FileExists(string filename) => File.Exists(filename);
 
     public async Task DownloadImageAsync(string url, string filename)
     {
@@ -36,11 +45,20 @@ public class FileService : IFileService
 
         Directory.CreateDirectory(dir);
 
-        using HttpResponseMessage response = await _httpClient.GetAsync(url);
-        response.EnsureSuccessStatusCode();
+        LogMessage.DownloadImage(_logger, url, filename);
 
-        using var fs = new FileStream(filename, FileMode.CreateNew);
-        
-        await response.Content.CopyToAsync(fs);        
+        try
+        {
+            using HttpResponseMessage response = await _httpClient.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+
+            using var fs = new FileStream(filename, FileMode.CreateNew);
+
+            await response.Content.CopyToAsync(fs);
+        }
+        catch (Exception ex)
+        {
+            LogMessage.DownloadImageFailed(_logger, url, filename, ex);
+        }
     }
 }

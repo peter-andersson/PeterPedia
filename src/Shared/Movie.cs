@@ -1,4 +1,4 @@
-﻿namespace PeterPedia.Shared;
+namespace PeterPedia.Shared;
 
 public class Movie
 {
@@ -25,4 +25,15 @@ public class Movie
     public string TheMovieDbUrl { get; set; }
 
     public string ImdbUrl { get; set; }
+
+    public DateTime LastUpdate { get; set; }
+
+    public bool Search(string searchString)
+    {
+        return
+            !string.IsNullOrEmpty(searchString) ||
+            searchString.Length > 3 || 
+            Title.Contains(searchString, StringComparison.InvariantCultureIgnoreCase) ||
+            OriginalTitle.Contains(searchString, StringComparison.InvariantCultureIgnoreCase);
+    }
 }

@@ -1,18 +1,26 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.FileProviders;
-using NLog;
-using NLog.Web;
+using Serilog;
+using Serilog.Events;
 using PeterPedia.Server.Jobs;
-using PeterPedia.Server.Services;
 using Quartz;
 
-Logger logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
-logger.Debug("init main");
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
+
+Log.Information("Starting up");
 
 try
 {
     WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+    builder.Host.UseSerilog((ctx, lc) => lc
+        .WriteTo.Console()
+        .ReadFrom.Configuration(ctx.Configuration));
+
+    Log.Information("Starting web host");
 
     // Add services to the container.
     builder.Services.AddControllersWithViews().AddJsonOptions(options => options.JsonSerializerOptions.AddContext<PeterPediaJSONContext>());
@@ -34,7 +42,11 @@ try
             x.GetRequiredService<IMemoryCache>()
         ));
 
+    builder.Services.AddScoped<IAuthorManager, AuthorManager>();
+    builder.Services.AddScoped<IBookManager, BookManager>();
     builder.Services.AddScoped<IFileService, FileService>();
+    builder.Services.AddScoped<IDeleteTracker, DeleteTracker>();
+    builder.Services.AddScoped<IMovieManager, MovieManager>();
 
     builder.Services.AddQuartz(q =>
     {
@@ -49,13 +61,10 @@ try
     });
 
     builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
-
-    // NLog: Setup NLog for Dependency injection
-    builder.Logging.ClearProviders();
-    builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
-    builder.Host.UseNLog();
-
+  
     WebApplication app = builder.Build();
+
+    app.UseSerilogRequestLogging();
 
     if (app.Environment.IsDevelopment())
     {
@@ -97,33 +106,46 @@ try
         app.MapFallbackToFile("index.html");
     });
 
-    CreateDbIfNotExists(logger, app);
+    CreateDbIfNotExists(app);
 
     app.Run();
 }
 catch (Exception exception)
 {
-    // NLog: catch setup errors
-    logger.Error(exception, "Stopped program because of exception");
+    Log.Fatal(exception, "Stopped program because of exception");
     throw;
 }
 finally
 {
-    // Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
-    LogManager.Shutdown();
+    Log.Information("Shut down complete");
+    Log.CloseAndFlush();
 }
 
-static void CreateDbIfNotExists(Logger logger, WebApplication app)
+static void CreateDbIfNotExists(WebApplication app)
 {
+    IServiceScopeFactory? scopedFactory = app.Services.GetService<IServiceScopeFactory>();
+
+    if (scopedFactory is null)
+    {
+        Log.Error("ScopedFactory is null");
+        return;
+    }
+
+    using IServiceScope scope = scopedFactory.CreateScope();
     try
     {
-        PeterPediaContext? lpdaContext = app.Services.GetRequiredService<PeterPediaContext>();
-        DbInitializer.Initialize(lpdaContext);
+        PeterPediaContext? lpdaContext = scope.ServiceProvider.GetService<PeterPediaContext>();
+        if (lpdaContext is not null)
+        {
+            DbInitializer.Initialize(lpdaContext);
+        }
     }
     catch (Exception ex)
     {
-        logger.Error(ex, "An error occurred creating the DB.");
+        Log.Error(ex, "An error occurred creating the DB.");
 
         throw;
     }
+
+
 }
