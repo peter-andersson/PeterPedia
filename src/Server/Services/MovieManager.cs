@@ -3,19 +3,17 @@ using PeterPedia.Server.Services.Models;
 
 namespace PeterPedia.Server.Services;
 
-public record MovieResult(bool Success, string ErrorMessage, Movie? Movie);
-
 public interface IMovieManager
 {
-    Task<MovieResult> AddAsync(AddMovie addMovie);
+    Task<Result<Movie>> AddAsync(AddMovie addMovie);
 
-    Task<MovieResult> DeleteAsync(int id);
+    Task<Result<Movie>> DeleteAsync(int id);
 
-    Task<IList<Movie>> GetAsync(DateTime updateSince);
+    Task<Result<IList<Movie>>> GetAsync(DateTime updateSince);
 
-    Task<IList<DeleteLog>> GetDeletedAsync(DateTime deletedSince);
+    Task<Result<IList<DeleteLog>>> GetDeletedAsync(DateTime deletedSince);
 
-    Task<MovieResult> UpdateAsync(Movie movie);
+    Task<Result<Movie>> UpdateAsync(Movie movie);
 
     Task RefreshAsync();
 }
@@ -45,13 +43,22 @@ public class MovieManager : IMovieManager
         _tmdbService = tmdbService;
     }
 
-    public async Task<MovieResult> AddAsync(AddMovie addMovie)
+    public async Task<Result<Movie>> AddAsync(AddMovie addMovie)
     {
+        LogMessage.AddMovie(_logger, addMovie.Id);
+
+        if (addMovie.Id == 0)
+        {
+            LogMessage.MovieAddFailed(_logger, addMovie, "Id on movie to add can't be 0.");
+            return new ErrorResult<Movie>("Id on movie to add can't be 0.");
+        }
+
         MovieEF? movie = await _dbContext.Movies.FindAsync(addMovie.Id).ConfigureAwait(false);
 
         if (movie is not null)
         {
-            return new MovieResult(false, "Movie already exists", null);
+            LogMessage.MovieAddFailed(_logger, addMovie, "Movie already exists");
+            return new ConflictResult<Movie>();
         }
 
         TMDbMovie? tmdbMovie = await _tmdbService.GetMovieAsync(addMovie.Id, string.Empty).ConfigureAwait(false);
@@ -59,7 +66,8 @@ public class MovieManager : IMovieManager
         if (tmdbMovie is null)
         {
             LogMessage.TheMovieDbFailed(_logger);
-            return new MovieResult(false, "Failed to fetch data from themoviedb.org", null);
+            LogMessage.MovieAddFailed(_logger, addMovie, "Failed to fetch data from themoviedb.org");
+            return new ErrorResult<Movie>("Failed to fetch data from themoviedb.org");
         }
 
         await DownloadCoverAsync(tmdbMovie.Id, tmdbMovie.PosterPath);
@@ -81,25 +89,28 @@ public class MovieManager : IMovieManager
         _dbContext.Movies.Add(movie);
         await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
-        return new MovieResult(true, string.Empty, ConvertToMovie(movie));
+        return new SuccessResult<Movie>(ConvertToMovie(movie));
     }
 
-    public async Task<MovieResult> DeleteAsync(int id)
+    public async Task<Result<Movie>> DeleteAsync(int id)
     {
+        LogMessage.MovieDelete(_logger, id);
+
         MovieEF? movie = await _dbContext.Movies.Where(m => m.Id == id).AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
         if (movie is null)
         {
-            return new MovieResult(false, "Movie not found", null);
+            LogMessage.MovieDeleteFailed(_logger, id, "Movie not found");
+            return new NotFoundResult<Movie>();
         }
 
         _dbContext.Movies.Remove(movie);        
         await _deleteTracker.TrackAsync(DeleteType.Movie, id);
         await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
-        return new MovieResult(true, string.Empty, null);
+        return new SuccessResult<Movie>(ConvertToMovie(movie));
     }
 
-    public async Task<IList<Movie>> GetAsync(DateTime updateSince)
+    public async Task<Result<IList<Movie>>> GetAsync(DateTime updateSince)
     {
         List<MovieEF> movies = await _dbContext.Movies.ToListAsync().ConfigureAwait(false);
 
@@ -109,11 +120,11 @@ public class MovieManager : IMovieManager
             result.Add(ConvertToMovie(movie));
         }
 
-        return result;
+        return new SuccessResult<IList<Movie>>(result);
     }
 
-    public async Task<IList<DeleteLog>> GetDeletedAsync(DateTime deletedSince) => await _deleteTracker.DeletedSinceAsync(DeleteType.Movie, deletedSince);
-
+    public async Task<Result<IList<DeleteLog>>> GetDeletedAsync(DateTime deletedSince) =>
+        new SuccessResult<IList<DeleteLog>>(await _deleteTracker.DeletedSinceAsync(DeleteType.Movie, deletedSince));
 
     public async Task RefreshAsync()
     {
@@ -136,13 +147,16 @@ public class MovieManager : IMovieManager
         }
     }
 
-    public async Task<MovieResult> UpdateAsync(Movie movie)
+    public async Task<Result<Movie>> UpdateAsync(Movie movie)
     {
+        LogMessage.MovieUpdate(_logger, movie);
+
         MovieEF? existingMovie = await _dbContext.Movies.Where(m => m.Id == movie.Id).AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
 
         if (existingMovie is null)
         {
-            return new MovieResult(false, "Movie not found", null);
+            LogMessage.MovieUpdateFailed(_logger, movie, "Movie not found");
+            return new NotFoundResult<Movie>();
         }
 
         existingMovie.WatchedDate = movie.WatchedDate;
@@ -151,7 +165,7 @@ public class MovieManager : IMovieManager
         _dbContext.Movies.Update(existingMovie);
         await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
-        return new MovieResult(true, string.Empty, ConvertToMovie(existingMovie));
+        return new SuccessResult<Movie>(ConvertToMovie(existingMovie));
     }
 
     private static Movie ConvertToMovie(MovieEF movieEF)

@@ -2,19 +2,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PeterPedia.Server.Services;
 
-public record BookResult(bool Success, string ErrorMessage, Book? Book);
-
 public interface IBookManager
 {
-    Task<BookResult> AddAsync(Book book);
+    Task<Result<Book>> AddAsync(Book book);
 
-    Task<BookResult> DeleteAsync(int id);
+    Task<Result<Book>> DeleteAsync(int id);
 
-    Task<IList<Book>> GetAsync(DateTime updateSince);
+    Task<Result<IList<Book>>> GetAsync(DateTime updateSince);
 
-    Task<IList<DeleteLog>> GetDeletedAsync(DateTime deletedSince);
+    Task<Result<IList<DeleteLog>>> GetDeletedAsync(DateTime deletedSince);
 
-    Task<BookResult> UpdateAsync(Book book);
+    Task<Result<Book>> UpdateAsync(Book book);
 }
 
 public class BookManager : IBookManager
@@ -23,21 +21,26 @@ public class BookManager : IBookManager
     private readonly IDeleteTracker _deleteTracker;
     private readonly IFileService _fileService;
     private readonly IConfiguration _configuration;
+    private readonly ILogger<BookManager> _logger;
 
     public BookManager(
         PeterPediaContext dbContext,
         IDeleteTracker deleteTracker,
         IFileService fileService,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        ILogger<BookManager> logger)
     {
         _dbContext = dbContext;
         _deleteTracker = deleteTracker;
         _fileService = fileService;
         _configuration = configuration;
+        _logger = logger;
     }
 
-    public async Task<BookResult> AddAsync(Book book)
+    public async Task<Result<Book>> AddAsync(Book book)
     {
+        LogMessage.BookAdd(_logger, book);
+
         var bookEF = new BookEF
         {
             Title = book.Title,
@@ -60,26 +63,29 @@ public class BookManager : IBookManager
 
         await DownloadCoverAsync(book.CoverUrl, bookEF.Id);
 
-        return new BookResult(true, string.Empty, ConvertToBook(bookEF));
+        return new SuccessResult<Book>(ConvertToBook(bookEF));
     }
 
-    public async Task<BookResult> DeleteAsync(int id)
+    public async Task<Result<Book>> DeleteAsync(int id)
     {
+        LogMessage.BookDelete(_logger, id);
+
         BookEF? book = await _dbContext.Books.Where(b => b.Id == id).AsTracking().SingleOrDefaultAsync();
 
         if (book is null)
         {
-            return new BookResult(false, "Book with id doesn't exists", null);
+            LogMessage.BookDeleteFailed(_logger, id, "No book found.");
+            return new NotFoundResult<Book>();
         }
 
         _dbContext.Books.Remove(book);
         await _dbContext.SaveChangesAsync();
         await _deleteTracker.TrackAsync(DeleteType.Book, id);
 
-        return new BookResult(true, string.Empty, null);
+        return new SuccessResult<Book>(ConvertToBook(book));
     }
 
-    public async Task<IList<Book>> GetAsync(DateTime updateSince)
+    public async Task<Result<IList<Book>>> GetAsync(DateTime updateSince)
     {
         List<BookEF>? books = await _dbContext.Books
             .Include(b => b.Authors)
@@ -95,13 +101,16 @@ public class BookManager : IBookManager
             result.Add(ConvertToBook(book));
         }
 
-        return result;
+        return new SuccessResult<IList<Book>>(result);
     }
 
-    public async Task<IList<DeleteLog>> GetDeletedAsync(DateTime deletedSince) => await _deleteTracker.DeletedSinceAsync(DeleteType.Book, deletedSince);
+    public async Task<Result<IList<DeleteLog>>> GetDeletedAsync(DateTime deletedSince) =>
+        new SuccessResult<IList<DeleteLog>>(await _deleteTracker.DeletedSinceAsync(DeleteType.Book, deletedSince));
 
-    public async Task<BookResult> UpdateAsync(Book book)
+    public async Task<Result<Book>> UpdateAsync(Book book)
     {
+        LogMessage.BookUpdate(_logger, book);
+
         BookEF? bookEF = await _dbContext.Books
             .Where(b => b.Id == book.Id)
             .Include(b => b.Authors)
@@ -111,7 +120,8 @@ public class BookManager : IBookManager
 
         if (bookEF is null)
         {
-            return new BookResult(false, "Book doesn't exist", null);
+            LogMessage.BookUpdateFailed(_logger, book, "Book not found.");
+            return new NotFoundResult<Book>();
         }
 
         bookEF.Authors.Clear();
@@ -133,7 +143,7 @@ public class BookManager : IBookManager
 
         await DownloadCoverAsync(book.CoverUrl, bookEF.Id);
 
-        return new BookResult(true, string.Empty, ConvertToBook(bookEF));
+        return new SuccessResult<Book>(ConvertToBook(bookEF));
     }
 
     private static Book ConvertToBook(BookEF bookEF)

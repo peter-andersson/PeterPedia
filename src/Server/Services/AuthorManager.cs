@@ -2,38 +2,41 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PeterPedia.Server.Services;
 
-public record AuthorResult(bool Success, string ErrorMessage, Author? Author);
-
 public interface IAuthorManager
 {
-    Task<AuthorResult> AddAsync(Author author);
+    Task<Result<Author>> AddAsync(Author author);
 
-    Task<AuthorResult> DeleteAsync(int id);
+    Task<Result<Author>> DeleteAsync(int id);
 
-    Task<IList<Author>> GetAsync(DateTime updateSince);
+    Task<Result<IList<Author>>> GetAsync(DateTime updateSince);
 
-    Task<IList<DeleteLog>> GetDeletedAsync(DateTime deletedSince);
+    Task<Result<IList<DeleteLog>>> GetDeletedAsync(DateTime deletedSince);
 
-    Task<AuthorResult> UpdateAsync(Author author);
+    Task<Result<Author>> UpdateAsync(Author author);
 }
 
 public class AuthorManager : IAuthorManager
 {
     private readonly PeterPediaContext _dbContext;
     private readonly IDeleteTracker _deleteTracker;
+    private readonly ILogger<AuthorManager> _logger;
 
-    public AuthorManager(PeterPediaContext dbContext, IDeleteTracker deleteTracker)
+    public AuthorManager(PeterPediaContext dbContext, IDeleteTracker deleteTracker, ILogger<AuthorManager> logger)
     {
         _dbContext = dbContext;
         _deleteTracker = deleteTracker;
+        _logger = logger;
     }
 
-    public async Task<AuthorResult> AddAsync(Author author)
+    public async Task<Result<Author>> AddAsync(Author author)
     {
+        LogMessage.AuthorAdd(_logger, author);
+
         AuthorEF? existingAuthor = await _dbContext.Authors.Where(a => a.Name == author.Name.Trim() && a.DateOfBirth == author.DateOfBirth).FirstOrDefaultAsync().ConfigureAwait(false);
         if (existingAuthor != null)
         {
-            return new AuthorResult(false, "The author already exists.", null);
+            LogMessage.AuthorAddFailed(_logger, author, "The author already exists.");
+            return new ConflictResult<Author>();
         }
 
         var authorEF = new AuthorEF
@@ -46,26 +49,29 @@ public class AuthorManager : IAuthorManager
         _dbContext.Authors.Add(authorEF);
         await _dbContext.SaveChangesAsync();
 
-        return new AuthorResult(true, string.Empty, ConvertToAuthor(authorEF));
+        return new SuccessResult<Author>(ConvertToAuthor(authorEF));
     }
 
-    public async Task<AuthorResult> DeleteAsync(int id)
+    public async Task<Result<Author>> DeleteAsync(int id)
     {
+        LogMessage.AuthorDelete(_logger, id);
+
         AuthorEF? author = await _dbContext.Authors.Where(a => a.Id == id).AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
 
         if (author is null)
         {
-            return new AuthorResult(false, "Author with id doesn't exists", null);
+            LogMessage.AuthorDeleteFailed(_logger, id, "Author with id doesn't exists");
+            return new NotFoundResult<Author>();
         }
 
         _dbContext.Authors.Remove(author);
         await _dbContext.SaveChangesAsync();
         await _deleteTracker.TrackAsync(DeleteType.Author, id);
 
-        return new AuthorResult(true, string.Empty, null);
+        return new SuccessResult<Author>(ConvertToAuthor(author));
     }
 
-    public async Task<IList<Author>> GetAsync(DateTime updateSince)
+    public async Task<Result<IList<Author>>> GetAsync(DateTime updateSince)
     {
         List<AuthorEF>? authors = await _dbContext.Authors
             .Where(a => a.LastUpdated > updateSince || a.LastUpdated == DateTime.MinValue)
@@ -77,13 +83,16 @@ public class AuthorManager : IAuthorManager
             result.Add(ConvertToAuthor(author));
         }
 
-        return result;
+        return new SuccessResult<IList<Author>>(result);
     }
 
-    public async Task<IList<DeleteLog>> GetDeletedAsync(DateTime deletedSince) => await _deleteTracker.DeletedSinceAsync(DeleteType.Author, deletedSince);
+    public async Task<Result<IList<DeleteLog>>> GetDeletedAsync(DateTime deletedSince) =>
+        new SuccessResult<IList<DeleteLog>>(await _deleteTracker.DeletedSinceAsync(DeleteType.Author, deletedSince));
 
-    public async Task<AuthorResult> UpdateAsync(Author author)
+    public async Task<Result<Author>> UpdateAsync(Author author)
     {
+        LogMessage.AuthorUpdate(_logger, author);
+
         AuthorEF? existingAuthor = await _dbContext.Authors
             .Where(a => a.Id == author.Id)
             .AsTracking()
@@ -91,7 +100,8 @@ public class AuthorManager : IAuthorManager
 
         if (existingAuthor is null)
         {
-            return new AuthorResult(false, "Author doesn't exists, can update it.", null);
+            LogMessage.AuthorUpdateFailed(_logger, author, "Author doesn't exists, can update it.");
+            return new NotFoundResult<Author>();
         }
 
         if ((author.Name.Trim() != existingAuthor.Name) ||
@@ -105,7 +115,7 @@ public class AuthorManager : IAuthorManager
             await _dbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
-        return new AuthorResult(true, string.Empty, ConvertToAuthor(existingAuthor));
+        return new SuccessResult<Author>(ConvertToAuthor(existingAuthor));
     }
 
     private static Author ConvertToAuthor(AuthorEF authorEF)

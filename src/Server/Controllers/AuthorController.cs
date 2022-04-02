@@ -7,15 +7,9 @@ namespace PeterPedia.Server.Controllers;
 [Route("api/[controller]")]
 public partial class AuthorController : Controller
 {    
-    private readonly ILogger<AuthorController> _logger;
-
     private readonly IAuthorManager _authorManager;
 
-    public AuthorController(ILogger<AuthorController> logger, IAuthorManager authorManager)
-    {
-        _logger = logger;
-        _authorManager = authorManager;
-    }
+    public AuthorController(IAuthorManager authorManager) => _authorManager = authorManager;
 
     [HttpGet]
     public async Task<IActionResult> GetAsync([FromQuery]string lastupdate)
@@ -23,11 +17,11 @@ public partial class AuthorController : Controller
         if (!DateTime.TryParseExact(lastupdate, "yyyyMMddHHmmss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime lastUpdated))
         {
             return BadRequest("Invalid date format");
-        }        
+        }
 
-        IList<Author> result = await _authorManager.GetAsync(lastUpdated);
+        Result<IList<Author>> result = await _authorManager.GetAsync(lastUpdated);
 
-        return Ok(result);
+        return result.Success ? Ok(result.Data) : StatusCode(500);
     }
 
     [HttpGet("deleted")]
@@ -38,9 +32,9 @@ public partial class AuthorController : Controller
             return BadRequest("Invalid date format");
         }
 
-        IList<DeleteLog> result = await _authorManager.GetDeletedAsync(since);
+        Result<IList<DeleteLog>> result = await _authorManager.GetDeletedAsync(since);
 
-        return Ok(result);
+        return result.Success ? Ok(result.Data) : StatusCode(500);
     }
 
     [HttpPost]
@@ -51,18 +45,14 @@ public partial class AuthorController : Controller
             return BadRequest();
         }
 
-        LogMessage.AuthorAdd(_logger, author);
+        Result<Author> result = await _authorManager.AddAsync(author);
 
-        AuthorResult result = await _authorManager.AddAsync(author);
-        if (result.Success)
+        return result switch
         {
-            return Ok(result.Author);
-        }
-        else
-        {
-            LogMessage.AuthorAddFailed(_logger, author, result.ErrorMessage);
-            return Conflict();
-        }        
+            SuccessResult<Author> successResult => Ok(successResult.Data),
+            ConflictResult<Author> => Conflict(),
+            _ => StatusCode(500)
+        };
     }
 
     [HttpDelete("{id:int}")]
@@ -73,18 +63,14 @@ public partial class AuthorController : Controller
             return BadRequest();
         }
 
-        LogMessage.AuthorDelete(_logger, id);
+        Result<Author> result = await _authorManager.DeleteAsync(id);
 
-        AuthorResult result = await _authorManager.DeleteAsync(id);
-        if (result.Success)
+        return result switch
         {
-            return NoContent();
-        }
-        else
-        {
-            LogMessage.AuthorDeleteFailed(_logger, id, result.ErrorMessage);
-            return NotFound();
-        }
+            SuccessResult<Author> => NoContent(),
+            NotFoundResult<Author> => NotFound(),
+            _ => StatusCode(500)
+        };
     }
 
     [HttpPut]
@@ -95,17 +81,12 @@ public partial class AuthorController : Controller
             return BadRequest();
         }
 
-        LogMessage.AuthorUpdate(_logger, author);
-
-        AuthorResult result = await _authorManager.UpdateAsync(author);
-        if (result.Success)
+        Result<Author> result = await _authorManager.UpdateAsync(author);
+        return result switch
         {
-            return Ok(result.Author);
-        }
-        else
-        {
-            LogMessage.AuthorUpdateFailed(_logger, author, result.ErrorMessage);
-            return NotFound();
-        }
+            SuccessResult<Author> successResult => Ok(successResult.Data),
+            ConflictResult<Author> => Conflict(),
+            _ => StatusCode(500)
+        };
     }    
 }

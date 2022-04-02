@@ -54,13 +54,10 @@ public static partial class LogMessage
     [LoggerMessage(17, LogLevel.Debug, "Adding new book {book}")]
     public static partial void BookAdd(ILogger logger, Book book);
 
-    [LoggerMessage(18, LogLevel.Error, "Failed to add book {book}, error = {message}.")]
-    public static partial void BookAddFailed(ILogger logger, Book book, string message);
-
     [LoggerMessage(19, LogLevel.Debug, "Delete book with id {id}.")]
     public static partial void BookDelete(ILogger logger, int id);
 
-    [LoggerMessage(20, LogLevel.Error, "Failed ot delete book with id {id}, error = {message}")]
+    [LoggerMessage(20, LogLevel.Error, "Failed to delete book with id {id}, error {message}")]
     public static partial void BookDeleteFailed(ILogger logger, int id, string message);
 
     [LoggerMessage(21, LogLevel.Debug, "Update book {book}")]

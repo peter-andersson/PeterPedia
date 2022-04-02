@@ -7,14 +7,9 @@ namespace PeterPedia.Server.Controllers;
 [Route("api/[controller]")]
 public partial class BookController : Controller
 {
-    private readonly ILogger<BookController> _logger;
     private readonly IBookManager _bookManager;
 
-    public BookController(ILogger<BookController> logger, IBookManager bookManager)
-    {
-        _logger = logger;
-        _bookManager = bookManager;
-    }
+    public BookController(IBookManager bookManager) => _bookManager = bookManager;
 
     [HttpGet]
     public async Task<IActionResult> GetAsync([FromQuery]string lastupdate)
@@ -24,9 +19,13 @@ public partial class BookController : Controller
             return BadRequest("Invalid date format");
         }
 
-        IList<Book> result = await _bookManager.GetAsync(lastUpdated);
+        Result<IList<Book>> result = await _bookManager.GetAsync(lastUpdated);
 
-        return Ok(result);        
+        return result switch
+        {
+            SuccessResult<IList<Book>> successResult => Ok(successResult.Data),
+            _ => StatusCode(500)
+        };
     }
 
     [HttpGet("deleted")]
@@ -37,9 +36,13 @@ public partial class BookController : Controller
             return BadRequest("Invalid date format");
         }
 
-        IList<DeleteLog> result = await _bookManager.GetDeletedAsync(since);
+        Result<IList<DeleteLog>> result = await _bookManager.GetDeletedAsync(since);
 
-        return Ok(result);
+        return result switch
+        {
+            SuccessResult<IList<DeleteLog>> successResult => Ok(successResult.Data),
+            _ => StatusCode(500)
+        };
     }
 
     [HttpPost]
@@ -49,19 +52,10 @@ public partial class BookController : Controller
         {
             return BadRequest();
         }
+        
+        Result<Book> result = await _bookManager.AddAsync(book);
 
-        LogMessage.BookAdd(_logger, book);
-
-        BookResult result = await _bookManager.AddAsync(book);
-        if (result.Success)
-        {
-            return Ok(result.Book);
-        }
-        else
-        {
-            LogMessage.BookAddFailed(_logger, book, result.ErrorMessage);
-            return StatusCode(500);
-        }
+        return result.Success ? Ok(result.Data) : StatusCode(500);
     }
 
     [HttpPut]
@@ -72,18 +66,14 @@ public partial class BookController : Controller
             return BadRequest();
         }
 
-        LogMessage.BookUpdate(_logger, book);
+        Result<Book> result = await _bookManager.UpdateAsync(book);
 
-        BookResult result = await _bookManager.UpdateAsync(book);
-        if (result.Success)
+        return result switch
         {
-            return Ok(result.Book);
-        }
-        else
-        {
-            LogMessage.BookUpdateFailed(_logger, book, result.ErrorMessage);
-            return NotFound();
-        }
+            SuccessResult<Book> successResult => Ok(successResult.Data),
+            NotFoundResult<Book> => NotFound(),
+            _ => StatusCode(500)
+        };
     }
 
     [HttpDelete("{id:int}")]
@@ -93,18 +83,14 @@ public partial class BookController : Controller
         {
             return BadRequest();
         }
+        
+        Result<Book> result = await _bookManager.DeleteAsync(id);
 
-        LogMessage.BookDelete(_logger, id);
-
-        BookResult result = await _bookManager.DeleteAsync(id);
-        if (result.Success)
+        return result switch
         {
-            return NoContent();
-        }
-        else
-        {
-            LogMessage.BookDeleteFailed(_logger, id, result.ErrorMessage);
-            return NotFound();
-        }
+            SuccessResult<Book> => NoContent(),
+            NotFoundResult<Book> => NotFound(),
+            _ => StatusCode(500)
+        };        
     }
 }

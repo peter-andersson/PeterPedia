@@ -7,16 +7,9 @@ namespace PeterPedia.Server.Controllers;
 [Route("/api/[controller]")]
 public class MovieController : Controller
 {
-    private readonly ILogger<MovieController> _logger;
     private readonly IMovieManager _movieManager;
 
-    public MovieController(
-        ILogger<MovieController> logger,
-        IMovieManager movieManager)
-    {
-        _logger = logger;
-        _movieManager = movieManager;
-    }
+    public MovieController(IMovieManager movieManager) => _movieManager = movieManager;    
 
     [HttpGet]
     public async Task<IActionResult> GetAsync([FromQuery] string lastupdate)
@@ -26,9 +19,9 @@ public class MovieController : Controller
             return BadRequest("Invalid date format");
         }
 
-        IList<Movie> result = await _movieManager.GetAsync(lastUpdated);       
+        Result<IList<Movie>> result = await _movieManager.GetAsync(lastUpdated);       
 
-        return Ok(result);
+        return result.Success ? Ok(result) : StatusCode(500);
     }
 
     [HttpGet("deleted")]
@@ -39,9 +32,9 @@ public class MovieController : Controller
             return BadRequest("Invalid date format");
         }
 
-        IList<DeleteLog> result = await _movieManager.GetDeletedAsync(since);
+        Result<IList<DeleteLog>> result = await _movieManager.GetDeletedAsync(since);
 
-        return Ok(result);
+        return result.Success ? Ok(result) : StatusCode(500);
     }
 
     [HttpPost]
@@ -52,23 +45,9 @@ public class MovieController : Controller
             return BadRequest();
         }
 
-        LogMessage.AddMovie(_logger, data.Id);
+        Result<Movie> result = await _movieManager.AddAsync(data);
 
-        if (data.Id == 0)
-        {
-            return BadRequest();
-        }
-
-        MovieResult result = await _movieManager.AddAsync(data);
-        if (result.Success)
-        {
-            return Ok(result.Movie);
-        }
-        else
-        {
-            LogMessage.MovieAddFailed(_logger, data, result.ErrorMessage);
-            return StatusCode(500);
-        }
+        return result.Success ? Ok(result.Data) : StatusCode(500);
     }
 
     [HttpPut]
@@ -79,34 +58,24 @@ public class MovieController : Controller
             return BadRequest();
         }
 
-        LogMessage.MovieUpdate(_logger, movie);
-
-        MovieResult result = await _movieManager.UpdateAsync(movie);
-        if (result.Success)
+        Result<Movie> result = await _movieManager.UpdateAsync(movie);
+        return result switch
         {
-            return Ok(result.Movie);
-        }
-        else
-        {
-            LogMessage.MovieUpdateFailed(_logger, movie, result.ErrorMessage);
-            return NotFound();
-        }        
+            SuccessResult<Movie> successResult => Ok(successResult.Data),
+            NotFoundResult<Movie> => NotFound(),
+            _ => StatusCode(500)
+        };
     }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteAsync(int id)
     {
-        LogMessage.MovieDelete(_logger, id);
-
-        MovieResult result = await _movieManager.DeleteAsync(id);
-        if (result.Success)
+        Result<Movie> result = await _movieManager.DeleteAsync(id);
+        return result switch
         {
-            return NoContent();
-        }
-        else
-        {
-            LogMessage.MovieDeleteFailed(_logger, id, result.ErrorMessage);
-            return NotFound();
-        }        
+            SuccessResult<Movie> => NoContent(),
+            NotFoundResult<Movie> => NotFound(),
+            _ => StatusCode(500)
+        };
     }    
 }
