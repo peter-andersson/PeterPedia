@@ -47,7 +47,12 @@ public class MovieController : Controller
 
         Result<Movie> result = await _movieManager.AddAsync(data);
 
-        return result.Success ? Ok(result.Data) : StatusCode(500);
+        return result switch
+        {
+            SuccessResult<Movie> successResult => Ok(successResult.Data),
+            ConflictResult<Movie> => Conflict(),
+            _ => StatusCode(500)
+        }
     }
 
     [HttpPut]
