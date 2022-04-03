@@ -1,5 +1,12 @@
 namespace PeterPedia.Server.Services;
 
+public abstract class Result
+{
+    public bool Success { get; protected set; }
+
+    public bool Failure => !Success;
+}
+
 public abstract class Result<T>
 {
     private T? _data;
@@ -17,9 +24,19 @@ public abstract class Result<T>
     }
 }
 
+public class SuccessResult : Result
+{
+    public SuccessResult() : base() => Success = true;
+}
+
 public class SuccessResult<T> : Result<T> where T : notnull
 {
     public SuccessResult(T data) : base(data) => Success = true;
+}
+
+public class ErrorResult : Result
+{
+    public ErrorResult() : base() => Success = false;
 }
 
 public class ErrorResult<T> : Result<T>
@@ -31,6 +48,11 @@ public class ErrorResult<T> : Result<T>
     }
 
     public string Message { get; set; }
+}
+
+public class NotFoundResult : Result
+{
+    public NotFoundResult() : base() => Success = false;
 }
 
 public class NotFoundResult<T> : Result<T>

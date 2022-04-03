@@ -8,9 +8,9 @@ namespace PeterPedia.Server.Data.Models
 
         Book,
 
-        Movie,
+        Episode,
 
-        Show,
+        Movie,
     }
 
     [Table("delete")]

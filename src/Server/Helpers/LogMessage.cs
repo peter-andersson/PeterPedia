@@ -71,4 +71,28 @@ public static partial class LogMessage
 
     [LoggerMessage(24, LogLevel.Error, "Failed to download image from {url} to {filename}.")]
     public static partial void DownloadImageFailed(ILogger logger, string url, string filename, Exception e);
+
+    [LoggerMessage(25, LogLevel.Debug, "Add tv show {id}")]
+    public static partial void EpisodeAdd(ILogger logger, int id);
+
+    [LoggerMessage(26, LogLevel.Error, "Failed to add show {show}, error {message}")]
+    public static partial void EpisodeAddFailed(ILogger logger, AddShow show, string message);
+
+    [LoggerMessage(27, LogLevel.Debug, "Update show {show}")]
+    public static partial void EpisodeUpdate(ILogger logger, Show show);
+
+    [LoggerMessage(28, LogLevel.Error, "Failed to update show {show}, error {message}")]
+    public static partial void EpisodeUpdateFailed(ILogger logger, Show show, string message);
+
+    [LoggerMessage(29, LogLevel.Debug, "Delete show with id {id}")]
+    public static partial void EpisodeDelete(ILogger logger, int id);
+
+    [LoggerMessage(30, LogLevel.Error, "Failed to delete show with id {id}, error {message}")]
+    public static partial void EpisodeDeleteFailed(ILogger logger, int id, string message);
+
+    [LoggerMessage(31, LogLevel.Debug, "Episode update watch on {watch}.")]
+    public static partial void EpisodeWatch(ILogger logger, ShowWatchData watch);
+
+    [LoggerMessage(32, LogLevel.Error, "Episode watch update failed, data {watch}, error {message}.")]
+    public static partial void EpisodeWatchFailed(ILogger logger, ShowWatchData watch, string message);
 }
