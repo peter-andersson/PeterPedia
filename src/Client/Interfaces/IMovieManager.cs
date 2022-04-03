@@ -1,18 +1,17 @@
 
-namespace PeterPedia.Client.Interfaces
+namespace PeterPedia.Client.Interfaces;
+
+public interface IMovieManager
 {
-    public interface IMovieManager
-    {
-        event Action? MovieChanged;
+    event Action? MovieChanged;
 
-        Task<bool> AddAsync(string movieUrl);
+    Task<bool> AddAsync(string movieUrl);
 
-        Task<bool> DeleteAsync(int id);
+    Task<bool> DeleteAsync(int id);
 
-        Task<List<Movie>> GetAsync();
+    Task<List<Movie>> GetAsync();
 
-        Task RefreshAsync();
+    Task RefreshAsync();
 
-        Task<bool> UpdateAsync(Movie movie);
-    }
+    Task<bool> UpdateAsync(Movie movie);
 }

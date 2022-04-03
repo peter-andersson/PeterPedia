@@ -1,18 +1,17 @@
 
-namespace PeterPedia.Client.Interfaces
+namespace PeterPedia.Client.Interfaces;
+
+public interface IAuthorManager
 {
-    public interface IAuthorManager
-    {
-        Task<List<Author>> GetAsync();
+    Task<List<Author>> GetAsync();
 
-        Task<bool> AddAsync(Author author);
+    Task<bool> AddAsync(Author author);
 
-        Task<bool> UpdateAsync(Author author);
+    Task<bool> UpdateAsync(Author author);
 
-        Task<bool> DeleteAsync(int id);
+    Task<bool> DeleteAsync(int id);
 
-        Task RefreshAsync();
+    Task RefreshAsync();
 
-        public event Action? AuthorChanged;
-    }
+    public event Action? AuthorChanged;
 }
