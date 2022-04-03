@@ -52,7 +52,7 @@ public class MovieController : Controller
             SuccessResult<Movie> successResult => Ok(successResult.Data),
             ConflictResult<Movie> => Conflict(),
             _ => StatusCode(500)
-        }
+        };
     }
 
     [HttpPut]
@@ -75,11 +75,11 @@ public class MovieController : Controller
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteAsync(int id)
     {
-        Result<Movie> result = await _movieManager.DeleteAsync(id);
+        Result result = await _movieManager.DeleteAsync(id);
         return result switch
         {
-            SuccessResult<Movie> => NoContent(),
-            NotFoundResult<Movie> => NotFound(),
+            SuccessResult => NoContent(),
+            Services.NotFoundResult => NotFound(),
             _ => StatusCode(500)
         };
     }    

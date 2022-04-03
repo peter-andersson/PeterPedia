@@ -7,7 +7,7 @@ public interface IMovieManager
 {
     Task<Result<Movie>> AddAsync(AddMovie addMovie);
 
-    Task<Result<Movie>> DeleteAsync(int id);
+    Task<Result> DeleteAsync(int id);
 
     Task<Result<IList<Movie>>> GetAsync(DateTime updateSince);
 
@@ -92,7 +92,7 @@ public class MovieManager : IMovieManager
         return new SuccessResult<Movie>(ConvertToMovie(movie));
     }
 
-    public async Task<Result<Movie>> DeleteAsync(int id)
+    public async Task<Result> DeleteAsync(int id)
     {
         LogMessage.MovieDelete(_logger, id);
 
@@ -100,19 +100,21 @@ public class MovieManager : IMovieManager
         if (movie is null)
         {
             LogMessage.MovieDeleteFailed(_logger, id, "Movie not found");
-            return new NotFoundResult<Movie>();
+            return new NotFoundResult();
         }
 
         _dbContext.Movies.Remove(movie);        
         await _deleteTracker.TrackAsync(DeleteType.Movie, id);
         await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
-        return new SuccessResult<Movie>(ConvertToMovie(movie));
+        return new SuccessResult();
     }
 
     public async Task<Result<IList<Movie>>> GetAsync(DateTime updateSince)
     {
-        List<MovieEF> movies = await _dbContext.Movies.ToListAsync().ConfigureAwait(false);
+        List<MovieEF> movies = await _dbContext.Movies
+            .Where(m => m.LastUpdate > updateSince || m.LastUpdate == DateTime.MinValue)
+            .ToListAsync();
 
         var result = new List<Movie>(movies.Count);
         foreach (MovieEF movie in movies)
