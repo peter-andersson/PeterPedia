@@ -1,13 +1,11 @@
-﻿using Microsoft.AspNetCore.Components;
-using PeterPedia.Client.Services;
-using PeterPedia.Shared;
+using Microsoft.AspNetCore.Components;
 
 namespace PeterPedia.Client.Pages.Episodes;
 
-public partial class SeasonView : ComponentBase
+public partial class SeasonView : ComponentBase, IDisposable
 {
     [Inject]
-    private TVService TVService { get; set; } = null!;
+    private IEpisodeManager EpisodeManager { get; set; } = null!;
 
     [CascadingParameter]
     public Show Show { get; set; } = null!;
@@ -18,27 +16,36 @@ public partial class SeasonView : ComponentBase
     [Parameter]
     public bool DisplayAllEpisodes { get; set; }    
 
-    private bool IsTaskRunning = false;
+    public bool IsTaskRunning { get; set; } = false;
 
-    public async Task WatchSeason()
+    protected override void OnInitialized() => EpisodeManager.EpisodeChanged += () => RefreshEpisodes();
+
+    private void RefreshEpisodes() => StateHasChanged();
+
+    public async Task WatchSeasonAsync()
     {
+        var data = new ShowWatchData()
+        {
+            SeasonId = Season.Id,
+            Watched = true,
+        };
+
         IsTaskRunning = true;
-        var result = await TVService.WatchSeasonAsync(Show.Id, Season.Id);
+        var result = await EpisodeManager.WatchAsync(Show.Id, data);
         IsTaskRunning = false;
 
         if (result)
         {
-            foreach (var season in Show.Seasons)
+            foreach (Season season in Show.Seasons)
             {
                 if (season.Id == Season.Id)
                 {
-                    foreach (var episode in season.Episodes)
+                    foreach (Episode episode in season.Episodes)
                     {
                         episode.Watched = true;
                     }
 
                     Show.Calculate();
-                    TVService.CallRequestRefresh();
 
                     return;
                 }
@@ -46,29 +53,41 @@ public partial class SeasonView : ComponentBase
         }
     }
 
-    public async Task UnwatchSeason()
+    public async Task UnwatchSeasonAsync()
     {
+        var data = new ShowWatchData()
+        {
+            SeasonId = Season.Id,
+            Watched = false,
+        };
+
         IsTaskRunning = true;
-        var result = await TVService.UnwatchSeasonAsync(Show.Id, Season.Id);
+        var result = await EpisodeManager.WatchAsync(Show.Id, data);
         IsTaskRunning = false;
 
         if (result)
         {
-            foreach (var season in Show.Seasons)
+            foreach (Season season in Show.Seasons)
             {
                 if (season.Id == Season.Id)
                 {
-                    foreach (var episode in season.Episodes)
+                    foreach (Episode episode in season.Episodes)
                     {
                         episode.Watched = false;
                     }
 
                     Show.Calculate();
-                    TVService.CallRequestRefresh();
 
                     return;
                 }
             }
         }
+    }
+
+    public void Dispose()
+    {
+        EpisodeManager.EpisodeChanged -= () => RefreshEpisodes();
+
+        GC.SuppressFinalize(this);
     }
 }

@@ -1,7 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
-using Microsoft.EntityFrameworkCore;
-using PeterPedia.Server.Services.Models;
 using System.Globalization;
 
 namespace PeterPedia.Server.Controllers;
@@ -23,7 +20,7 @@ public partial class EpisodeController : Controller
 
         Result<IList<Show>> result = await _episodeManager.GetAsync(lastUpdated);
 
-        return result.Success ? Ok(result) : StatusCode(500);
+        return result.Success ? Ok(result.Data) : StatusCode(500);
     }
     
     [HttpGet("deleted")]
@@ -36,7 +33,7 @@ public partial class EpisodeController : Controller
 
         Result<IList<DeleteLog>> result = await _episodeManager.GetDeletedAsync(since);
 
-        return result.Success ? Ok(result) : StatusCode(500);
+        return result.Success ? Ok(result.Data) : StatusCode(500);
     }
 
     [HttpGet("episodes")]
@@ -44,7 +41,7 @@ public partial class EpisodeController : Controller
     {
         Result<IList<Episode>> result = await _episodeManager.GetEpisodesAsync();
 
-        return result.Success ? Ok(result) : StatusCode(500);
+        return result.Success ? Ok(result.Data) : StatusCode(500);
     }
 
     [HttpPost]

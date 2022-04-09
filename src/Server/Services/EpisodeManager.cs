@@ -97,7 +97,7 @@ namespace PeterPedia.Server.Services
                     SeasonNumber = tmdbSeason.SeasonNumber,
                 };
 
-                foreach (Models.TMDbEpisode tmdbEpisode in tmdbSeason.Episodes)
+                foreach (TMDbEpisode tmdbEpisode in tmdbSeason.Episodes)
                 {
                     var episode = new EpisodeEF()
                     {
@@ -160,14 +160,20 @@ namespace PeterPedia.Server.Services
 
         public async Task<Result<IList<Episode>>> GetEpisodesAsync()
         {
-            DateTime limit = DateTime.UtcNow.AddDays(-30);
+            DateTime limit = DateTime.UtcNow.AddDays(-28);
+            DateTime maxLimit = DateTime.UtcNow.AddDays(7);
 
-            List<EpisodeEF> episodes = await _dbContext.Episodes.Where(e => e.AirDate > limit).OrderBy(e => e.AirDate).ToListAsync();
+            List<EpisodeEF> episodes = await _dbContext.Episodes
+                .Include(e => e.Season)
+                .ThenInclude(s => s.Show)
+                .AsSplitQuery()
+                .Where(e => e.AirDate > limit && e.AirDate < maxLimit)
+                .OrderByDescending(e => e.AirDate).ToListAsync();
 
             var result = new List<Episode>(episodes.Count);
             foreach (EpisodeEF episodeEF in episodes)
             {
-                result.Add(ConvertToEpisode(episodeEF));
+                result.Add(ConvertToLatestEpisode(episodeEF));
             }
 
             return new SuccessResult<IList<Episode>>(result);
@@ -441,6 +447,7 @@ namespace PeterPedia.Server.Services
                 Title = showEF.Title,
                 Status = showEF.Status,
                 TheMovieDbUrl = $"https://www.themoviedb.org/tv/{showEF.Id}",
+                LastUpdate = showEF.LastUpdate,
             };
 
             foreach (SeasonEF seasonEF in showEF.Seasons)
@@ -473,6 +480,16 @@ namespace PeterPedia.Server.Services
                 AirDate = episodeEF.AirDate,
                 Watched = episodeEF.Watched,
             };
+        }
+
+        private static Episode ConvertToLatestEpisode(EpisodeEF episodeEF)
+        {
+            Episode episode = ConvertToEpisode(episodeEF);
+
+            episode.ShowTitle = episodeEF.Season.Show.Title;
+            episode.SeasonNumber = episodeEF.Season.SeasonNumber;
+
+            return episode;
         }
     }
 }

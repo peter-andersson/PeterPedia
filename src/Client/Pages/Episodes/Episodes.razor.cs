@@ -1,180 +1,65 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
+using Microsoft.AspNetCore.Components;
 
 namespace PeterPedia.Client.Pages.Episodes;
 
-public partial class Episodes : ComponentBase
+public partial class Episodes : ComponentBase, IDisposable
 {
-    private IJSObjectReference _module = null!;
-
     [Inject]
-    private TVService TVService { get; set; } = null!;
+    private IEpisodeManager EpisodeManager { get; set; } = null!;
 
-    [Inject]
-    private IJSRuntime JS { get; set; } = null!;
+    [CascadingParameter]
+    private IModalService Modal { get; set; } = null!;
 
-    public List<Show> ShowList { get; set; } = null!;
+    public string Filter { get; set; } = string.Empty;
 
-    public bool Unwatched { get; set; } = true;
+    private readonly List<Show> _shows = new();
 
-    public Show? SelectedShow { get; set; } = null;
+    private List<Show> AllShows => _shows.Where(s => s.Search(Filter)).ToList();
 
-    public string AddShowElement { get; } = "add-show-dialog";
-
-    public string DeleteShowElement { get; } = "delete-show-dialog";
-
-    public string EditShowElement { get; } = "edit-show-dialog";
-
-    public string ShowEpisodeElement { get; } = "show-episode-dialog";
-
-    private string _currentFilter = string.Empty;
+    private List<Show> WatchList => _shows.Where(s => s.UnwatchedEpisodeCount > 0).ToList();
 
     protected override async Task OnInitializedAsync()
     {
-        await FilterShows(string.Empty);
+        EpisodeManager.EpisodeChanged += async () => await RefreshEpisodesAsync();
+
+        await RefreshEpisodesAsync();
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private async Task RefreshEpisodesAsync()
     {
-        await base.OnAfterRenderAsync(firstRender);
+        List<Show> shows = await EpisodeManager.GetAsync();
 
-        _module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/dialog.js");
-    }
-
-    public async Task ToggleUnwatched()
-    {
-        Unwatched = !Unwatched;
-
-        await FilterShows(string.Empty);
-    }
-
-    public async Task FilterShows(string filter)
-    {
-        _currentFilter = filter;
-
-        await TVService.FetchDataAsync();
-
-        IEnumerable<Show> shows;
-
-        if (Unwatched)
-        {
-            shows = TVService.Shows.Where(s => s.UnwatchedEpisodeCount > 0);
-        }
-        else
-        {
-            shows = TVService.Shows;
-        }
-
-        if (!string.IsNullOrWhiteSpace(_currentFilter))
-        {
-            shows = shows.Where(s => s.Title.Contains(_currentFilter, StringComparison.OrdinalIgnoreCase));
-        }
-
-        ShowList = shows.OrderBy(s => s.Title).ToList();
-    }
-
-    public async Task AddShow()
-    {
-        await ShowDialog(AddShowElement);
-    }
-
-    public async Task AddDialogClose()
-    {
-        await HideDialog(AddShowElement);
-    }
-
-    public async Task AddDialogSuccess()
-    {
-        await AddDialogClose();
-
-        await FilterShows(_currentFilter);
+        _shows.Clear();
+        _shows.AddRange(shows.OrderBy(a => a.Title).ToList());
 
         StateHasChanged();
     }
 
-    public async Task DeleteShow(Show show)
+    public void AddShow() => _ = Modal.Show<AddShowDialog>("Add show", new ModalOptions()
     {
-        SelectedShow = show;        
+        Class = "blazored-modal w-50",
+    });
 
-        await ShowDialog(DeleteShowElement);
-    }
-
-    public async Task DeleteDialogClose()
+    public void ShowLastEpisodes() => _ = Modal.Show<EpisodesDialog>("Latest episodes", new ModalOptions()
     {
-        SelectedShow = null;
+        Class = "blazored-modal w-50 overflow-scroll vh-75 mh-100",
+    });
 
-        await HideDialog(DeleteShowElement);
-    }
-
-    public async Task DeleteDialogSuccess()
+    private void SelectShow(Show show)
     {
-        await DeleteDialogClose();
+        var parameters = new ModalParameters();
+        parameters.Add("Show", show);
 
-        await FilterShows(_currentFilter);
-
-        StateHasChanged();
-    }
-
-    public async Task EditShow(Show show)
-    {
-        SelectedShow = show;
-
-        await ShowDialog(EditShowElement);
-    }
-
-    public async Task EditDialogClose()
-    {
-        await HideDialog(EditShowElement);
-    }
-
-    public async Task EditDialogSuccess()
-    {
-        await EditDialogClose();
-
-        await FilterShows(_currentFilter);
-
-        StateHasChanged();
-    }
-
-    public async Task ShowEpisodes(Show show)
-    {
-        SelectedShow = show;
-
-        await ShowDialog(ShowEpisodeElement);
-    }
-
-    public async Task EpisodeDialogClose()
-    {
-        await HideDialog(ShowEpisodeElement);
-
-        await FilterShows(_currentFilter);
-
-        StateHasChanged();
-    }
-    
-    private async Task ShowDialog(string element)
-    {
-        if (string.IsNullOrWhiteSpace(element))
+        Modal.Show<ShowDialog>("Edit show", parameters, new ModalOptions()
         {
-            return;
-        }
-
-        if (_module is not null)
-        {
-            await _module.InvokeVoidAsync("ShowDialog", element);
-        }
+            Class = "blazored-modal w-75",
+        });
     }
 
-    private async Task HideDialog(string element)
+    public void Dispose()
     {
-        if (string.IsNullOrWhiteSpace(element))
-        {
-            return;
-        }
+        EpisodeManager.EpisodeChanged -= async () => await RefreshEpisodesAsync();
 
-        if (_module is not null)
-        {
-            await _module.InvokeVoidAsync("HideDialog", element);
-        }
-    }
+        GC.SuppressFinalize(this);
+    }    
 }

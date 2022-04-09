@@ -5,11 +5,11 @@
             Season @Season.SeasonNumber
             @if (Season.IsAllWatched)
             {
-                <button class="btn btn-primary float-end" @onclick="@(async () => await UnwatchSeason())" disabled="@IsTaskRunning">Not watched</button>
+                <button class="btn btn-primary float-end" @onclick="@(async () => await UnwatchSeasonAsync())" disabled="@IsTaskRunning">Not watched</button>
             }
             else
             {
-                <button class="btn btn-primary float-end" @onclick="@(async() => await WatchSeason())" disabled="@IsTaskRunning">Watched</button>
+                <button class="btn btn-primary float-end" @onclick="@(async() => await WatchSeasonAsync())" disabled="@IsTaskRunning">Watched</button>
             }
         </h3>
         <ul class="list-group list-group-flush mb-3">

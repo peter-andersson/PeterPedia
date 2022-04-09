@@ -1,0 +1,17 @@
+﻿<div class="vw-50">
+    <div class="row">
+        <ul class="list-group list-group-flush">
+          @foreach (Episode episode in Episodes)
+            {
+              <li class="list-group-item">@($"{episode.ShowTitle} S{episode.SeasonNumber:D2}E{episode.EpisodeNumber:D2} - {episode.Title} - {episode.AirDate:MMM d, yyyy}")</li>
+            }
+        </ul>
+    </div>
+    <div class="row mt-2">
+        <div class="col">
+            <div class="d-flex">
+                <button type="button" class="btn btn-secondary ms-2" @onclick="CloseAsync">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

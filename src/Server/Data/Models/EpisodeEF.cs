@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PeterPedia.Server.Data.Models
@@ -6,10 +6,7 @@ namespace PeterPedia.Server.Data.Models
     [Table("episode")]
     public class EpisodeEF
     {
-        public EpisodeEF()
-        {
-            Title = string.Empty;
-        }
+        public EpisodeEF() => Title = string.Empty;
 
         public int Id { get; set; }
 
