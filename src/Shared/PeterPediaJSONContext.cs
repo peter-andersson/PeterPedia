@@ -11,6 +11,7 @@ namespace PeterPedia.Shared;
 [JsonSerializable(typeof(Book))]
 [JsonSerializable(typeof(Book[]))]
 [JsonSerializable(typeof(DeleteLog[]))]
+[JsonSerializable(typeof(Episode[]))]
 [JsonSerializable(typeof(Movie))]
 [JsonSerializable(typeof(Movie[]))]
 [JsonSerializable(typeof(Show))]
