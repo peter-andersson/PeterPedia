@@ -5,7 +5,7 @@ namespace PeterPedia.Client.Pages.Movies;
 public partial class MovieDialog : ComponentBase
 {
     [Inject]
-    private IMovieManager MovieService { get; set; } = null!;
+    private IMovieManager MovieManager { get; set; } = null!;
 
     [CascadingParameter]
     private BlazoredModalInstance ModalInstance { get; set; } = null!;
@@ -36,7 +36,7 @@ public partial class MovieDialog : ComponentBase
 
         Movie.WatchedDate = EditMovie.WatchedDate;
 
-        var result = await MovieService.UpdateAsync(Movie);
+        var result = await MovieManager.UpdateAsync(Movie);
 
         IsTaskRunning = false;
         if (result)
@@ -49,7 +49,7 @@ public partial class MovieDialog : ComponentBase
     {
         IsTaskRunning = true;
 
-        if (await MovieService.DeleteAsync(Movie.Id))
+        if (await MovieManager.DeleteAsync(Movie.Id))
         {
             await ModalInstance.CloseAsync();
         }

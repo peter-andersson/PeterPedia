@@ -6,7 +6,7 @@ namespace PeterPedia.Client.Pages.Movies;
 public partial class AddMovieDialog : ComponentBase
 {
     [Inject]
-    private IMovieManager MovieService { get; set; } = null!;
+    private IMovieManager MovieManager { get; set; } = null!;
 
     [CascadingParameter]
     private BlazoredModalInstance ModalInstance { get; set; } = null!;
@@ -32,11 +32,8 @@ public partial class AddMovieDialog : ComponentBase
 
         IsTaskRunning = true;
 
-        var result = await MovieService.AddAsync(MovieUrl);
-        IsTaskRunning = false;
+        var result = await MovieManager.AddAsync(MovieUrl);
 
-        IsTaskRunning = true;
-        
         IsTaskRunning = false;
 
         if (result)
