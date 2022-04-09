@@ -30,9 +30,23 @@ public class Movie
 
     public bool Search(string searchString)
     {
+        if (string.IsNullOrEmpty(searchString))
+        {
+            return false;
+        }
+
+        if (searchString == "*")
+        {
+            return true;
+        }
+
+        if (searchString.Length <= 3)
+        {
+            return false;
+        }
+
+        // 
         return
-            !string.IsNullOrEmpty(searchString) ||
-            searchString.Length > 3 || 
             Title.Contains(searchString, StringComparison.InvariantCultureIgnoreCase) ||
             OriginalTitle.Contains(searchString, StringComparison.InvariantCultureIgnoreCase);
     }
