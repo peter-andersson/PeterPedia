@@ -21,7 +21,7 @@ public class MovieController : Controller
 
         Result<IList<Movie>> result = await _movieManager.GetAsync(lastUpdated);       
 
-        return result.Success ? Ok(result) : StatusCode(500);
+        return result.Success ? Ok(result.Data) : StatusCode(500);
     }
 
     [HttpGet("deleted")]
@@ -34,7 +34,7 @@ public class MovieController : Controller
 
         Result<IList<DeleteLog>> result = await _movieManager.GetDeletedAsync(since);
 
-        return result.Success ? Ok(result) : StatusCode(500);
+        return result.Success ? Ok(result.Data) : StatusCode(500);
     }
 
     [HttpPost]
