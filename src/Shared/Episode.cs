@@ -1,10 +1,11 @@
-﻿namespace PeterPedia.Shared;
+namespace PeterPedia.Shared;
 
 public class Episode
 {
     public Episode()
     {
         Title = string.Empty;
+        ShowTitle = string.Empty;
     }
 
     public int Id { get; set; }
@@ -16,4 +17,8 @@ public class Episode
     public DateTime? AirDate { get; set; }
 
     public bool Watched { get; set; }
+
+    public string ShowTitle { get; set; }
+
+    public int SeasonNumber { get; set; }
 }
