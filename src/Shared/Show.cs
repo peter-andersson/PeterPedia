@@ -1,4 +1,4 @@
-﻿namespace PeterPedia.Shared;
+namespace PeterPedia.Shared;
 
 public class Show
 {
@@ -27,28 +27,49 @@ public class Show
 
     public int EpisodeCount { get; set; }
 
+    public DateTime LastUpdate { get; set; }
+
     public void Calculate()
     {
         SeasonCount = Seasons.Count;
 
-        int count = 0;
-        foreach (var season in Seasons)
+        EpisodeCount = 0;
+        UnwatchedEpisodeCount = 0;
+        foreach (Season season in Seasons)
         {
-            count += season.Episodes.Count;
-        }
-        EpisodeCount = count;
-
-        count = 0;
-        foreach (var season in Seasons)
-        {
-            foreach (var episode in season.Episodes)
+            foreach (Episode episode in season.Episodes)
             {
-                if ((episode.Watched == false) && (episode.AirDate != null) && (episode.AirDate <= DateTime.UtcNow))
+                if ((episode.AirDate != null) && (episode.AirDate <= DateTime.UtcNow))
                 {
-                    count += 1;
+                    EpisodeCount += 1;
+
+                    if (!episode.Watched)
+                    {
+                        UnwatchedEpisodeCount += 1;
+                    }
                 }
             }
         }
-        UnwatchedEpisodeCount = count;
+    }
+
+    public bool Search(string searchString)
+    {
+        if (string.IsNullOrEmpty(searchString))
+        {
+            return false;
+        }
+
+        if (searchString == "*")
+        {
+            return true;
+        }
+
+        if (searchString.Length <= 3)
+        {
+            return false;
+        }
+
+        // 
+        return Title.Contains(searchString, StringComparison.InvariantCultureIgnoreCase);
     }
 }
