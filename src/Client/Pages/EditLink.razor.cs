@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Components;
 
 namespace PeterPedia.Client.Pages;
 
@@ -9,35 +7,27 @@ public partial class EditLink : ComponentBase
     [Inject]
     private LinkService LinkService { get; set; } = null!;
 
-    [Parameter]
-    public string? Id { get; set; }
-
-    [Parameter, AllowNull]
-    public EventCallback<string> OnClose { get; set; }
-
-    [Parameter, AllowNull]
-    public List<Link> Links { get; set; }
-
     public Link Link { get; set; } = new Link();
 
     public bool IsTaskRunning { get; set; } = false;
 
-    public void Edit(Link link)
-    {
-        Link = link;
-    }
+    public void Edit(Link link) => Link = link;
 
-    public async Task Save()
+    public List<Link> Links { get; set; } = null!;
+
+    protected override async Task OnInitializedAsync() => Links = await LinkService.GetLinksAsync();
+
+    public async Task SaveAsync()
     {
         IsTaskRunning = true;
 
         await LinkService.UpsertAsync(Link);
-
+        
         Link = new Link();
         IsTaskRunning = false;
     }
 
-    public async Task Delete()
+    public async Task DeleteAsync()
     {
         if (Link.Id == 0)
         {
@@ -53,10 +43,5 @@ public partial class EditLink : ComponentBase
         Link = new Link();
 
         IsTaskRunning = false;
-    }
-
-    public async Task Close()
-    {
-        await OnClose.InvokeAsync();
     }
 }
