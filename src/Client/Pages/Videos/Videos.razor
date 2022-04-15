@@ -1,32 +1,36 @@
 ﻿@page "/videos"
 
-@if (VideoList == null)
-{
-    <Loader Text="Loading videos..."/>
-}
-else
-{
-    <div class="row mt-2">
-        <div class="col-12">
-            @if (VideoList.Count() == 0)
-            {
-                <p>Nothing to watch, add some new movies!</p>
-            }
-            else
-            {
-                <Table Items="VideoList" Context="video" 
-                    SearchEnabled="true" OnSearch="@FilterVideos"
-                    PaginationEnabled="true" PageSize="20">
-                    <TableHeader>
-                        <th>Title</th>
-                        <th>Duration</th>
-                    </TableHeader>
-                    <RowTemplate>
-                        <td class=""><a class="link-dark" href="videos/player/@video.Id">@video.Title</a></td>
-                        <td>@video.Duration.ToString(@"hh\:mm\:ss")</td>
-                    </RowTemplate>
-                </Table>
-            }
-        </div>
-    </div>
-}
+<h4 class="mt-2">Videos</h4>
+<div class="d-flex mb-2">
+    <button class="btn btn-primary flex-shrink-0 me-2" @onclick="ToggleOrder">
+        @if (OrderByDuration)
+        {
+            <span>Order by title</span>
+        }
+        else
+        {
+            <span>Order by duration</span>
+        }
+    </button>
+    <button class="btn btn-secondary flex-shrink-0 me-2" @onclick="ToggleDescending">
+        @if (SortDescending)
+        {
+            <span>Descending</span>
+        }
+        else
+        {
+            <span>Ascending</span>
+        }
+    </button>
+    <input type="text" class="form-control" @bind="Filter" @bind:event="oninput" placeholder="Filter">
+</div>
+
+<ul class="list-group mt-2">
+    @foreach (Video video in VideoList)
+    {
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <a class="link-dark" href="videos/player/@video.Id">@video.Title</a>
+            <span class="badge bg-primary rounded-pill">@video.Duration.ToString(@"hh\:mm\:ss")</span>
+        </li>
+    }
+</ul>
