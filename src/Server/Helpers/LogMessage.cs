@@ -2,7 +2,7 @@ namespace PeterPedia.Server.Helpers;
 
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Used by source generator")]
 public static partial class LogMessage
-{    
+{
     [LoggerMessage(0, LogLevel.Error, "Failed to fetch data from themoviedb.org")]
     public static partial void TheMovieDbFailed(ILogger logger);
 
@@ -95,4 +95,7 @@ public static partial class LogMessage
 
     [LoggerMessage(32, LogLevel.Error, "Episode watch update failed, data {watch}, error {message}.")]
     public static partial void EpisodeWatchFailed(ILogger logger, ShowWatchData watch, string message);
+
+    [LoggerMessage(33, LogLevel.Debug, "Read article: {article}")]
+    public static partial void ReaderReadArticle(ILogger logger, ArticleEF article);   
 }
