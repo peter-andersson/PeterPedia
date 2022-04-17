@@ -87,7 +87,7 @@ public class RSSService
         {
             _toast.ShowSuccess("Subscription added");
 
-            var subscription = await response.Content.ReadFromJsonAsync(s_Context.Subscription);
+            Subscription? subscription = await response.Content.ReadFromJsonAsync(s_Context.Subscription);
             if (subscription is not null)
             {
                 Subscriptions.Add(subscription);
@@ -109,7 +109,7 @@ public class RSSService
 
     public async Task<bool> DeleteSubscriptionAsync(int id)
     {
-        var subscription = await GetSubscriptionAsync(id);
+        Subscription? subscription = await GetSubscriptionAsync(id);
         if (subscription is null)
         {
             _toast.ShowError($"{id} is not a valid subscription id. Can't remove subscription.");
@@ -142,7 +142,7 @@ public class RSSService
             return false;
         }
 
-        var existingSubscription = await GetSubscriptionAsync(subscription.Id);
+        Subscription? existingSubscription = await GetSubscriptionAsync(subscription.Id);
         if (existingSubscription is null)
         {
             _toast.ShowError("Can't update a subscription that doesn't exist.");
