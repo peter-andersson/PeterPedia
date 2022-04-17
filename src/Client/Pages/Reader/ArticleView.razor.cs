@@ -1,13 +1,11 @@
-﻿using Microsoft.AspNetCore.Components;
-using PeterPedia.Client.Services;
-using PeterPedia.Shared;
+using Microsoft.AspNetCore.Components;
 
 namespace PeterPedia.Client.Pages.Reader;
 
 public partial class ArticleView
 {
     [Inject]
-    RSSService RSSService { get; set; } = null!;
+    private RSSService RSSService { get; set; } = null!;
 
     [Parameter]
     public Article Article { get; set; } = null!;
@@ -15,9 +13,9 @@ public partial class ArticleView
     [Parameter]
     public EventCallback<Article> OnArticleRemove { get; set; }
 
-    private bool IsTaskRunning;
+    public bool IsTaskRunning { get; set; }
 
-    private async Task Delete()
+    private async Task DeleteAsync()
     {
         if (Article is null)
         {

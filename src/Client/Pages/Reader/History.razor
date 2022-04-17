@@ -1,29 +1,16 @@
 ﻿@page "/reader/history"
 
-@if (Articles == null)
-{
-    <Loader Text="Loading items..."/>
-}
-else
-{
-    <div class="row mt-2">
-        <div class="col">
-            <a class="btn btn-primary" href="/reader">Return to reader</a>
-        </div>
+<div class="row mt-2">
+    <div class="col">
+        <a class="btn btn-primary" href="/reader">Return to reader</a>
     </div>
+</div>
 
-    <div class="row mt-2">
-    <Table Items="Articles" Context="article" 
-        SearchEnabled="true" OnSearch="@FilterArticles"
-        PaginationEnabled="true" PageSize="20">
-        <TableHeader>
-            <th>Title</th>
-            <th>Read</th>
-        </TableHeader>
-        <RowTemplate>
-            <td><a href="@article.Url" class="link-dark" target="_blank">@article.Title</a></td>
-            <td>@article.ReadDate?.ToString("d MMM yyyy HH:mm:ss")</td>
-        </RowTemplate>
-    </Table>
+<div class="row mt-2">
+    <div class="list-group">
+        @foreach (Article article in Articles)
+        {
+            <a href="@article.Url" class="list-group-item list-group-item-action">@article.Title - @article.ReadDate?.ToString("d MMM yyyy HH:mm:ss")</a>
+        }
     </div>
-}
+</div>
