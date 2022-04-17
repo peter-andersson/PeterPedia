@@ -1,8 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PeterPedia.Server.Data;
-using PeterPedia.Server.Data.Models;
-using PeterPedia.Shared;
 
 namespace PeterPedia.Server.Controllers;
 
@@ -10,8 +7,6 @@ namespace PeterPedia.Server.Controllers;
 [Route("api/[controller]")]
 public partial class ArticleController : Controller
 {
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "Should not suppress this.")]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Used by source generator [LoggerMessaage]")]    
     private readonly ILogger<ArticleController> _logger;
 
     private readonly PeterPediaContext _dbContext;
@@ -23,18 +18,18 @@ public partial class ArticleController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> GetAsync()
     {
-        var subscriptions = await _dbContext.Subscriptions.Include(s => s.Articles.Where(a => a.ReadDate == null).OrderBy(a => a.PublishDate)).AsSplitQuery().ToListAsync().ConfigureAwait(false);
+        List<SubscriptionEF> subscriptions = await _dbContext.Subscriptions.Include(s => s.Articles.Where(a => a.ReadDate == null).OrderBy(a => a.PublishDate)).AsSplitQuery().ToListAsync().ConfigureAwait(false);
         subscriptions = subscriptions.Where(s => s.Articles.Count > 0).ToList();
 
         var tmpArticles = new Dictionary<string, UnreadArticle>();
 
-        foreach (var subscription in subscriptions)
+        foreach (SubscriptionEF subscription in subscriptions)
         {
             if (tmpArticles.TryGetValue(subscription.Group ?? subscription.Title, out UnreadArticle? unreadArticle))
             {
-                foreach (var article in subscription.Articles)
+                foreach (ArticleEF article in subscription.Articles)
                 {
                     unreadArticle.Articles.Add(ConvertToArticle(article));
                 }                
@@ -46,7 +41,7 @@ public partial class ArticleController : Controller
                     Group = subscription.Group ?? subscription.Title,
                 };
 
-                foreach (var article in subscription.Articles)
+                foreach (ArticleEF article in subscription.Articles)
                 {
                     unreadArticle.Articles.Add(ConvertToArticle(article));
                 }
@@ -55,10 +50,10 @@ public partial class ArticleController : Controller
             }
         }
         
-        List<string> keys = tmpArticles.Keys.ToList();
+        var keys = tmpArticles.Keys.ToList();
         keys.Sort();
         var result = new List<UnreadArticle>(keys.Count);
-        foreach (string key in keys)
+        foreach (var key in keys)
         {
             result.Add(tmpArticles[key]);
         }
@@ -67,40 +62,32 @@ public partial class ArticleController : Controller
     }
 
     [HttpGet("history")]
-    public async Task<IActionResult> History()
+    public async Task<IActionResult> HistoryAsync()
     {
-        var articles = await _dbContext.Articles.Where(a => a.ReadDate != null).OrderByDescending(a => a.ReadDate).Take(100).ToListAsync().ConfigureAwait(false);
+        List<ArticleEF> articles = await _dbContext.Articles.Where(a => a.ReadDate != null).OrderByDescending(a => a.ReadDate).Take(100).ToListAsync().ConfigureAwait(false);
 
         var result = new List<Article>(articles.Count);
-        foreach (var article in articles)
+        foreach (ArticleEF article in articles)
         {
             result.Add(ConvertToArticle(article));
         }
 
         return Ok(result);
     }
-
-    [HttpGet("stats")]
-    public async Task<IActionResult> Stats()
-    {
-        int articleCount = await _dbContext.Articles.CountAsync().ConfigureAwait(false);
-
-        return Ok(articleCount);
-    }
-
+ 
     [HttpGet("read/{articleId:int}")]
-    public async Task<IActionResult> Read(int articleId)
+    public async Task<IActionResult> ReadAsync(int articleId)
     {
-        LogReadArticle(articleId);
-
-        var article = await _dbContext.Articles.Where(a => a.Id == articleId).AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
+        ArticleEF? article = await _dbContext.Articles.Where(a => a.Id == articleId).AsTracking().SingleOrDefaultAsync();
         if (article is null)
         {
             return NotFound();
         }
 
+        LogMessage.ReaderReadArticle(_logger, article);
+
         article.ReadDate = DateTime.UtcNow;
-        await _dbContext.SaveChangesAsync().ConfigureAwait(false);
+        await _dbContext.SaveChangesAsync();
 
         return Ok();
     }
@@ -118,19 +105,11 @@ public partial class ArticleController : Controller
             Title = articleEF.Title,
             PublishDate = articleEF.PublishDate,
             Url = articleEF.Url,
-            ReadDate = articleEF.ReadDate
+            ReadDate = articleEF.ReadDate,
+            Feed = articleEF.Subscription?.Title ?? string.Empty,
         };
 
         return article;
     }
-   
-#pragma warning disable IDE0079 // Remove unnecessary suppression
-#pragma warning disable CA1822 // Mark members as static
-#pragma warning disable IDE0060 // Remove unused parameter
-    [LoggerMessage(0, LogLevel.Information, "Read articleId: {articleId}")]
-    partial void LogReadArticle(int articleId);
-#pragma warning restore IDE0060 // Remove unused parameter
-#pragma warning restore CA1822 // Mark members as static
-#pragma warning restore IDE0079 // Remove unnecessary suppression
 }
 
