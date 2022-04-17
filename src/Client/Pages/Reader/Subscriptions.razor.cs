@@ -1,21 +1,31 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using PeterPedia.Client.Services;
-using PeterPedia.Shared;
 
 namespace PeterPedia.Client.Pages.Reader;
 
 public partial class Subscriptions : ComponentBase
 {
-    private IJSObjectReference _module = null!;
-
     [Inject]
     private RSSService RSSService { get; set; } = null!;
 
-    [Inject]
-    private IJSRuntime JS { get; set; } = null!;
+    public List<Subscription> SubscriptionList
+    {
+        get
+        {
+            IEnumerable<Subscription> subscriptions;
 
-    public List<Subscription> SubscriptionList { get; set; } = null!;
+            if (string.IsNullOrWhiteSpace(Filter))
+            {
+                subscriptions = RSSService.Subscriptions;
+            }
+            else
+            {
+                subscriptions = RSSService.Subscriptions.Where(sub => sub.Title.Contains(Filter, StringComparison.InvariantCultureIgnoreCase));
+            }
+
+            return subscriptions.OrderBy(sub => sub.Title).ToList();
+        }
+    }
 
     public string AddSubscriptionElement { get; } = "add-subscription-dialog";
 
@@ -25,38 +35,11 @@ public partial class Subscriptions : ComponentBase
 
     public Subscription? SelectedSubscription { get; set; }
 
-    private string _currentFilter = string.Empty;
+    public string Filter { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         await RSSService.FetchDataAsync();
-
-        FilterSubscription(string.Empty);
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        await base.OnAfterRenderAsync(firstRender);
-
-        _module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/dialog.js");
-    }
-
-    public void FilterSubscription(string filter)
-    {
-        _currentFilter = filter;
-
-        IEnumerable<Subscription> subscriptions;
-
-        if (string.IsNullOrWhiteSpace(filter))
-        {
-            subscriptions = RSSService.Subscriptions;
-        }
-        else
-        {
-            subscriptions = RSSService.Subscriptions.Where(sub => sub.Title.Contains(filter, StringComparison.InvariantCultureIgnoreCase));
-        }
-
-        SubscriptionList = subscriptions.OrderBy(sub => sub.Title).ToList();
     }
 
     public async Task AddSubscription()
@@ -73,7 +56,7 @@ public partial class Subscriptions : ComponentBase
     {
         await AddDialogClose();
 
-        FilterSubscription(_currentFilter);
+        // FilterSubscription(_currentFilter);
 
         StateHasChanged();
     }
@@ -96,7 +79,7 @@ public partial class Subscriptions : ComponentBase
     {
         await DeleteDialogClose();
 
-        FilterSubscription(_currentFilter);
+        // FilterSubscription(_currentFilter);
 
         StateHasChanged();
     }
@@ -119,7 +102,7 @@ public partial class Subscriptions : ComponentBase
     {
         await EditDialogClose();
 
-        FilterSubscription(_currentFilter);
+        // FilterSubscription(_currentFilter);
 
         StateHasChanged();
     }
@@ -129,12 +112,7 @@ public partial class Subscriptions : ComponentBase
         if (string.IsNullOrWhiteSpace(element))
         {
             return;
-        }
-
-        if (_module is not null)
-        {
-            await _module.InvokeVoidAsync("ShowDialog", element);
-        }
+        }      
     }
 
     private async Task HideDialog(string element)
@@ -142,11 +120,6 @@ public partial class Subscriptions : ComponentBase
         if (string.IsNullOrWhiteSpace(element))
         {
             return;
-        }
-
-        if (_module is not null)
-        {
-            await _module.InvokeVoidAsync("HideDialog", element);
-        }
+        }       
     }
 }
