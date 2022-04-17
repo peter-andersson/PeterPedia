@@ -1,4 +1,4 @@
-﻿namespace PeterPedia.Shared;
+namespace PeterPedia.Shared;
 
 public class Article
 {
@@ -6,6 +6,7 @@ public class Article
     {
         Title = string.Empty;
         Url = string.Empty;
+        Feed = string.Empty;
     }
 
     public int Id { get; set; }
@@ -17,4 +18,6 @@ public class Article
     public DateTime PublishDate { get; set; }
 
     public DateTime? ReadDate { get; set; }
+
+    public string Feed { get; set; }
 }
