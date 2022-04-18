@@ -1,11 +1,5 @@
 ﻿@page "/reader/subscriptions"
 
-<AddSubscription Id="@AddSubscriptionElement" OnClose="AddDialogClose" OnSuccess="AddDialogSuccess"></AddSubscription>
-
-<DeleteSubscription Id="@DeleteSubscriptionElement" OnClose="DeleteDialogClose" OnSuccess="DeleteDialogSuccess" Subscription="SelectedSubscription"></DeleteSubscription>
-
-<EditSubscription Id="@EditSubscriptionElement" OnClose="EditDialogClose" OnSuccess="EditDialogSuccess" Subscription="SelectedSubscription"></EditSubscription>
-
 <h4 class="mt-2">Subscriptions</h4>
 <div class="d-flex mb-2">
     <button class="btn btn-success flex-shrink-0 me-2" @onclick="AddSubscription">Add subscription</button>
