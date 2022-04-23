@@ -5,9 +5,11 @@
   const deleteStore = "delete";
 
   const db = idb.openDB("Authors", 2, {
-    upgrade(db) {
-      db.deleteObjectStore(authorStore);
-
+    upgrade(db, oldVersion, newVersion) {
+      if (oldVersion == 1) {
+        db.deleteObjectStore(authorStore);
+      }
+      
       db.createObjectStore(authorStore, { keyPath: "id" }).createIndex("lastUpdated", "lastUpdated");
       db.createObjectStore(deleteStore, { keyPath: "deleted" });
     },
