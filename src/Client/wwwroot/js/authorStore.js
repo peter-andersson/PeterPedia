@@ -5,7 +5,7 @@
   const deleteStore = "delete";
 
   const db = idb.openDB("Authors", 2, {
-    upgrade(db, oldVersion, newVersion) {
+    upgrade(db, oldVersion) {
       if (oldVersion == 1) {
         db.deleteObjectStore(authorStore);
       }
