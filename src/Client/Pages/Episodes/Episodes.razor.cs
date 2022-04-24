@@ -52,7 +52,7 @@ public partial class Episodes : ComponentBase, IDisposable
 
         Modal.Show<ShowDialog>("Edit show", parameters, new ModalOptions()
         {
-            Class = "blazored-modal w-75",
+            Class = "blazored-modal w-75 overflow-scroll vh-75 mh-100",
         });
     }
 
