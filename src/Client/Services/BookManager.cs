@@ -198,8 +198,14 @@ public class BookManager : IBookManager
     private async Task<bool> FetchDeletedBooksAsync()
     {
         var changed = false;
-        DeleteLog? latestDeletion = await _js.InvokeAsync<DeleteLog>("bookStore.getDeleted");
-        DateTime since = latestDeletion?.Deleted ?? DateTime.MinValue;
+
+        DeleteLog[] deleteLog = await _js.InvokeAsync<DeleteLog[]>("bookStore.getDeleted");
+        DateTime since = DateTime.MinValue;
+        if (deleteLog.Length > 0)
+        {
+            since = deleteLog[0].Deleted;
+        }
+
         var json = await _http.GetStringAsync($"/api/Book/deleted?deleted={since:yyyyMMddHHmmss}");
         if (!string.IsNullOrWhiteSpace(json))
         {

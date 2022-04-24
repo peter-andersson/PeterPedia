@@ -322,8 +322,14 @@ public class EpisodeManager : IEpisodeManager
     private async Task<bool> FetchDeletedShowsAsync()
     {
         var changed = false;
-        DeleteLog? latestDeletion = await _js.InvokeAsync<DeleteLog>("episodeStore.getDeleted");
-        DateTime since = latestDeletion?.Deleted ?? DateTime.MinValue;
+
+        DeleteLog[] deleteLog = await _js.InvokeAsync<DeleteLog[]>("episodeStore.getDeleted");
+        DateTime since = DateTime.MinValue;
+        if (deleteLog.Length > 0)
+        {
+            since = deleteLog[0].Deleted;
+        }
+
         var json = await _http.GetStringAsync($"/api/Episode/deleted?deleted={since:yyyyMMddHHmmss}");
         if (!string.IsNullOrWhiteSpace(json))
         {

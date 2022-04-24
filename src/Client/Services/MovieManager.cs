@@ -227,8 +227,14 @@ public class MovieManager : IMovieManager
     private async Task<bool> FetchDeletedMoviesAsync()
     {
         var changed = false;
-        DeleteLog? latestDeletion = await _js.InvokeAsync<DeleteLog>("movieStore.getDeleted");
-        DateTime since = latestDeletion?.Deleted ?? DateTime.MinValue;
+
+        DeleteLog[] deleteLog = await _js.InvokeAsync<DeleteLog[]>("movieStore.getDeleted");
+        DateTime since = DateTime.MinValue;
+        if (deleteLog.Length > 0)
+        {
+            since = deleteLog[0].Deleted;
+        }
+
         var json = await _http.GetStringAsync($"/api/Movie/deleted?deleted={since:yyyyMMddHHmmss}");
         if (!string.IsNullOrWhiteSpace(json))
         {

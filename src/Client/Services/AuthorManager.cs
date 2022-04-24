@@ -196,8 +196,14 @@ public class AuthorManager : IAuthorManager
     private async Task<bool> FetchDeletedAuthorsAsync()
     {
         var changed = false;
-        DeleteLog? latestDeletion = await _js.InvokeAsync<DeleteLog>("authorStore.getDeleted");
-        DateTime since = latestDeletion?.Deleted ?? DateTime.MinValue;
+
+        DeleteLog[] deleteLog = await _js.InvokeAsync<DeleteLog[]>("authorStore.getDeleted");
+        DateTime since = DateTime.MinValue;
+        if (deleteLog.Length > 0)
+        {
+            since = deleteLog[0].Deleted;
+        }
+
         var json = await _http.GetStringAsync($"/api/Author/deleted?deleted={since:yyyyMMddHHmmss}");
         if (!string.IsNullOrWhiteSpace(json))
         {
