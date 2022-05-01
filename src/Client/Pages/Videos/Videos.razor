@@ -25,12 +25,16 @@
     <input type="text" class="form-control" @bind="Filter" @bind:event="oninput" placeholder="Filter">
 </div>
 
-<ul class="list-group mt-2">
-    @foreach (Video video in VideoList)
-    {
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            <a class="link-dark" href="videos/player/@video.Id">@video.Title</a>
-            <span class="badge bg-primary rounded-pill">@video.Duration.ToString(@"hh\:mm\:ss")</span>
-        </li>
-    }
-</ul>
+<div class="row">
+    <div class="col">
+        <ul class="list-group mt-2">
+            @foreach (Video video in VideoList)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <a class="link-dark video-link" href="videos/player/@video.Id">@video.Title</a>
+                    <span class="badge bg-primary rounded-pill">@video.Duration.ToString(@"hh\:mm\:ss")</span>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
