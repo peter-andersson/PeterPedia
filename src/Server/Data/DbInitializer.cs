@@ -12,8 +12,5 @@ public static class DbInitializer
         }
 
         context.Database.Migrate();
-
-        var command = "UPDATE book SET LastUpdated = '2000-01-01' WHERE LastUpdated = 'LastUpdated'";            
-        context.Database.ExecuteSqlRaw(command);
     }
 }
