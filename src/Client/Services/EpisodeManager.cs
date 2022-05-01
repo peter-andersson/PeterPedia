@@ -124,6 +124,15 @@ public class EpisodeManager : IEpisodeManager
 
             foreach (Show show in shows)
             {
+                var currentCount = show.UnwatchedEpisodeCount;
+
+                show.Calculate();
+
+                if (currentCount != show.UnwatchedEpisodeCount)
+                {
+                    await _js.InvokeVoidAsync("episodeStore.put", show);
+                }
+
                 _shows.Add(show);
             }
         }
