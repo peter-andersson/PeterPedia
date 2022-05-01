@@ -16,6 +16,8 @@ public class EpisodeManager : IEpisodeManager
 
     private readonly List<Show> _shows = new();
 
+    private System.Timers.Timer _timer = null!;
+
     public EpisodeManager(HttpClient httpClient, IToastService toastService, IJSRuntime js)
     {
         _http = httpClient;
@@ -120,8 +122,8 @@ public class EpisodeManager : IEpisodeManager
     {
         if (_shows.Count == 0)
         {
-            Show[] shows = await _js.InvokeAsync<Show[]>("episodeStore.getAll");
-
+            Show[] shows = await _js.InvokeAsync<Show[]>("episodeStore.getUnwatched");
+            
             foreach (Show show in shows)
             {
                 var currentCount = show.UnwatchedEpisodeCount;
@@ -135,11 +137,11 @@ public class EpisodeManager : IEpisodeManager
 
                 _shows.Add(show);
             }
-        }
 
-        if (_shows.Count == 0)
-        {
-            await RefreshAsync();
+            _timer = new System.Timers.Timer(5 * 1000);
+            _timer.Elapsed += LoadAllAsync;
+            _timer.AutoReset = true;
+            _timer.Enabled = true;
         }
 
         return _shows;
@@ -372,5 +374,45 @@ public class EpisodeManager : IEpisodeManager
         }
 
         return changed;
+    }
+
+    private async void LoadAllAsync(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        _timer.Stop();
+        _timer.Enabled = false;
+        var changed = false;
+
+        Show[] shows = await _js.InvokeAsync<Show[]>("episodeStore.getAll");
+
+        foreach (Show show in shows)
+        {
+            var currentCount = show.UnwatchedEpisodeCount;
+
+            show.Calculate();
+
+            if (currentCount != show.UnwatchedEpisodeCount)
+            {
+                await _js.InvokeVoidAsync("episodeStore.put", show);
+            }
+
+            Show? existing = Get(show.Id);
+            if (existing is null)
+            {
+                _shows.Add(show);
+                changed = true;
+            }
+        }
+
+        if (_shows.Count == 0)
+        {
+            await RefreshAsync();
+        }
+        else
+        {
+            if (changed)
+            {
+                EpisodeChanged?.Invoke();
+            }
+        }
     }
 }

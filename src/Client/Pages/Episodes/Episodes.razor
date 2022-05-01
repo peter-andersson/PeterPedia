@@ -1,28 +1,35 @@
 ﻿@page "/episodes"
 
 <h4 class="mt-2">Episodes</h4>
-<div class="d-flex mb-2">
-  <button class="btn btn-success flex-shrink-0 me-2" @onclick="AddShow">Add show</button>
-  <button class="btn btn-primary flex-shrink-0 me-2" @onclick="ShowLastEpisodes">Latest episodes</button>
-  <input type="text" class="form-control" @bind="Filter" @bind:event="oninput" placeholder="Filter">
-</div>
-     
-@if (string.IsNullOrWhiteSpace(Filter))
+@if (Loading)
 {
-    <h5>Watchlist</h5>
-    <div class="row row-cols-1 row-cols-md-4 g-4 mb-2">
-        @foreach (Show show in WatchList)
-        {
-            <ShowView Show="@show" OnSelect="SelectShow" />
-        }
-    </div>
+  <Loader Text="Loading episodes..."></Loader>
 }
-else if (Filter == "*" || Filter.Length > 3)
+else
 {
-    <div class="row row-cols-1 row-cols-md-4 g-4 mt-2">
-    @foreach (Show show in AllShows)
-    {
-      <ShowView Show="@show" OnSelect="SelectShow" />
-    }
+    <div class="d-flex mb-2">
+        <button class="btn btn-success flex-shrink-0 me-2" @onclick="AddShow">Add show</button>
+        <button class="btn btn-primary flex-shrink-0 me-2" @onclick="ShowLastEpisodes">Latest episodes</button>
+        <input type="text" class="form-control" @bind="Filter" @bind:event="oninput" placeholder="Filter">
     </div>
+
+    @if (string.IsNullOrWhiteSpace(Filter))
+    {
+        <h5>Watchlist</h5>
+        <div class="row row-cols-1 row-cols-md-4 g-4 mb-2">
+            @foreach (Show show in WatchList)
+            {
+                <ShowView Show="@show" OnSelect="SelectShow" />
+            }
+        </div>
+    }
+    else if (Filter == "*" || Filter.Length > 3)
+    {
+        <div class="row row-cols-1 row-cols-md-4 g-4 mt-2">
+            @foreach (Show show in AllShows)
+            {
+                <ShowView Show="@show" OnSelect="SelectShow" />
+            }
+        </div>
+    }
 }

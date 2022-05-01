@@ -10,19 +10,23 @@ public partial class Episodes : ComponentBase, IDisposable
     [CascadingParameter]
     private IModalService Modal { get; set; } = null!;
 
-    public string Filter { get; set; } = string.Empty;
-
     private readonly List<Show> _shows = new();
 
-    private List<Show> AllShows => _shows.Where(s => s.Search(Filter)).ToList();
+    public string Filter { get; set; } = string.Empty;
 
-    private List<Show> WatchList => _shows.Where(s => s.UnwatchedEpisodeCount > 0).ToList();
+    public bool Loading { get; set; } = true;    
+
+    public List<Show> AllShows => _shows.Where(s => s.Search(Filter)).ToList();
+
+    public List<Show> WatchList => _shows.Where(s => s.UnwatchedEpisodeCount > 0).ToList();    
 
     protected override async Task OnInitializedAsync()
     {
         EpisodeManager.EpisodeChanged += async () => await RefreshEpisodesAsync();
 
         await RefreshEpisodesAsync();
+
+        Loading = false;
     }
 
     private async Task RefreshEpisodesAsync()
