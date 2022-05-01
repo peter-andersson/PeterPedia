@@ -180,13 +180,13 @@ public class EpisodeManager : IEpisodeManager
             return false;
         }
 
-        using HttpResponseMessage response = await _http.PutAsJsonAsync("/api/TV", show, s_Context.Show);
+        using HttpResponseMessage response = await _http.PutAsJsonAsync("/api/Episode", show, s_Context.Show);
 
         if (response.IsSuccessStatusCode)
         {
             _toast.ShowSuccess($"Show {show.Title} saved");
 
-            Show? serverShow = await _http.GetFromJsonAsync($"/api/TV/{show.Id}", s_Context.Show);
+            Show? serverShow = await _http.GetFromJsonAsync($"/api/Episode/{show.Id}", s_Context.Show);
 
             if (serverShow is not null)
             {

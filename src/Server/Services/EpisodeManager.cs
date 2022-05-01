@@ -16,6 +16,8 @@ namespace PeterPedia.Server.Services
 
         Task<Result<IList<Show>>> GetAsync(DateTime updateSince);
 
+        Task<Result<Show>> GetAsync(int id);
+
         Task<Result<IList<DeleteLog>>> GetDeletedAsync(DateTime deletedSince);
 
         Task<Result<IList<Episode>>> GetEpisodesAsync();
@@ -153,6 +155,20 @@ namespace PeterPedia.Server.Services
             }
 
             return new SuccessResult<IList<Show>>(result);
+        }
+
+        public async Task<Result<Show>> GetAsync(int id)
+        {
+            ShowEF? show = await _dbContext.Shows
+                .Include(sh => sh.Seasons)
+                .ThenInclude(se => se.Episodes)
+                .AsSplitQuery()
+                .Where(s => s.Id == id)
+                .SingleOrDefaultAsync();
+
+            return show is null
+                ? new NotFoundResult<Show>()
+                : new SuccessResult<Show>(ConvertToShow(show));
         }
 
         public async Task<Result<IList<DeleteLog>>> GetDeletedAsync(DateTime deletedSince) =>

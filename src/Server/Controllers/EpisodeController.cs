@@ -22,7 +22,15 @@ public partial class EpisodeController : Controller
 
         return result.Success ? Ok(result.Data) : StatusCode(500);
     }
-    
+
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetShowAsync(int id)
+    {
+        Result<Show> result = await _episodeManager.GetAsync(id);
+
+        return result.Success ? Ok(result.Data) : StatusCode(500);
+    }
+
     [HttpGet("deleted")]
     public async Task<IActionResult> GetDeletedAsync([FromQuery] string deleted)
     {
