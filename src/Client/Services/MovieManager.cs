@@ -16,6 +16,8 @@ public class MovieManager : IMovieManager
 
     private readonly List<Movie> _movies = new();
 
+    private System.Timers.Timer _timer = null!;
+
     public MovieManager(HttpClient httpClient, IToastService toastService, IJSRuntime js)
     {
         _http = httpClient;
@@ -121,12 +123,17 @@ public class MovieManager : IMovieManager
     {
         if (_movies.Count == 0)
         {
-            Movie[] movies = await _js.InvokeAsync<Movie[]>("movieStore.getAll");
+            Movie[] movies = await _js.InvokeAsync<Movie[]>("movieStore.getWatchlist");
 
             foreach (Movie movie in movies)
             {
                 _movies.Add(movie);
             }
+
+            _timer = new System.Timers.Timer(5 * 1000);
+            _timer.Elapsed += LoadAllAsync;
+            _timer.AutoReset = true;
+            _timer.Enabled = true;
         }
 
         if (_movies.Count == 0)
@@ -268,5 +275,36 @@ public class MovieManager : IMovieManager
         }
 
         return changed;
+    }
+
+    private async void LoadAllAsync(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        _timer.Stop();
+        _timer.Enabled = false;
+        var changed = false;
+
+        Movie[] movies = await _js.InvokeAsync<Movie[]>("movieStore.getAll");
+
+        foreach (Movie movie in movies)
+        {
+            Movie? existing = Get(movie.Id);
+            if (existing is null)
+            {
+                _movies.Add(movie);
+                changed = true;
+            }
+        }
+
+        if (_movies.Count == 0)
+        {
+            await RefreshAsync();
+        }
+        else
+        {
+            if (changed)
+            {
+                MovieChanged?.Invoke();
+            }
+        }
     }
 }

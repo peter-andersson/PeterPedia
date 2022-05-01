@@ -10,19 +10,23 @@ public partial class Movies : ComponentBase, IDisposable
     [CascadingParameter]
     private IModalService Modal { get; set; } = null!;
 
-    public string Filter { get; set; } = string.Empty;
-
     private readonly List<Movie> _movies = new();
 
-    private List<Movie> AllMovies => _movies.Where(m => m.Search(Filter)).ToList();
+    public string Filter { get; set; } = string.Empty;
 
-    private List<Movie> WatchList => _movies.Where(m => !m.WatchedDate.HasValue).ToList();
+    public bool Loading { get; set; } = true;
+
+    public List<Movie> AllMovies => _movies.Where(m => m.Search(Filter)).ToList();
+
+    public List<Movie> WatchList => _movies.Where(m => !m.WatchedDate.HasValue).ToList();
 
     protected override async Task OnInitializedAsync()
     {
         MovieManager.MovieChanged += async () => await RefreshMoviesAsync();
 
         await RefreshMoviesAsync();
+
+        Loading = false;
     }
 
     private async Task RefreshMoviesAsync()

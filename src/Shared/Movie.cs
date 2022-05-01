@@ -50,4 +50,6 @@ public class Movie
             Title.Contains(searchString, StringComparison.InvariantCultureIgnoreCase) ||
             OriginalTitle.Contains(searchString, StringComparison.InvariantCultureIgnoreCase);
     }
+
+    public int WatchedState => WatchedDate.HasValue ? 1 : 0;
 }

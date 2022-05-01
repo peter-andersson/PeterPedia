@@ -1,27 +1,34 @@
 ﻿@page "/movies/"
 
 <h4 class="mt-2">Movies</h4>
-<div class="d-flex mb-2">
-  <button class="btn btn-success flex-shrink-0 me-2" @onclick="AddMovie">Add movie</button>
-  <input type="text" class="form-control" @bind="Filter" @bind:event="oninput" placeholder="Filter">
-</div>
-     
-@if (string.IsNullOrWhiteSpace(Filter))
+@if (Loading)
 {
-  <h5>Watchlist</h5>
-  <div class="row row-cols-1 row-cols-md-4 g-4 mb-2">
-    @foreach (Movie movie in WatchList)
-    {
-      <MovieView Movie="@movie" OnSelect="SelectMovie" />
-    }
-  </div>  
+    <Loader Text="Loading movies..."></Loader>
 }
-else if (Filter == "*" || Filter.Length > 3)
+else
 {
-  <div class="row row-cols-1 row-cols-md-4 g-4 mt-2">
-    @foreach (Movie movie in AllMovies)
+    <div class="d-flex mb-2">
+        <button class="btn btn-success flex-shrink-0 me-2" @onclick="AddMovie">Add movie</button>
+        <input type="text" class="form-control" @bind="Filter" @bind:event="oninput" placeholder="Filter">
+    </div>
+
+    @if (string.IsNullOrWhiteSpace(Filter))
     {
-      <MovieView Movie="@movie" OnSelect="SelectMovie" />
+        <h5>Watchlist</h5>
+        <div class="row row-cols-1 row-cols-md-4 g-4 mb-2">
+            @foreach (Movie movie in WatchList)
+            {
+                <MovieView Movie="@movie" OnSelect="SelectMovie" />
+            }
+        </div>
     }
-  </div>
+    else if (Filter == "*" || Filter.Length > 3)
+    {
+        <div class="row row-cols-1 row-cols-md-4 g-4 mt-2">
+            @foreach (Movie movie in AllMovies)
+            {
+                <MovieView Movie="@movie" OnSelect="SelectMovie" />
+            }
+        </div>
+    }
 }
