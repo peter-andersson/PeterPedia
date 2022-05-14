@@ -1,0 +1,32 @@
+﻿@page "/movies/add"
+
+<h4 class="mt-2">Add movie</h4>
+
+<EditForm class="form" Model="@Movie" OnValidSubmit="@AddAsync">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-floating">
+        <InputText id="add-movie" class="form-control" type="text" @bind-Value="@Movie.Url"></InputText>
+        <label for="add-movie">TheMovieDb id or URL</label>
+    </div>
+    <div class="mt-2 mb-3">
+        <button type="button" class="btn btn-danger" @onclick="Close" disabled=@IsTaskRunning>Cancel</button>
+        <button type="submit" class="ms-2 btn btn-success" disabled=@IsTaskRunning>Add</button>
+    </div>
+</EditForm>
+
+@if (!string.IsNullOrWhiteSpace(SuccessMessage))
+{
+    <div class="alert alert-success" role="alert">
+        @SuccessMessage
+    </div>
+}
+
+@if (!string.IsNullOrWhiteSpace(ErrorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        @ErrorMessage
+    </div>
+}
+

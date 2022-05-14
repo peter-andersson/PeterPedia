@@ -12,9 +12,7 @@ WORKDIR /src
 
 # Copy project files
 COPY PeterPedia.sln .
-COPY src/Client/*.csproj ./src/Client/
-COPY src/Server/*.csproj ./src/Server/
-COPY src/Shared/*.csproj ./src/Shared/
+COPY src/PeterPedia/*.csproj ./src/PeterPedia/
 
 # Copy test projects
 COPY tests/PeterPedia.Tests/*.csproj ./tests/PeterPedia.Tests/
@@ -40,4 +38,4 @@ RUN dotnet publish -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "PeterPedia.Server.dll"]
+ENTRYPOINT ["dotnet", "PeterPedia.dll"]

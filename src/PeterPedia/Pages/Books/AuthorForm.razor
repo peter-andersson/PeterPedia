@@ -1,0 +1,29 @@
+﻿@page "/books/author/{id:int}"
+
+<h4 class="mt-2">Manage author</h4>
+
+<EditForm Model="@Author" OnValidSubmit="@HandleValidSubmitAsync" autocomplete="off">
+    <div class="mb-3">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+    </div>
+
+    <div class="mb-3">
+        <label class="visually-hidden" for="addName">Name</label>
+        <InputText type="text" class="form-control" id="addName" placeholder="Name" @bind-Value="Author.Name" />
+    </div>
+
+    <div class="mb-3">
+        <label class="visually-hidden" for="addDateOfBirth">Date of birth</label>
+        <InputDate class="form-control" id="addDateOfBirth" @bind-Value="Author.DateOfBirth" @bind-Value:format="dd MMM yyyy" />
+    </div>
+
+    <div class="mb-3">
+        <button type="submit" class="btn btn-success" disabled="@IsTaskRunning">@SubmitButtonText</button>
+        @if (Author.Id > 0)
+        {
+            <button type="button" class="btn btn-danger ms-2" @onclick="DeleteAsync" disabled="@IsTaskRunning">Delete</button>
+        }
+        <button type="button" class="btn btn-secondary ms-2" @onclick="Close">Cancel</button>        
+    </div>
+</EditForm>

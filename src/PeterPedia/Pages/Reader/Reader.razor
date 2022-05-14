@@ -1,0 +1,49 @@
+﻿@page "/reader"
+
+<div class="row mt-2">
+    <div class="d-flex">
+        <a class="btn btn-primary" href="/reader/subscriptions">Manage subscriptions</a>
+        <a class="ms-2 btn btn-secondary" href="/reader/history">History</a>
+    </div>
+</div>
+
+<div class="row mt-2">
+    @if (Unread != null)
+    {
+        <h3>@Unread.Group - @Unread.Articles.Count</h3>
+        <div class="col-12 d-flex mt-2 mb-2 align-items-center">
+            <button class="btn btn-primary" @onclick="() => Load(null)">Return to list</button>
+        </div>
+
+        <hr />
+        <div class="col-12">
+            @foreach (var article in Unread.Articles)
+            {
+                <ArticleView Article="article" OnArticleRemove="@ArticleRemoved"></ArticleView>
+            }
+        </div>
+    }
+    else if (UnreadArticles.Count > 0)
+    {
+        <div class="col-12">
+            <div class="list-group list-group-flush">
+                @foreach (var unread in UnreadArticles)
+                {
+                    if (unread.Articles.Count > 0)
+                    {
+                        <button class="list-group-item d-flex justify-content-between align-items-start" @onclick="() => Load(unread)">
+                            <div class="ms-2 me-auto">@unread.Group</div>
+                            <span class="badge bg-primary rounded-pill">@unread.Articles.Count</span>
+                        </button>
+                    }
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="col-12">
+            No more items to read
+        </div>
+    }
+</div>    

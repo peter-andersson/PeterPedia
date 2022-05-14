@@ -1,0 +1,41 @@
+﻿@page "/photos"
+
+
+@if (PhotoList != null)
+{
+    <div class="row mt-2">
+        <h2>@Album</h2>
+    </div>
+    <div class="row mt-2">
+        <a class="link-dark" href="javascript:void(0)" @onclick="() => OpenAlbumAsync(string.Empty)">Return to albums</a>
+    </div>
+
+    <div class="row mt-2">
+        <div class="d-flex flex-wrap">
+            @foreach (var photo in PhotoList)
+            {
+                <a class="image-link me-2 mt-2" href="@photo.Url" target="_blank">
+                    <img width="200" height="200" src="@photo.Url" class="img-thumbnail image" alt="@photo.Url">
+                </a>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="row mt-2">
+        @if (Albums.Count() == 0)
+        {
+            <p>No photos, start by adding some.</p>
+        }
+        else
+        {
+            @foreach (string album in Albums)
+            {
+                <div class="col-12 col-md-6 col-lg-4">
+                    <a class="fs-2 link-dark" href="javascript:void(0)" @onclick="() => OpenAlbumAsync(album)">@album</a>
+                </div>
+            }
+        }
+    </div>
+}

@@ -1,0 +1,4 @@
+﻿<div class="show mb-2 me-2" @onclick="() => OpenShow()">
+  <span class="badge rounded-pill bg-primary">@Show.UnwatchedEpisodeCount</span>
+  <img src="/images/episodes/@($"{Show.Id}.jpg")" class="show-poster" alt="@Show.Title">
+</div>

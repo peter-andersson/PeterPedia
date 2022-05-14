@@ -1,0 +1,17 @@
+﻿@page "/episodes"
+
+<h4 class="mt-2">Episodes</h4>
+
+<div class="d-flex mb-2">
+    <a class="btn btn-success flex-shrink-0 me-2" href="/episodes/add">Add show</a>
+    <a class="btn btn-info flex-shrink-0 me-2" href="/episodes/new">Latest episodes</a>
+    <a class="btn btn-primary flex-shrink-0 me-2" href="/episodes/all">All shows</a>
+</div>
+
+<div class="row row-cols-1 row-cols-md-4 g-4 mb-2">
+    @foreach (Show show in WatchList)
+    {
+        <ShowView Show="@show" />
+    }
+</div>
+

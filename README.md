@@ -5,8 +5,18 @@ A collection of simple apps I use
 [![Build and Publish Docker Image](https://github.com/peter-andersson/PeterPedia/actions/workflows/Build%20and%20Publish%20Docker%20Image.yml/badge.svg)](https://github.com/peter-andersson/PeterPedia/actions/workflows/Build%20and%20Publish%20Docker%20Image.yml)
 
 ## Apps
-- Book - Tracking read books and books I want to read.
-- Episodes - Tracking unwatched TV episodes. Using data from themoviedb.org
-- Movie - Tracking watched movies. Using data from themoviedb.org
-- Reader - RSS reader.
-- VideoPlayer - Playback of video files.
+- Tracking read books and books I want to read.
+- Tracking unwatched TV episodes. Using data from themoviedb.org
+- Tracking watched movies. Using data from themoviedb.org
+- RSS reader.
+- Playback of video files.
+- Photo gallery
+- Dashboard with links to specific sites.
+
+# Build
+## Test docker image
+Using WSL Debian with podman installed.
+
+```sh
+podman build .
+```

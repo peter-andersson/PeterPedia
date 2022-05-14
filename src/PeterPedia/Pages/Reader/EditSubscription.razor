@@ -1,0 +1,36 @@
+﻿@page "/reader/subscriptions/edit/{id:int}"
+
+<h4 class="mt-2">Edit subscription</h4>
+
+@if (Subscription.Id > 0)
+{
+    <EditForm class="form" Model="@Subscription" OnValidSubmit="@SaveAsync">
+        <div class="row">
+            <div class="col-12 mb-2">
+                <div class="form-floating">
+                    <InputText id="title" class="form-control" @bind-Value="Subscription.Title"></InputText>
+                    <label for="title">Title</label>
+                </div>
+            </div>
+            <div class="col-12 mb-2">
+                <div class="form-floating">
+                    <InputText id="group" class="form-control" @bind-Value="Subscription.Group" />
+                    <label for="group">Original title</label>
+                </div>
+            </div>
+            <div class="col-12 mb-2">
+                <div class="form-floating">
+                    <InputNumber id="movie-original-language" class="form-control" @bind-Value="Subscription.UpdateIntervalMinute" />
+                    <label for="movie-language">Original language</label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="d-flex">
+                <button type="submit" class="btn btn-success" disabled=@IsTaskRunning>Save</button>
+                <button type="button" class="btn btn-danger ms-2" @onclick="DeleteAsync" disabled="@IsTaskRunning">Delete</button>
+                <button type="button" class="btn btn-secondary ms-2" @onclick="Close">Cancel</button>
+            </div>
+        </div>
+    </EditForm>
+}

@@ -1,0 +1,31 @@
+﻿@page "/edit"
+<h1>Edit links</h1>
+
+<div class="row mt-2">
+    <EditForm class="form" Model="@Link" OnValidSubmit="@SaveAsync">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-floating mb-2">
+            <InputText id="link-title" class="form-control" type="text" @bind-Value="@Link.Title"></InputText>
+            <label for="link-title">Title</label>
+        </div>
+        <div class="form-floating mb-2">
+            <InputText id="link-url" class="form-control" type="text" @bind-Value="@Link.Url"></InputText>
+            <label for="link-url">Url</label>
+        </div>
+        <div class="mb-3">
+            <button type="button" class="btn btn-danger" @onclick="DeleteAsync" disabled=@IsTaskRunning>Delete</button>
+            <button type="submit" class="ms-2 btn btn-success" disabled=@IsTaskRunning>Save</button>
+        </div>
+    </EditForm>
+</div>
+<div class="row mt-2">
+    <div class="list-group">
+
+        @foreach (var link in Links)
+        {
+            <a href="javascript:void(0)" class="list-group-item list-group-item-action" @onclick="() => Edit(link)">@link.Title - @link.Url</a>
+        }
+    </div>
+</div>

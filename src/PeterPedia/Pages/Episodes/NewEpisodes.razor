@@ -1,0 +1,20 @@
+﻿@page "/episodes/new"
+
+<h4 class="mt-2">New episodes</h4>
+
+
+    <div class="row mt-2">
+        <div class="col">
+            <div class="d-flex">
+                <button type="button" class="btn btn-primary ms-2" @onclick="Close">Back to watchlist</button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <ul class="list-group list-group-flush">
+          @foreach (Episode episode in Episodes)
+            {
+              <li class="list-group-item">@($"{episode.ShowTitle} S{episode.SeasonNumber:D2}E{episode.EpisodeNumber:D2} - {episode.Title} - {episode.AirDate:MMM d, yyyy}")</li>
+            }
+        </ul>
+    </div>
