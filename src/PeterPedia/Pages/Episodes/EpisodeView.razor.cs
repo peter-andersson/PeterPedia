@@ -8,9 +8,12 @@ public partial class EpisodeView : ComponentBase
     private IEpisodeManager EpisodeManager { get; set; } = null!;
 
     [CascadingParameter]
+    public ShowPage Parent { get; set; } = null!;
+
+    [Parameter]
     public Show Show { get; set; } = null!;
 
-    [CascadingParameter]
+    [Parameter]
     public Episode Episode { get; set; } = null!;
 
     public bool IsTaskRunning { get; set; } = false;
@@ -39,6 +42,8 @@ public partial class EpisodeView : ComponentBase
                         episode.Watched = true;
 
                         Show.Calculate();
+
+                        Parent?.Refresh();
 
                         return;
                     }
@@ -72,6 +77,8 @@ public partial class EpisodeView : ComponentBase
                         episode.Watched = false;
 
                         Show.Calculate();
+
+                        Parent?.Refresh();
 
                         return;
                     }

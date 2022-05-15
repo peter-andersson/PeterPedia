@@ -21,6 +21,8 @@ public partial class ShowPage : ComponentBase
 
     public bool IsTaskRunning { get; set; }
 
+    public void Refresh() => StateHasChanged();
+
     protected override async Task OnInitializedAsync()
     {
         IsTaskRunning = false;
@@ -33,7 +35,7 @@ public partial class ShowPage : ComponentBase
         }
     }
 
-    public async Task SaveAsync()
+    private async Task SaveAsync()
     {       
         IsTaskRunning = true;
 
@@ -44,7 +46,7 @@ public partial class ShowPage : ComponentBase
         {
             NavManager.NavigateTo("/episodes");
         }
-    }
+    }    
 
     private async Task DeleteAsync()
     {

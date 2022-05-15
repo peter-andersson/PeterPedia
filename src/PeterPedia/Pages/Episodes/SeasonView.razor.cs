@@ -8,10 +8,13 @@ public partial class SeasonView : ComponentBase
     private IEpisodeManager EpisodeManager { get; set; } = null!;
 
     [CascadingParameter]
-    public Show Show { get; set; } = null!;
+    public ShowPage Parent { get; set; } = null!;
 
-    [CascadingParameter]
+    [Parameter]
     public Season Season { get; set; } = null!;
+
+    [Parameter]
+    public Show Show { get; set; } = null!;
 
     [Parameter]
     public bool DisplayAllEpisodes { get; set; }    
@@ -43,6 +46,8 @@ public partial class SeasonView : ComponentBase
 
                     Show.Calculate();
 
+                    Parent?.Refresh();
+
                     return;
                 }
             }
@@ -73,6 +78,8 @@ public partial class SeasonView : ComponentBase
                     }
 
                     Show.Calculate();
+
+                    Parent?.Refresh();
 
                     return;
                 }

@@ -1,4 +1,4 @@
-@if (DisplayAllEpisodes || !Season.IsAllWatched)
+﻿@if (DisplayAllEpisodes || !Season.IsAllWatched)
 {
     <div class="col-12">
         <h3 class="mb-3">
@@ -21,16 +21,14 @@
             {
                 @foreach (var episode in Season.Episodes.OrderBy(e => e.EpisodeNumber))
                 {
-                    <CascadingValue Value="@episode">
-                        @if (DisplayAllEpisodes)
-                        {
-                            <EpisodeView></EpisodeView>
-                        }
-                        else if ((episode.Watched == false) && (episode.AirDate != null) && (episode.AirDate <= DateTime.UtcNow))
-                        {
-                            <EpisodeView></EpisodeView>
-                        }
-                    </CascadingValue>
+                    @if (DisplayAllEpisodes)
+                    {
+                        <EpisodeView Episode="@episode" Show="@Show"></EpisodeView>
+                    }
+                    else if ((episode.Watched == false) && (episode.AirDate != null) && (episode.AirDate <= DateTime.UtcNow))
+                    {
+                        <EpisodeView Episode="@episode" Show="@Show"></EpisodeView>
+                    }
                 }
             }
         </ul>

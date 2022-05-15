@@ -56,12 +56,10 @@
                 <input checked="@ShowAll" class="form-check-input" type="checkbox" role="switch" id="switch-showall" @onchange="ToggleShowAll">
                 <label class="form-check-label" for="switch-showall">Show all episodes</label>
             </div>
-            <CascadingValue Value="@Show">
+            <CascadingValue Value="this">
                 @foreach (var season in Show.Seasons.OrderBy(s => s.SeasonNumber))
                 {
-                <CascadingValue Value="@season">
-                    <SeasonView DisplayAllEpisodes="@ShowAll"></SeasonView>
-                </CascadingValue>
+                    <SeasonView Season="@season" Show="@Show" DisplayAllEpisodes="@ShowAll"></SeasonView>
                 }
         </CascadingValue>
     </div>
