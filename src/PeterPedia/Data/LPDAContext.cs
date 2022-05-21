@@ -17,7 +17,7 @@ public class PeterPediaContext : DbContext
 
     public DbSet<BookEF> Books { get; set; } = null!;
 
-    public DbSet<DeleteLogEF> DeleteLog { get; set; } = null!;
+    public DbSet<CategoryEF> Categories { get; set; } = null!;
 
     public DbSet<EpisodeEF> Episodes { get; set; } = null!;
 
@@ -33,6 +33,8 @@ public class PeterPediaContext : DbContext
 
     public DbSet<SubscriptionEF> Subscriptions { get; set; } = null!;
 
+    public DbSet<TransactionEF> Transactions { get; set; } = null!;
+
     public DbSet<VideoEF> Videos { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -42,17 +44,19 @@ public class PeterPediaContext : DbContext
             throw new ArgumentNullException(nameof(modelBuilder));
         }
 
+        modelBuilder.Entity<ArticleEF>();
         modelBuilder.Entity<AuthorEF>();
         modelBuilder.Entity<BookEF>();
-        modelBuilder.Entity<DeleteLogEF>();
-        modelBuilder.Entity<MovieEF>();
-        modelBuilder.Entity<SubscriptionEF>();
-        modelBuilder.Entity<ArticleEF>();
-        modelBuilder.Entity<ShowEF>();
-        modelBuilder.Entity<SeasonEF>();
+        modelBuilder.Entity<CategoryEF>();
         modelBuilder.Entity<EpisodeEF>();
-        modelBuilder.Entity<VideoEF>();
         modelBuilder.Entity<LinkEF>();
+        modelBuilder.Entity<MovieEF>();
+        modelBuilder.Entity<PhotoEF>();
+        modelBuilder.Entity<SeasonEF>();
+        modelBuilder.Entity<ShowEF>();
+        modelBuilder.Entity<SubscriptionEF>();
+        modelBuilder.Entity<TransactionEF>();
+        modelBuilder.Entity<VideoEF>();        
 
         modelBuilder
             .Entity<BookEF>()

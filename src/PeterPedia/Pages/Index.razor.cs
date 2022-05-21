@@ -46,6 +46,12 @@ public partial class Index : ComponentBase
 
         Links.Add(new Link()
         {
+            Title = "Economy",
+            Url = "economy"
+        });
+
+        Links.Add(new Link()
+        {
             Title = "Episodes",
             Url = "episodes"
         });

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PeterPedia.Data;
 
@@ -10,9 +11,10 @@ using PeterPedia.Data;
 namespace PeterPedia.Migrations
 {
     [DbContext(typeof(PeterPediaContext))]
-    partial class LPDAContextModelSnapshot : ModelSnapshot
+    [Migration("20220521075135_RemoveDeleteLog")]
+    partial class RemoveDeleteLog
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.5");
@@ -123,26 +125,6 @@ namespace PeterPedia.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("book");
-                });
-
-            modelBuilder.Entity("PeterPedia.Data.Models.CategoryEF", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("ParentId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ParentId");
-
-                    b.ToTable("category");
                 });
 
             modelBuilder.Entity("PeterPedia.Data.Models.EpisodeEF", b =>
@@ -339,36 +321,6 @@ namespace PeterPedia.Migrations
                     b.ToTable("subscription");
                 });
 
-            modelBuilder.Entity("PeterPedia.Data.Models.TransactionEF", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<double>("Amount")
-                        .HasColumnType("REAL");
-
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Note1")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Note2")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("transaction");
-                });
-
             modelBuilder.Entity("PeterPedia.Data.Models.VideoEF", b =>
                 {
                     b.Property<int>("Id")
@@ -429,15 +381,6 @@ namespace PeterPedia.Migrations
                     b.Navigation("Subscription");
                 });
 
-            modelBuilder.Entity("PeterPedia.Data.Models.CategoryEF", b =>
-                {
-                    b.HasOne("PeterPedia.Data.Models.CategoryEF", "Parent")
-                        .WithMany("Children")
-                        .HasForeignKey("ParentId");
-
-                    b.Navigation("Parent");
-                });
-
             modelBuilder.Entity("PeterPedia.Data.Models.EpisodeEF", b =>
                 {
                     b.HasOne("PeterPedia.Data.Models.SeasonEF", "Season")
@@ -471,25 +414,9 @@ namespace PeterPedia.Migrations
                     b.Navigation("Show");
                 });
 
-            modelBuilder.Entity("PeterPedia.Data.Models.TransactionEF", b =>
-                {
-                    b.HasOne("PeterPedia.Data.Models.CategoryEF", "Category")
-                        .WithMany("Transactions")
-                        .HasForeignKey("CategoryId");
-
-                    b.Navigation("Category");
-                });
-
             modelBuilder.Entity("PeterPedia.Data.Models.AlbumEF", b =>
                 {
                     b.Navigation("Photos");
-                });
-
-            modelBuilder.Entity("PeterPedia.Data.Models.CategoryEF", b =>
-                {
-                    b.Navigation("Children");
-
-                    b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("PeterPedia.Data.Models.SeasonEF", b =>

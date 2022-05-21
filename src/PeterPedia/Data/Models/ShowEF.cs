@@ -45,13 +45,7 @@ public class ShowEF
         }
     }
 
-    public int SeasonCount
-    {
-        get
-        {
-            return Seasons.Count;
-        }
-    }
+    public int SeasonCount => Seasons.Count;
 
     public int EpisodeCount
     {
