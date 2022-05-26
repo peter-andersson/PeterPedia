@@ -12,5 +12,5 @@ public class Transaction
 
     public double Amount { get; set; }
 
-    public Category? Category { get; set; }
+    public Category Category { get; set; } = new();
 }

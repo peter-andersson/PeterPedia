@@ -21,5 +21,5 @@ public class TransactionEF
 
     public double Amount { get; set; }
 
-    public CategoryEF? Category { get; private set; }
+    public CategoryEF? Category { get; set; }
 }

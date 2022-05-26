@@ -1,0 +1,40 @@
+﻿<div class="row mb-1">
+    <div class="col">
+        <div class="form-floating">
+            <input id="date" class="form-control" type="date" value="@Transaction.Date.ToString("yyyy-MM-dd")" readonly />
+            <label for="date">Date</label>
+        </div>
+    </div>
+    <div class="col">
+        <div class="form-floating">
+            <input id="note1" class="form-control" type="text" value="@Transaction.Note1" readonly />
+            <label for="note1">Note1</label>
+        </div>
+    </div>
+    <div class="col">
+        <div class="form-floating">
+            <input id="note2" class="form-control" type="text" value="@Transaction.Note2" readonly />
+            <label for="note2">Note2</label>
+        </div>
+    </div>
+    <div class="col">
+        <div class="form-floating">
+            <input id="amount" class="form-control" type="text" value="@Transaction.Amount" readonly />
+            <label for="amount">Amount</label>
+        </div>
+    </div>
+    <div class="col">
+            <div class="form-floating">
+                <select id="@($"category-{Transaction.Id}")" class="form-select" @onchange="OnCategoryChangedAsync">
+                    <option value=@(0) selected="@(Transaction.Category.Id == 0)">No category selected</option>
+                    @foreach (Category category in Categories)
+                    {
+                        <option value="@category.Id" selected="@(Transaction.Category.Id == category.Id)">@category.Display</option>
+                    }
+                </select>
+                <label for="@($"category-{Transaction.Id}")">Category</label>
+            </div>
+    </div>
+</div>
+
+

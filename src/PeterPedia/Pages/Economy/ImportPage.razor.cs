@@ -15,7 +15,7 @@ public partial class ImportPage : ComponentBase
 
     public List<string> AccountTypes { get; set; } = new();
 
-    private IReadOnlyList<IBrowserFile> _selectedFiles;
+    private IReadOnlyList<IBrowserFile>? _selectedFiles;
 
     protected override void OnInitialized()
     {
@@ -25,13 +25,15 @@ public partial class ImportPage : ComponentBase
         AccountTypes.Add("Länsförsäkringar Kort");        
     }
 
-    public void LoadFiles(InputFileChangeEventArgs e)
-    {
-        _selectedFiles = e.GetMultipleFiles();        
-    }
+    public void LoadFiles(InputFileChangeEventArgs e) => _selectedFiles = e.GetMultipleFiles();
 
     public async Task UploadAsync()
     {
+        if (_selectedFiles is null)
+        {
+            return;
+        }
+
         var maxAllowSize = 1024 * 1024 * 5;
 
         var transactions = new List<Transaction>();
