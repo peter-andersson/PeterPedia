@@ -2,9 +2,9 @@
 
 <h4 class="mt-2">Manage categories</h4>
 <div class="d-flex mb-2">
-  <a class="btn btn-primary flex-shrink-0 me-2" href="/economy">Overview</a>
-  <a class="btn btn-primary flex-shrink-0 me-2" href="/economy/import">Import transactions</a>
-  <a class="btn btn-primary flex-shrink-0 me-2" href="/economy/transactions">View transactions</a>
+    <a class="btn btn-primary flex-shrink-0 me-2" href="/economy">Overview</a>
+    <a class="btn btn-primary flex-shrink-0 me-2" href="/economy/import">Import transactions</a>
+    <a class="btn btn-primary flex-shrink-0 me-2" href="/economy/transactions">View transactions</a>
 </div>
 
 
@@ -18,15 +18,19 @@
             <label for="name">Name</label>
         </div>
         <div class="form-floating mb-2">
-          <select class="form-select" id="parent" @bind="@Category.ParentId">
-            <option value="0">No parent</option>
-            @foreach (var category in Categories)
+            <select class="form-select" id="parent" @bind="@Category.ParentId">
+                <option value="0">No parent</option>
+                @foreach (var category in Categories)
                 {
-                <option value="@category.Id">@category.Display</option>    
+                    <option value="@category.Id">@category.Display</option>
                 }
-          </select>
+            </select>
 
             <label for="parent">Parent</label>
+        </div>
+        <div class="form-check">
+            <InputCheckbox id="ignore-overview" class="form-check-input" @bind-Value="Category.IgnoreInOverview"></InputCheckbox>
+            <label for="ignore-overview" class="form-check-label">Ignore in overview</label>
         </div>
         <div class="mb-3">
             <button type="button" class="btn btn-danger" @onclick="DeleteAsync" disabled=@IsTaskRunning>Delete</button>

@@ -1,0 +1,35 @@
+﻿
+<li class="list-group-item">
+    <span @onclick="Toggle">@($"{Summary.Name}: {Math.Round(Summary.TotalAmount, 2, MidpointRounding.AwayFromZero)}")</span>
+
+    @if (Summary.Children.Count > 0)
+    {
+        <div class="@Class">
+            <ul class="list-group mt-1">
+                @foreach (CategorySummary summary in Summary.Children)
+                {
+                    <SummaryView Summary="summary"></SummaryView>
+                }
+            </ul>
+        </div>
+    }
+</li>
+
+@code {
+    [Parameter]
+    public CategorySummary Summary { get; set; } = null!;
+
+    private string Class { get; set; } = "collapse";
+
+    private void Toggle()
+    {
+        if (Class == "collapse")
+        {
+            Class = "show";
+        }
+        else
+        {
+            Class = "collapse";
+        }
+    }
+}

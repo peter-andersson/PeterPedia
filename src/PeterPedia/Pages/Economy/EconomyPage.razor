@@ -2,12 +2,49 @@
 
 <h4 class="mt-2">Economy</h4>
 <div class="d-flex mb-2">
-  <a class="btn btn-primary flex-shrink-0 me-2" href="/economy/import">Import transactions</a>
-  <a class="btn btn-primary flex-shrink-0 me-2" href="/economy/transactions">View transactions</a>
-  <a class="btn btn-primary flex-shrink-0 me-2" href="/economy/category">Manage categories</a>
+    <a class="btn btn-primary flex-shrink-0 me-2" href="/economy/import">Import transactions</a>
+    <a class="btn btn-primary flex-shrink-0 me-2" href="/economy/transactions">View transactions</a>
+    <a class="btn btn-primary flex-shrink-0 me-2" href="/economy/category">Manage categories</a>
 </div>
 
+<div class="mb-2">
+    <EditForm Model="@Search" OnSubmit="@FetchDataAsync">
+        <div class="row">
+            <label class="col-1 col-form-label" for="start-date">Start date</label>
+            <div class="col-2">
+                <InputDate id="start-date" class="form-control" @bind-Value="Search.StartDate"></InputDate>
+            </div>
 
-<h1>TODO: Filter for period</h1>
+            <label class="col-1 col-form-label" for="end-date">End date</label>
+            <div class="col-2">
+                <InputDate id="end-date" class="form-control" @bind-Value="Search.EndDate"></InputDate>
+            </div>
 
-<h1>TODO: Graph and transaction for selected period</h1>
+            <div class="col">
+                <button class="btn btn-success my-auto" type="submit">Show</button>
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+<div class="row">
+    <div class="col">
+        <h5>Selected period</h5>
+
+        <ul class="list-group">
+            @foreach (CategorySummary summary in CurrentPeriod)
+            {
+                <SummaryView Summary="summary"></SummaryView>
+            }
+        </ul>
+    </div>
+    <div class="col">
+      <h5>Cash flow</h5>
+      <ul class="list-group">
+            @foreach (CashFlow flow in CashFlow)
+            {
+              <li class="list-group-item">@($"{flow.Month}: {Math.Round(flow.Amount, 2, MidpointRounding.AwayFromZero)}")</li>
+            }
+        </ul>
+    </div>"
+</div>

@@ -8,17 +8,20 @@ public partial class EconomyPage : ComponentBase
     [Inject]
     private PeterPediaContext DbContext { get; set; } = null!;
 
-    public Category Category { get; set; } = new Category();
-
-    public bool IsTaskRunning { get; set; } = false;
+    public TransactionSearch Search { get; set; } = new();
 
     public List<Category> Categories { get; set; } = new();
 
+    public List<CategorySummary> CurrentPeriod { get; set; } = new();
+
+    public List<CashFlow> CashFlow { get; set; } = new();
+
     protected override async Task OnInitializedAsync()
     {
-        List<CategoryEF> categories = await DbContext.Categories.Include(c => c.Parent).OrderBy(c => c.Parent != null).ThenBy(c => c.Parent).ToListAsync();
+        Search.StartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+        Search.EndDate = Search.StartDate.Value.AddMonths(1).AddDays(-1);
 
-        Categories.Clear();
+        List<CategoryEF> categories = await DbContext.Categories.Include(c => c.Parent).OrderBy(c => c.Parent != null).ThenBy(c => c.Parent).ToListAsync();
 
         foreach (CategoryEF categoryEF in categories)
         {
@@ -26,6 +29,7 @@ public partial class EconomyPage : ComponentBase
             {
                 Id = categoryEF.Id,
                 Name = categoryEF.Name,
+                IgnoreInOverview = categoryEF.IgnoreInOverView
             };
 
             if (categoryEF.Parent is not null)
@@ -40,79 +44,164 @@ public partial class EconomyPage : ComponentBase
             Categories.Add(category);
         }
 
-        Categories = Categories.OrderBy(c => c.Display).ToList();
+        await FetchDataAsync();        
     }
 
-    public void Edit(Category category) => Category = category;
-
-    public async Task SaveAsync()
+    private async Task FetchDataAsync()
     {
-        IsTaskRunning = true;
-
-        CategoryEF? categoryEF = await DbContext.Categories.Where(c => c.Id == Category.Id).AsTracking().SingleOrDefaultAsync();
-
-        if (categoryEF is null)
+        if (Search.StartDate is null || Search.EndDate is null)
         {
-            categoryEF = new CategoryEF();
+            return;
         }
-        
-        categoryEF.Name = Category.Name;
 
-        if (Category.ParentId > 0)
+        CurrentPeriod.Clear();
+
+        List<TransactionEF> transactions = await DbContext.Transactions.Include(t => t.Category).Where(t => t.Date >= Search.StartDate.Value && t.Date <= Search.EndDate.Value).ToListAsync();
+
+        foreach (TransactionEF transactionEF in transactions)
         {
-            CategoryEF? parentEF = await DbContext.Categories.Where(c => c.Id == Category.ParentId).AsTracking().SingleOrDefaultAsync();
-            if (parentEF != null)
+            var transaction = new Transaction()
             {
-                categoryEF.Parent = parentEF;
+                Date = transactionEF.Date,
+                Amount = transactionEF.Amount,
+                Note1 = transactionEF.Note1,
+                Note2 = transactionEF.Note2,
+                Id = transactionEF.Id,
+            };
+
+            if (transactionEF.Category is not null)
+            {
+                Category? category = Categories.Where(c => c.Id == transactionEF.Category.Id).SingleOrDefault();
+
+                transaction.Category = category ?? new Category() { Id = 0, Name = "Uncategorized" };
             }
-        }        
+            else
+            {
+                transaction.Category = new Category() { Id = 0, Name = "Uncategorized" };
+            }
 
-        if (categoryEF.Id > 0)
-        {
-            DbContext.Categories.Update(categoryEF);
+            if (transaction.Category.IgnoreInOverview)
+            {
+                continue;
+            }
+
+            CategorySummary? summary = CurrentPeriod.Where(c => c.Name == transaction.Category.Display).SingleOrDefault();
+            if (summary is null)
+            {
+                summary = new CategorySummary()
+                {
+                    Name = transaction.Category.Display,
+                    TotalAmount = transaction.Amount,
+                };
+
+                CurrentPeriod.Add(summary);
+            }
+            else
+            {
+                summary.TotalAmount += transaction.Amount;
+            }
         }
-        else
+
+        var i = 0;
+        while (i < CurrentPeriod.Count)
         {
-            DbContext.Categories.Add(categoryEF);
-            Categories.Add(Category);            
+            CategorySummary summary = CurrentPeriod[i];
+
+            var charPosition = summary.Name.LastIndexOf(':');
+            if (charPosition > 0)
+            {
+                var parentCategory = summary.Name[..charPosition];
+
+                CategorySummary? category = CurrentPeriod.Where(c => c.Name == parentCategory).SingleOrDefault();
+
+                if (category is not null)
+                {
+                    category.Children.Add(summary);
+                    category.TotalAmount += summary.TotalAmount;
+
+                    CurrentPeriod.Remove(summary);
+
+                    continue;
+                }
+                else
+                {
+                    category = new CategorySummary()
+                    {
+                        Name = parentCategory,
+                        TotalAmount = summary.TotalAmount,
+                    };
+
+                    category.Children.Add(summary);
+                    CurrentPeriod.Add(category);
+
+                    CurrentPeriod.Remove(summary);
+                }
+            }            
+
+            i += 1;
         }
 
-        await DbContext.SaveChangesAsync();
+        CurrentPeriod = CurrentPeriod.OrderBy(c => c.Name).ToList();
 
-        Category.Id = categoryEF.Id;
-        Category? parent = Categories.Where(c => c.Id == Category.ParentId).FirstOrDefault();
-        Category.Parent = parent;
-        
-        Category = new Category();
+        foreach(CategorySummary summary in CurrentPeriod)
+        {
+            OrderChildren(summary);
+        }
 
-        Categories = Categories.OrderBy(c => c.Display).ToList();
-
-        IsTaskRunning = false;
+        await FetchCashFlowAsync();
     }
 
-    public async Task DeleteAsync()
+    private async Task FetchCashFlowAsync()
     {
-        if (Category.Id == 0)
+        if (Search.StartDate is null)
         {
             return;
         }
 
-        IsTaskRunning = true;
+        var summary = await DbContext.Transactions
+            .Include(t => t.Category)
+            .Where(t => t.Date.Year >= Search.StartDate.Value.Year && t.Category != null && !t.Category.IgnoreInOverView)
+            .GroupBy(t => t.Date.Month)
+            .Select(g => new
+            {
+                g.Key,
+                Amount = g.Sum(t => t.Amount),
+            })
+            .OrderBy(g => g.Key)
+            .ToListAsync();
 
-        CategoryEF? categoryEF = await DbContext.Categories.Where(l => l.Id == Category.Id).AsTracking().SingleOrDefaultAsync();
+        CashFlow.Clear();
+        foreach (var x in summary)
+        {
+            var cashFlow = new CashFlow()
+            {
+                Month = GetMonthName(x.Key),
+                Amount = x.Amount
+            };
 
-        if (categoryEF is null)
+            CashFlow.Add(cashFlow);
+        }
+    }
+
+    private static string GetMonthName(int month)
+    {
+        var date = new DateTime(2020, month, 1);
+
+        return date.ToString("MMMM");
+    }
+
+    private void OrderChildren(CategorySummary summary)
+    {
+        if (summary.Children.Count == 0)
         {
             return;
         }
 
-        DbContext.Categories.Remove(categoryEF);
-        await DbContext.SaveChangesAsync();
+        summary.Children = summary.Children.OrderBy(c => c.Name).ToList();
 
-        Categories.Remove(Category);
-
-        Category = new Category();
-
-        IsTaskRunning = false;
+        foreach (CategorySummary child in summary.Children)
+        {
+            OrderChildren(child);
+        }
     }
 }

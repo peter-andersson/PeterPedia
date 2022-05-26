@@ -49,7 +49,7 @@ public partial class TransactionPage : ComponentBase
     {
         Transactions.Clear();
 
-        IQueryable<TransactionEF> query = DbContext.Transactions;
+        IQueryable<TransactionEF> query = DbContext.Transactions.Include(t => t.Category);
 
         if (Search.StartDate is null && Search.EndDate is null)
         {

@@ -10,6 +10,8 @@ public class Category
 
     public string Name { get; set; }
 
+    public bool IgnoreInOverview { get; set; }
+
     public Category? Parent { get; set; }
 
     public int ParentId { get; set; }

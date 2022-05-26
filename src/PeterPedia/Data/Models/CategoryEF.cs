@@ -16,6 +16,8 @@ public class CategoryEF
 
     public string Name { get; set; }
 
+    public bool IgnoreInOverView { get; set; }
+
     public CategoryEF? Parent { get; set; }
 
     public ICollection<CategoryEF> Children { get; set; }

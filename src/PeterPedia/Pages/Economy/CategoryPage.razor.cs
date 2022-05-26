@@ -26,6 +26,7 @@ public partial class CategoryPage : ComponentBase
             {
                 Id = categoryEF.Id,
                 Name = categoryEF.Name,
+                IgnoreInOverview = categoryEF.IgnoreInOverView
             };
 
             if (categoryEF.Parent is not null)
@@ -57,6 +58,7 @@ public partial class CategoryPage : ComponentBase
         }
         
         categoryEF.Name = Category.Name;
+        categoryEF.IgnoreInOverView = Category.IgnoreInOverview;
 
         if (Category.ParentId > 0)
         {
