@@ -6,5 +6,7 @@ public class CategorySummary
 
     public double TotalAmount { get; set; }
 
+    public CategorySummary? Parent { get; set; }
+
     public List<CategorySummary> Children { get; set; } = new();
 }

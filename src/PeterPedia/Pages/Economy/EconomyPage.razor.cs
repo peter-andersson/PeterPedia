@@ -44,6 +44,8 @@ public partial class EconomyPage : ComponentBase
             Categories.Add(category);
         }
 
+        Categories = Categories.OrderBy(c => c.Display).ToList();
+
         await FetchDataAsync();        
     }
 
@@ -56,9 +58,10 @@ public partial class EconomyPage : ComponentBase
 
         CurrentPeriod.Clear();
 
-        List<TransactionEF> transactions = await DbContext.Transactions.Include(t => t.Category).Where(t => t.Date >= Search.StartDate.Value && t.Date <= Search.EndDate.Value).ToListAsync();
+        List<TransactionEF> dbTransactions = await DbContext.Transactions.Include(t => t.Category).Where(t => t.Date >= Search.StartDate.Value && t.Date <= Search.EndDate.Value).ToListAsync();
 
-        foreach (TransactionEF transactionEF in transactions)
+        var transactions = new List<Transaction>(dbTransactions.Count);
+        foreach (TransactionEF transactionEF in dbTransactions)
         {
             var transaction = new Transaction()
             {
@@ -85,62 +88,56 @@ public partial class EconomyPage : ComponentBase
                 continue;
             }
 
-            CategorySummary? summary = CurrentPeriod.Where(c => c.Name == transaction.Category.Display).SingleOrDefault();
-            if (summary is null)
-            {
-                summary = new CategorySummary()
-                {
-                    Name = transaction.Category.Display,
-                    TotalAmount = transaction.Amount,
-                };
+            transactions.Add(transaction);
 
-                CurrentPeriod.Add(summary);
+            
+        }
+
+        foreach (Category category in Categories)
+        {
+            if (category.IgnoreInOverview)
+            {
+                continue;
+            }
+
+            CategorySummary? summary = null;
+            if (category.Parent is null)
+            {
+                summary = CurrentPeriod.Where(c => c.Name == category.Display).SingleOrDefault();
+
+                if (summary is null)
+                {
+                    summary = new CategorySummary()
+                    {
+                        Name = category.Display,
+                        TotalAmount = 0,
+                    };
+
+                    CurrentPeriod.Add(summary);
+                }
             }
             else
             {
-                summary.TotalAmount += transaction.Amount;
-            }
-        }
+                summary = GetParentSummary(category);
 
-        var i = 0;
-        while (i < CurrentPeriod.Count)
-        {
-            CategorySummary summary = CurrentPeriod[i];
-
-            var charPosition = summary.Name.LastIndexOf(':');
-            if (charPosition > 0)
-            {
-                var parentCategory = summary.Name[..charPosition];
-
-                CategorySummary? category = CurrentPeriod.Where(c => c.Name == parentCategory).SingleOrDefault();
-
-                if (category is not null)
+                if (summary is not null)
                 {
-                    category.Children.Add(summary);
-                    category.TotalAmount += summary.TotalAmount;
-
-                    CurrentPeriod.Remove(summary);
-
-                    continue;
-                }
-                else
-                {
-                    category = new CategorySummary()
+                    var child = new CategorySummary
                     {
-                        Name = parentCategory,
-                        TotalAmount = summary.TotalAmount,
+                        Name = category.Display,
+                        TotalAmount = 0,
+                        Parent = summary
                     };
-
-                    category.Children.Add(summary);
-                    CurrentPeriod.Add(category);
-
-                    CurrentPeriod.Remove(summary);
+                    summary.Children.Add(child);
                 }
+            }
+
+            if (summary is not null)
+            {
+                AddTransactions(category, summary, transactions);
             }            
-
-            i += 1;
         }
-
+       
         CurrentPeriod = CurrentPeriod.OrderBy(c => c.Name).ToList();
 
         foreach(CategorySummary summary in CurrentPeriod)
@@ -149,6 +146,125 @@ public partial class EconomyPage : ComponentBase
         }
 
         await FetchCashFlowAsync();
+    }
+
+    private CategorySummary? GetParentSummary(Category category)
+    {
+        if (category.Parent is null)
+        {
+            return null;
+        }
+
+        Category parent = category.Parent;
+        while (true)
+        {
+            if (parent.Parent is null)
+            {
+                break;
+            }
+            else
+            {
+                parent = parent.Parent;
+            }
+        }
+
+        CategorySummary? summary = CurrentPeriod.Where(c => c.Name == parent.Display).SingleOrDefault();
+        if (summary is null)
+        {
+            return null;
+        }
+
+        if (summary.Name == category.Parent.Display)
+        {
+            return summary;
+        }
+
+        // Find child
+        return GetChild(category, summary.Children);
+    }
+
+    private CategorySummary? GetChild(Category category, List<CategorySummary> children)
+    {
+        foreach (var child in children)
+        {
+            if (child.Name == category.Parent?.Display)
+            {
+                return child;
+            }
+        }
+
+        foreach (var child in children)
+        {
+            CategorySummary? summary = GetChild(category, child.Children);
+
+            if (summary is not null)
+            {
+                return summary;
+            }
+        }
+
+        return null;
+    }
+
+    private void AddTransactions(Category category, CategorySummary summary, List<Transaction> transactions)
+    {
+        var i = 0;
+        while (i < transactions.Count)
+        {
+            Transaction transaction = transactions[i];
+
+            if (transaction.Category.Id == category.Id)
+            {
+                if (summary.Name == transaction.Category.Display)
+                {
+                    summary.TotalAmount += transaction.Amount;
+
+                    CategorySummary? parent = summary.Parent;
+                    while (parent is not null)
+                    {
+                        parent.TotalAmount += transaction.Amount;
+
+                        parent = parent.Parent;
+                    }
+                }
+                else
+                {
+                    AddToChild(transaction, summary.Children);
+                }
+                
+
+                transactions.Remove(transaction);
+                continue;
+            }
+
+            i += 1;
+        }
+    }
+
+    private void AddToChild(Transaction transaction, List<CategorySummary> children)
+    {
+        foreach (var child in children)
+        {
+            if (child.Name == transaction.Category.Display)
+            {
+                child.TotalAmount += transaction.Amount;
+
+                CategorySummary? parent = child.Parent;
+                while (parent is not null)
+                {
+                    parent.TotalAmount += transaction.Amount;
+
+                    parent = parent.Parent;
+                }
+
+                return;
+            }
+        }
+
+        foreach (var child in children)
+        {
+            AddToChild(transaction, child.Children);
+        }
     }
 
     private async Task FetchCashFlowAsync()
