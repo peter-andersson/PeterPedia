@@ -1,11 +1,8 @@
 ﻿@page "/economy"
 
 <h4 class="mt-2">Economy</h4>
-<div class="d-flex mb-2">
-    <a class="btn btn-primary flex-shrink-0 me-2" href="/economy/import">Import transactions</a>
-    <a class="btn btn-primary flex-shrink-0 me-2" href="/economy/transactions">View transactions</a>
-    <a class="btn btn-primary flex-shrink-0 me-2" href="/economy/category">Manage categories</a>
-</div>
+
+<EconomyMenu Page="Models.EconomyPage.Overview"></EconomyMenu>
 
 <div class="mb-2">
     <EditForm Model="@Search" OnSubmit="@FetchDataAsync">

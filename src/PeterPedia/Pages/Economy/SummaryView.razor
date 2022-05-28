@@ -14,22 +14,3 @@
         </div>
     }
 </li>
-
-@code {
-    [Parameter]
-    public CategorySummary Summary { get; set; } = null!;
-
-    private string Class { get; set; } = "collapse";
-
-    private void Toggle()
-    {
-        if (Class == "collapse")
-        {
-            Class = "show";
-        }
-        else
-        {
-            Class = "collapse";
-        }
-    }
-}
