@@ -17,8 +17,6 @@ public class PeterPediaContext : DbContext
 
     public DbSet<BookEF> Books { get; set; } = null!;
 
-    public DbSet<CategoryEF> Categories { get; set; } = null!;
-
     public DbSet<EpisodeEF> Episodes { get; set; } = null!;
 
     public DbSet<ErrorEF> Errors { get; set; } = null!;
@@ -35,8 +33,6 @@ public class PeterPediaContext : DbContext
 
     public DbSet<SubscriptionEF> Subscriptions { get; set; } = null!;
 
-    public DbSet<TransactionEF> Transactions { get; set; } = null!;
-
     public DbSet<VideoEF> Videos { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -49,7 +45,6 @@ public class PeterPediaContext : DbContext
         modelBuilder.Entity<ArticleEF>();
         modelBuilder.Entity<AuthorEF>();
         modelBuilder.Entity<BookEF>();
-        modelBuilder.Entity<CategoryEF>();
         modelBuilder.Entity<EpisodeEF>();
         modelBuilder.Entity<ErrorEF>();
         modelBuilder.Entity<LinkEF>();
@@ -58,7 +53,6 @@ public class PeterPediaContext : DbContext
         modelBuilder.Entity<SeasonEF>();
         modelBuilder.Entity<ShowEF>();
         modelBuilder.Entity<SubscriptionEF>();
-        modelBuilder.Entity<TransactionEF>();
         modelBuilder.Entity<VideoEF>();        
 
         modelBuilder
