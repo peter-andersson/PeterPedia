@@ -15,19 +15,19 @@ namespace PeterPedia.Services
             _dbContext = dbContext;
         }
 
-        public async Task<bool> AddSubscriptionAsync(string url)
+        public async Task<string> AddSubscriptionAsync(string url)
         {
             if (string.IsNullOrEmpty(url))
             {
-                // TODO: Log and better error message to client
-                return false;
+                LogMessage.SubscriptionError(_logger, "No url specified");
+                return "No url specified";
             }
 
             SubscriptionEF? existingSubscription = await _dbContext.Subscriptions.Where(s => s.Url == url).SingleOrDefaultAsync();
             if (existingSubscription != null)
             {
-                // TODO: Log and better error message to client
-                return false;
+                LogMessage.SubscriptionError(_logger, "Subscription already exists");
+                return "Subscription already exists";
             }
 
             IEnumerable<HtmlFeedLink>? feedLinks = await FeedReader.GetFeedUrlsFromUrlAsync(url);
@@ -35,32 +35,29 @@ namespace PeterPedia.Services
             string feedLink;
             if (!feedLinks.Any())
             {
-                // TODO: Log and better error message to client
                 // no url - probably the url is already the right feed url
                 feedLink = url.ToString();
             }
             else if (feedLinks.Count() == 1)
             {
-                // TODO: Log and better error message to client
                 feedLink = feedLinks.First().Url;
             }
             else if (feedLinks.Count() == 2)
             {
-                // TODO: Log and better error message to client
                 // if 2 urls, then its usually a feed and a comments feed, so take the first per default
                 feedLink = feedLinks.First().Url;
             }
             else
             {
-                // TODO: Log and better error message to client
-                return false;
+                LogMessage.SubscriptionError(_logger, "Multiple feeds exists");
+                return "Url contains multiple feeds";
             }
 
             Feed? data = await FeedReader.ReadAsync(feedLink);
             if (data is null)
             {
-                // TODO: Log and better error message to client
-                return false;
+                LogMessage.SubscriptionError(_logger, "Failed to add feed");
+                return "Failed to add feed";
             }
 
             var subscriptionEF = new SubscriptionEF
@@ -76,7 +73,7 @@ namespace PeterPedia.Services
             _dbContext.Subscriptions.Add(subscriptionEF);
             await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
-            return true;
+            return string.Empty;
         }
 
         public async Task<bool> DeleteArticleAsync(int id)

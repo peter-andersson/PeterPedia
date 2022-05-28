@@ -64,7 +64,7 @@ public class LänsförsäkringarKort
         }
 
         // Ignore preliminary transactions
-        if (note1.ToLowerInvariant() == "prel.köp")
+        if (note1.ToLowerInvariant() == "prel. köp")
         {
             return null;
         }

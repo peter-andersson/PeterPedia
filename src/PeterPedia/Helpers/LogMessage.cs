@@ -113,4 +113,31 @@ public static partial class LogMessage
 
     [LoggerMessage(38, LogLevel.Information, "Adding new photo '{file}'")]
     public static partial void PhotoNew(ILogger logger, string file);
+
+    [LoggerMessage(39, LogLevel.Debug, "Adding transaction, date: {date}, note1: {note1}, note2: {note2}, amount: {amount}")]
+    public static partial void TransactionAdd(ILogger logger, DateTime date, string note1, string note2, double amount);
+
+    [LoggerMessage(40, LogLevel.Information, "Duplicate transaction, date: {date}, note1: {note1}, note2: {note2}, amount: {amount}")]
+    public static partial void TransactionExists(ILogger logger, DateTime date, string note1, string note2, double amount);
+
+    [LoggerMessage(41, LogLevel.Error, "Reader subscription error: {message}")]
+    public static partial void SubscriptionError(ILogger logger, string message);
+
+    [LoggerMessage(42, LogLevel.Error, "{message}")]
+    public static partial void ReaderException(ILogger logger, string message, Exception ex);
+
+    [LoggerMessage(43, LogLevel.Error, "Exception when fetching feed data for subscription {title}")]
+    public static partial void ReaderFeedException(ILogger logger, string title, Exception ex);
+
+    [LoggerMessage(44, LogLevel.Error, "'{url}' is not a valid url.")]
+    public static partial void ReaderInvalidUrl(ILogger logger, string url);
+
+    [LoggerMessage(46, LogLevel.Debug, "UpdateSubscription - {title}")]
+    public static partial void ReaderUpdateFeed(ILogger logger, string title);
+
+    [LoggerMessage(47, LogLevel.Debug, "Feed has not changed.")]
+    public static partial void ReaderFeedNotChanged(ILogger logger);
+
+    [LoggerMessage(48, LogLevel.Information, "Adding new article {article} to subscription {subscription}")]
+    public static partial void ReaderAddArticle(ILogger logger, string article, string subscription);
 }

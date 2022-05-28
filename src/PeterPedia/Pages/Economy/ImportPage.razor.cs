@@ -8,7 +8,10 @@ public partial class ImportPage : ComponentBase
 {
     [Inject]
     private PeterPediaContext DbContext { get; set; } = null!;
-    
+
+    [Inject]
+    private ILogger<ImportPage> Logger { get; set; } = null!;
+
     public bool IsTaskRunning { get; set; } = false;
 
     public string AccountType { get; set; } = string.Empty;
@@ -80,11 +83,14 @@ public partial class ImportPage : ComponentBase
                     Amount = transaction.Amount,
                 };
 
+                LogMessage.TransactionAdd(Logger, transactionEF.Date, transactionEF.Note1, transactionEF.Note2, transactionEF.Amount);
                 DbContext.Transactions.Add(transactionEF);
             }
+            else
+            {
+                LogMessage.TransactionExists(Logger, transactionEF.Date, transactionEF.Note1, transactionEF.Note2, transactionEF.Amount);
+            }
         }
-
-        // TODO: Log existing transactions?
 
         await DbContext.SaveChangesAsync();
     }

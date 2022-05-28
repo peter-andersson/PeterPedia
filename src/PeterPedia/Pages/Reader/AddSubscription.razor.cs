@@ -15,6 +15,10 @@ public partial class AddSubscription : ComponentBase
 
     public string NewSubscriptionUrl { get; set; } = string.Empty;
 
+    public string SuccessMessage { get; set; } = string.Empty;
+
+    public string ErrorMessage { get; set; } = string.Empty;
+
     public async Task InputKeyDownAsync(KeyboardEventArgs e)
     {
         if (e.Code == "Enter" || e.Code == "NumpadEnter")
@@ -30,17 +34,22 @@ public partial class AddSubscription : ComponentBase
             return;
         }
 
+        SuccessMessage = string.Empty;
+        ErrorMessage = string.Empty;
         IsTaskRunning = true;
 
         var result = await ReaderManager.AddSubscriptionAsync(NewSubscriptionUrl);
 
         IsTaskRunning = false;
 
-        if (result)
+        if (string.IsNullOrWhiteSpace(result))
         {
+            SuccessMessage = "Subscription added";
             NewSubscriptionUrl = string.Empty;
-
-            NavManager.NavigateTo("/reader/subscriptions");
+        }
+        else
+        {
+            ErrorMessage = result;
         }
     }
 

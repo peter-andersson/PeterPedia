@@ -11,12 +11,14 @@ public class TheMovieDatabaseService : ITheMovieDatabaseService
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly string _baseUrl = "https://api.themoviedb.org/3";
     private readonly IMemoryCache _cache;
+    private readonly PeterPediaContext _dbContext;
 
-    public TheMovieDatabaseService(string apiKey, IHttpClientFactory httpClientFactory, IMemoryCache cache)
+    public TheMovieDatabaseService(string apiKey, IHttpClientFactory httpClientFactory, IMemoryCache cache, PeterPediaContext dbContext)
     {
         _apiKey = apiKey;
         _httpClientFactory = httpClientFactory;
         _cache = cache;
+        _dbContext = dbContext;
     }
 
     public async Task<TMDbMovie?> GetMovieAsync(int id, string? etag)
@@ -61,7 +63,16 @@ public class TheMovieDatabaseService : ITheMovieDatabaseService
             return movie;
         }
 
-        throw new InvalidOperationException($"Failed to fetch movie with status code {response.StatusCode}");
+        var error = new ErrorEF()
+        {
+            Module = "TMDB",
+            Error = $"Failed to fetch movie {id} with status code {response.StatusCode}"
+        };
+
+        _dbContext.Errors.Add(error);
+        await _dbContext.SaveChangesAsync();
+
+        throw new InvalidOperationException(error.Error);
     }
 
     public async Task<TMDbShow?> GetTvShowAsync(int id, string? etag)
@@ -115,7 +126,16 @@ public class TheMovieDatabaseService : ITheMovieDatabaseService
             return show;
         }
 
-        throw new InvalidOperationException($"Failed to fetch tv show with status code {response.StatusCode}");
+        var error = new ErrorEF()
+        {
+            Module = "TMDB",
+            Error = $"Failed to fetch tv show {id} with status code {response.StatusCode}"
+        };
+
+        _dbContext.Errors.Add(error);
+        await _dbContext.SaveChangesAsync();
+
+        throw new InvalidOperationException(error.Error);
     }
 
     public async Task<string> GetImageUrlAsync(string? path, string size = "w185")
@@ -150,7 +170,16 @@ public class TheMovieDatabaseService : ITheMovieDatabaseService
             return string.IsNullOrWhiteSpace(content) ? null : JsonSerializer.Deserialize<TMDbSeason>(content);
         }
 
-        throw new InvalidOperationException($"Failed to fetch tv show with status code {response.StatusCode}");
+        var error = new ErrorEF()
+        {
+            Module = "TMDB",
+            Error = $"Failed to fetch tv show {showId} season {seasonNumber} with status code {response.StatusCode}"
+        };
+
+        _dbContext.Errors.Add(error);
+        await _dbContext.SaveChangesAsync();
+
+        throw new InvalidOperationException(error.Error);
     }
 
     private string GetTvShowUrl(int id) => $"{_baseUrl}/tv/{id}";
@@ -188,6 +217,15 @@ public class TheMovieDatabaseService : ITheMovieDatabaseService
             return configuration;
         }
 
-        throw new InvalidOperationException($"Failed to fetch configuration with status code {response.StatusCode}");
+        var error = new ErrorEF()
+        {
+            Module = "TMDB",
+            Error = $"Failed to fetch configuration with status code {response.StatusCode}"
+        };
+
+        _dbContext.Errors.Add(error);
+        await _dbContext.SaveChangesAsync();
+        
+        throw new InvalidOperationException(error.Error);
     }
 }

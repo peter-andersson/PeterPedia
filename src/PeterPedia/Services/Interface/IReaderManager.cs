@@ -2,7 +2,7 @@ namespace PeterPedia.Services;
 
 public interface IReaderManager
 {
-    Task<bool> AddSubscriptionAsync(string url);
+    Task<string> AddSubscriptionAsync(string url);
 
     Task<bool> DeleteArticleAsync(int id);
 

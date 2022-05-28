@@ -34,11 +34,12 @@ try
         options.UseSqlite(builder.Configuration.GetConnectionString("PeterPedia"));
     });
 
-    builder.Services.AddSingleton(x =>
+    builder.Services.AddScoped(x =>
         new TheMovieDatabaseService(
             builder.Configuration["TheMovieDbAccessToken"],
             x.GetRequiredService<IHttpClientFactory>(),
-            x.GetRequiredService<IMemoryCache>()
+            x.GetRequiredService<IMemoryCache>(),
+            x.GetRequiredService<PeterPediaContext>()
         ));
 
     builder.Services.AddScoped<IAuthorManager, AuthorManager>();
