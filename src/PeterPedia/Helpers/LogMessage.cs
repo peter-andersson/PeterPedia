@@ -1,3 +1,5 @@
+using PeterPedia.Data.Models;
+
 namespace PeterPedia.Helpers;
 
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Used by source generator")]

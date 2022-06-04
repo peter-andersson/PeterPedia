@@ -13,6 +13,7 @@ WORKDIR /src
 # Copy project files
 COPY PeterPedia.sln .
 COPY src/PeterPedia/*.csproj ./src/PeterPedia/
+COPY src/PeterPedia.Data/*.csproj ./src/PeterPedia.Data/
 
 # Copy test projects
 COPY tests/PeterPedia.Tests/*.csproj ./tests/PeterPedia.Tests/
