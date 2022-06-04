@@ -57,7 +57,7 @@ public class MovieManager : IMovieManager
         movie = new MovieEF()
         {
             Id = tmdbMovie.Id,
-            ImdbId = tmdbMovie.ImdbId,
+            ImdbId = tmdbMovie.ImdbId ?? string.Empty,
             OriginalLanguage = tmdbMovie.OriginalLanguage,
             OriginalTitle = tmdbMovie.OriginalTitle,
             ReleaseDate = tmdbMovie.ReleaseDate,
