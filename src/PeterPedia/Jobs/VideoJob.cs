@@ -136,6 +136,8 @@ public partial class VideoJob : IJob
 
     private MediaInfo? GetMediaInfo(string file)
     {
+        var output = string.Empty;
+
         try
         {
             Process p = new();
@@ -146,7 +148,7 @@ public partial class VideoJob : IJob
 
             p.Start();
 
-            var output = p.StandardOutput.ReadToEnd();
+            output = p.StandardOutput.ReadToEnd();
             p.WaitForExit();
 
             MediaData? mediaInfo = System.Text.Json.JsonSerializer.Deserialize<MediaData>(output);
@@ -169,6 +171,7 @@ public partial class VideoJob : IJob
         }
         catch (Exception e)
         {
+            LogJSON(output);
             LogException(e);
         }
 
@@ -201,6 +204,9 @@ public partial class VideoJob : IJob
 
     [LoggerMessage(7, LogLevel.Error, "Exception in VideoService")]
     partial void LogException(Exception ex);
+
+    [LoggerMessage(8, LogLevel.Error, "MediaInfo output: {json}")]
+    partial void LogJSON(string json);
 #pragma warning restore CA1822 // Mark members as static
 #pragma warning restore IDE0060 // Remove unused parameter
 #pragma warning restore IDE0079 // Remove unnecessary suppression
