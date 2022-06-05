@@ -41,7 +41,7 @@ public partial class EditSubscription : ComponentBase
         IsTaskRunning = false;
         if (result)
         {
-            NavManager.NavigateTo("/reader/subscriptions");
+            Navigation.NavigateBack();
         }
     }
 
