@@ -8,7 +8,7 @@ public partial class Authors : ComponentBase
     private IAuthorManager AuthorManager { get; set; } = null!;
 
     [Inject]
-    private NavigationManager NavManager { get; set; } = null!;
+    private Navigation Navigation { get; set; } = null!;
 
     private readonly List<Author> _authorList = new();
 
@@ -28,5 +28,5 @@ public partial class Authors : ComponentBase
         }
     }
 
-    public void SelectAuthor(Author author) => NavManager.NavigateTo($"/books/author/{author.Id}");
+    public void SelectAuthor(Author author) => Navigation.NavigateTo($"/books/author/{author.Id}");
 }

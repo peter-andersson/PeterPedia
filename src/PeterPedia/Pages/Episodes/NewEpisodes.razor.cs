@@ -8,7 +8,7 @@ public partial class NewEpisodes : ComponentBase
     private IEpisodeManager EpisodeManager { get; set; } = null!;
 
     [Inject]
-    private NavigationManager NavManager { get; set; } = null!;
+    private Navigation Navigation { get; set; } = null!;
 
     public List<Episode> Episodes { get; set; } = new();
 
@@ -23,5 +23,5 @@ public partial class NewEpisodes : ComponentBase
         }
     }
 
-    private void Close() => NavManager.NavigateTo("/episodes");
+    private void Close() => Navigation.NavigateBack();
 }

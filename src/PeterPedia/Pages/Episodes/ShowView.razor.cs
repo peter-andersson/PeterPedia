@@ -5,10 +5,10 @@ namespace PeterPedia.Pages.Episodes;
 public partial class ShowView : ComponentBase
 {
     [Inject]
-    private NavigationManager NavManager { get; set; } = null!;
+    private Navigation Navigation { get; set; } = null!;
 
     [Parameter]
     public Show Show { get; set; } = null!;
     
-    private void OpenShow() => NavManager.NavigateTo($"/episodes/{Show.Id}");
+    private void OpenShow() => Navigation.NavigateTo($"/episodes/{Show.Id}");
 }

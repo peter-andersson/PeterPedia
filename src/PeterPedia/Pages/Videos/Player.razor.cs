@@ -18,7 +18,7 @@ public partial class Player : ComponentBase
     private ILogger<Player> Logger { get; set; } = null!;
 
     [Inject]
-    private NavigationManager NavManager { get; set; } = null!;
+    private Navigation Navigation { get; set; } = null!;
 
     [Parameter]
     public int Id { get; set; }
@@ -61,8 +61,8 @@ public partial class Player : ComponentBase
         DbContext.Remove(video);
         await DbContext.SaveChangesAsync();
 
-        LogMessage.VideoDeleted(Logger, video.Title, video.AbsolutePath);                
-        
-        NavManager.NavigateTo("videos");
+        LogMessage.VideoDeleted(Logger, video.Title, video.AbsolutePath);
+
+        Navigation.NavigateBack();
     }
 }

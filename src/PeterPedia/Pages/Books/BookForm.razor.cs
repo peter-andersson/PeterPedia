@@ -12,12 +12,12 @@ public partial class BookForm : ComponentBase
     private IAuthorManager AuthorManager { get; set; } = null!;
 
     [Inject]
-    private NavigationManager NavManager { get; set; } = null!;
+    private Navigation Navigation { get; set; } = null!;
 
     [Parameter]
     public int Id { get; set; }
 
-    public Book Book { get; set; } = null!;
+    private Book Book { get; set; } = null!;
 
     private bool IsTaskRunning { get; set; }
 
@@ -35,15 +35,8 @@ public partial class BookForm : ComponentBase
 
         Result<Book> bookResult = await BookManager.GetAsync(Id);
 
-        if (bookResult.Success)
-        {
-            Book = bookResult.Data;
-        }
-        else
-        {
-            Book = new();
-        }
-        
+        Book = bookResult.Success ? bookResult.Data : (new());
+
         SubmitButtonText = Book.Id == 0 ? "Add" : "Save";
 
         Result<IList<Author>> authorResult = await AuthorManager.GetAllAsync();
@@ -71,7 +64,7 @@ public partial class BookForm : ComponentBase
             Result<Book> result = await BookManager.AddAsync(Book);
             if (result.Success)
             {
-                NavManager.NavigateTo("/books");
+                Navigation.NavigateBack();
             }
         }
         else
@@ -79,7 +72,7 @@ public partial class BookForm : ComponentBase
             Result<Book> result = await BookManager.UpdateAsync(Book);
             if (result.Success)
             {
-                NavManager.NavigateTo("/books");
+                Navigation.NavigateBack();
             }
         }
 
@@ -93,7 +86,7 @@ public partial class BookForm : ComponentBase
         Result<Book> result = await BookManager.DeleteAsync(Book.Id);
         if (result.Success)
         {
-            NavManager.NavigateTo("/books");
+            Navigation.NavigateBack();
         }
         
         IsTaskRunning = false;
@@ -118,5 +111,5 @@ public partial class BookForm : ComponentBase
         }
     }
 
-    private void Close() => NavManager.NavigateTo("/books");
+    private void Close() => Navigation.NavigateBack();
 }

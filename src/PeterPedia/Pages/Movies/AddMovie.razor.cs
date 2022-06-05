@@ -9,7 +9,7 @@ public partial class AddMovie : ComponentBase
     private IMovieManager MovieManager { get; set; } = null!;
 
     [Inject]
-    private NavigationManager NavManager { get; set; } = null!;
+    private Navigation Navigation { get; set; } = null!;
 
     public bool IsTaskRunning { get; set; } = false;
 
@@ -55,5 +55,5 @@ public partial class AddMovie : ComponentBase
         }
     }
 
-    private void Close() => NavManager.NavigateTo("movies");
+    private void Close() => Navigation.NavigateBack();
 }

@@ -8,7 +8,7 @@ public partial class EditMovie : ComponentBase
     private IMovieManager MovieManager { get; set; } = null!;
 
     [Inject]
-    private NavigationManager NavManager { get; set; } = null!;
+    private Navigation Navigation { get; set; } = null!;
 
     [Parameter]
     public int Id { get; set; }
@@ -45,7 +45,7 @@ public partial class EditMovie : ComponentBase
 
         if (result.Success)
         {
-            NavManager.NavigateTo("movies");
+            Navigation.NavigateBack();
         }
         else
         {
@@ -64,7 +64,7 @@ public partial class EditMovie : ComponentBase
 
         if (result.Success)
         {
-            NavManager.NavigateTo("movies");
+            Navigation.NavigateBack();
         }
         else
         {
@@ -74,5 +74,5 @@ public partial class EditMovie : ComponentBase
         IsTaskRunning = false;
     }
 
-    private void Close() => NavManager.NavigateTo("movies");
+    private void Close() => Navigation.NavigateBack();
 }

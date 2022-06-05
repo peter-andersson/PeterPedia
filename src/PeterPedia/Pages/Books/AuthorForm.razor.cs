@@ -8,7 +8,7 @@ public partial class AuthorForm : ComponentBase
     private IAuthorManager AuthorManager { get; set; } = null!;
 
     [Inject]
-    private NavigationManager NavManager { get; set; } = null!;
+    private Navigation Navigation { get; set; } = null!;
 
     [Parameter]
     public int Id { get; set; }
@@ -55,7 +55,7 @@ public partial class AuthorForm : ComponentBase
 
             if (addResult.Success)
             {
-                NavManager.NavigateTo("/books/authors");
+                Navigation.NavigateBack();
             }
         }
         else
@@ -64,7 +64,7 @@ public partial class AuthorForm : ComponentBase
 
             if (updateResult.Success)
             {
-                NavManager.NavigateTo("/books/authors");
+                Navigation.NavigateBack();
             }
         }
 
@@ -79,11 +79,11 @@ public partial class AuthorForm : ComponentBase
 
         if (result.Success)
         {
-            NavManager.NavigateTo("/books/authors");
+            Navigation.NavigateBack();
         }
 
         IsTaskRunning = false;
     }
 
-    private void Close() => NavManager.NavigateTo("/books/authors");
+    private void Close() => Navigation.NavigateBack();
 }

@@ -9,7 +9,7 @@ public partial class AddShow : ComponentBase
     private IEpisodeManager EpisodeManager { get; set; } = null!;
 
     [Inject]
-    private NavigationManager NavManager { get; set; } = null!;
+    private Navigation Navigation { get; set; } = null!;
 
     public bool IsTaskRunning { get; set; } = false;
 
@@ -55,5 +55,5 @@ public partial class AddShow : ComponentBase
         }
     }
 
-    private void Close() => NavManager.NavigateTo("episodes");
+    private void Close() => Navigation.NavigateBack();
 }

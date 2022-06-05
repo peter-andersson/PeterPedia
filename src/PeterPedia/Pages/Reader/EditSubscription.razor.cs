@@ -8,7 +8,7 @@ public partial class EditSubscription : ComponentBase
     private IReaderManager ReaderManager { get; set; } = null!;
 
     [Inject]
-    private NavigationManager NavManager { get; set; } = null!;
+    private Navigation Navigation { get; set; } = null!;
 
     [Parameter]
     public int Id { get; set; }
@@ -51,11 +51,11 @@ public partial class EditSubscription : ComponentBase
 
         if (await ReaderManager.DeleteSubscriptionAsync(Id))
         {
-            NavManager.NavigateTo("/reader/subscriptions");
+            Navigation.NavigateBack();
         }
 
         IsTaskRunning = false;
     }
 
-    private void Close() => NavManager.NavigateTo("/reader/subscriptions");
+    private void Close() => Navigation.NavigateBack();
 }

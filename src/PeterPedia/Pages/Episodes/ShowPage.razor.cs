@@ -8,7 +8,7 @@ public partial class ShowPage : ComponentBase
     private IEpisodeManager EpisodeManager { get; set; } = null!;
 
     [Inject]
-    private NavigationManager NavManager { get; set; } = null!;
+    private Navigation Navigation { get; set; } = null!;
 
     [Parameter]
     public int Id { get; set; }
@@ -44,7 +44,7 @@ public partial class ShowPage : ComponentBase
         IsTaskRunning = false;
         if (result.Success)
         {
-            NavManager.NavigateTo("/episodes");
+            Navigation.NavigateBack();
         }
     }    
 
@@ -56,11 +56,11 @@ public partial class ShowPage : ComponentBase
 
         if (result.Success)
         {
-            NavManager.NavigateTo("/episodes");
+            Navigation.NavigateBack();
         }
 
         IsTaskRunning = false;
     }
 
-    private void Close() => NavManager.NavigateTo("/episodes");   
+    private void Close() => Navigation.NavigateBack();
 }

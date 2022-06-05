@@ -9,7 +9,7 @@ public partial class AddSubscription : ComponentBase
     private IReaderManager ReaderManager { get; set; } = null!;
 
     [Inject]
-    private NavigationManager NavManager { get; set; } = null!;
+    private Navigation Navigation { get; set; } = null!;
 
     public bool IsTaskRunning { get; set; } = false;
 
@@ -53,5 +53,5 @@ public partial class AddSubscription : ComponentBase
         }
     }
 
-    private void Close() => NavManager.NavigateTo("/reader/subscriptions");
+    private void Close() => Navigation.NavigateBack();
 }

@@ -42,6 +42,8 @@ try
             x.GetRequiredService<PeterPediaContext>()
         ));
 
+    builder.Services.AddScoped<Navigation>();
+
     builder.Services.AddScoped<IAuthorManager, AuthorManager>();
     builder.Services.AddScoped<IBookManager, BookManager>();
     builder.Services.AddScoped<IEpisodeManager, EpisodeManager>();
