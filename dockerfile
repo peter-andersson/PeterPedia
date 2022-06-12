@@ -14,6 +14,7 @@ WORKDIR /src
 COPY PeterPedia.sln .
 COPY src/PeterPedia/*.csproj ./src/PeterPedia/
 COPY src/PeterPedia.Data/*.csproj ./src/PeterPedia.Data/
+COPY src/PeterPedia.Services/*.csproj ./src/PeterPedia.Services/
 
 # Copy test projects
 COPY tests/PeterPedia.Tests/*.csproj ./tests/PeterPedia.Tests/
