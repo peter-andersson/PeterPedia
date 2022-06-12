@@ -38,8 +38,7 @@ try
         new TheMovieDatabaseService(
             builder.Configuration["TheMovieDbAccessToken"],
             x.GetRequiredService<IHttpClientFactory>(),
-            x.GetRequiredService<IMemoryCache>(),
-            x.GetRequiredService<PeterPediaContext>()
+            x.GetRequiredService<IMemoryCache>()
         ));
 
     builder.Services.AddScoped<Navigation>();
@@ -96,6 +95,12 @@ try
     {
         FileProvider = new PhysicalFileProvider(builder.Configuration["ImagePath"] ?? "/images"),
         RequestPath = "/images"
+    });
+
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(builder.Configuration["LogsPath"] ?? "/logs"),
+        RequestPath = "/logs"
     });
 
     app.UseRouting();

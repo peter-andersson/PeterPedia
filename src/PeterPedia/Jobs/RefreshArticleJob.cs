@@ -119,28 +119,10 @@ public partial class RefreshArticleJob : IJob
         }
         catch (TaskCanceledException ex)
         {
-            var error = new ErrorEF()
-            {
-                Module = "Reader",
-                Error = $"Error fetching feed {subscription.Title}. Exception: {ex.Message}"
-            };
-
-            _dbContext.Errors.Add(error);
-            await _dbContext.SaveChangesAsync();
-
             LogMessage.ReaderFeedException(_logger, subscription.Title, ex);
         }
         catch (XmlException x)
         {
-            var error = new ErrorEF()
-            {
-                Module = "Reader",
-                Error = $"Error fetching feed {subscription.Title}. Exception: {x.Message}"
-            };
-
-            _dbContext.Errors.Add(error);
-            await _dbContext.SaveChangesAsync();
-
             LogMessage.ReaderFeedException(_logger, subscription.Title, x);
         }
     }

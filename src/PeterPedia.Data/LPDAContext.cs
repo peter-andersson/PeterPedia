@@ -20,8 +20,6 @@ public class PeterPediaContext : DbContext
 
     public DbSet<EpisodeEF> Episodes { get; set; } = null!;
 
-    public DbSet<ErrorEF> Errors { get; set; } = null!;
-
     public DbSet<LinkEF> Links { get; set; } = null!;
 
     public DbSet<MovieEF> Movies { get; set; } = null!;
@@ -47,7 +45,6 @@ public class PeterPediaContext : DbContext
         modelBuilder.Entity<AuthorEF>();
         modelBuilder.Entity<BookEF>();
         modelBuilder.Entity<EpisodeEF>();
-        modelBuilder.Entity<ErrorEF>();
         modelBuilder.Entity<LinkEF>();
         modelBuilder.Entity<MovieEF>();
         modelBuilder.Entity<PhotoEF>();
