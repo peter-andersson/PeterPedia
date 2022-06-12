@@ -5,10 +5,10 @@ public class FileService : IFileService
     private readonly HttpClient _httpClient;
     private readonly ILogger<FileService> _logger;
 
-    public FileService(ILogger<FileService> logger, IHttpClientFactory httpClientFactory)
+    public FileService(ILogger<FileService> logger, HttpClient httpClient)
     {
         _logger = logger;
-        _httpClient = httpClientFactory.CreateClient();
+        _httpClient = httpClient;
     }
 
     public void Delete(string path)

@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PeterPedia.Models;
+namespace PeterPedia.Services.Models;
 
 public class Configuration
 {

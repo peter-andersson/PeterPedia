@@ -1,12 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace PeterPedia.Models;
+namespace PeterPedia.Services.Models;
 
 public class Author
 {
     public Author() => Name = string.Empty;
 
     public int Id { get; set; }
+
+    // TODO: Move annotation to viewmodel?
 
     [Required(AllowEmptyStrings = false, ErrorMessage = "Name must be specified.")]
     [StringLength(100, ErrorMessage = "Name is too long.")]

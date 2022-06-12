@@ -7,14 +7,14 @@ namespace PeterPedia.Services;
 public class TheMovieDatabaseService : ITheMovieDatabaseService
 {
     private readonly string _apiKey;
-    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly HttpClient _httpClient;
     private readonly string _baseUrl = "https://api.themoviedb.org/3";
     private readonly IMemoryCache _cache;
 
-    public TheMovieDatabaseService(string apiKey, IHttpClientFactory httpClientFactory, IMemoryCache cache)
+    public TheMovieDatabaseService(string apiKey, HttpClient httpClient, IMemoryCache cache)
     {
         _apiKey = apiKey;
-        _httpClientFactory = httpClientFactory;
+        _httpClient = httpClient;
         _cache = cache;
     }
 
@@ -31,9 +31,7 @@ public class TheMovieDatabaseService : ITheMovieDatabaseService
             }
         }
 
-        using HttpClient httpClient = _httpClientFactory.CreateClient();
-
-        HttpResponseMessage response = await httpClient.SendAsync(request).ConfigureAwait(false);
+        HttpResponseMessage response = await _httpClient.SendAsync(request).ConfigureAwait(false);
 
         if (response.StatusCode == System.Net.HttpStatusCode.NotModified)
         {
@@ -76,8 +74,7 @@ public class TheMovieDatabaseService : ITheMovieDatabaseService
             }
         }
 
-        using HttpClient httpClient = _httpClientFactory.CreateClient();
-        HttpResponseMessage response = await httpClient.SendAsync(request).ConfigureAwait(false);
+        HttpResponseMessage response = await _httpClient.SendAsync(request).ConfigureAwait(false);
 
         if (response.StatusCode == System.Net.HttpStatusCode.NotModified)
         {
@@ -136,8 +133,7 @@ public class TheMovieDatabaseService : ITheMovieDatabaseService
         using HttpRequestMessage request = new(HttpMethod.Get, GetTvSeasonUrl(showId, seasonNumber));
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
 
-        using HttpClient httpClient = _httpClientFactory.CreateClient();
-        HttpResponseMessage response = await httpClient.SendAsync(request).ConfigureAwait(false);
+        HttpResponseMessage response = await _httpClient.SendAsync(request).ConfigureAwait(false);
         if (response.StatusCode == System.Net.HttpStatusCode.NotModified)
         {
             return null;
@@ -170,9 +166,7 @@ public class TheMovieDatabaseService : ITheMovieDatabaseService
         using var request = new HttpRequestMessage(HttpMethod.Get, $"{_baseUrl}/configuration");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
 
-        using HttpClient httpClient = _httpClientFactory.CreateClient();
-
-        HttpResponseMessage response = await httpClient.SendAsync(request).ConfigureAwait(false);
+        HttpResponseMessage response = await _httpClient.SendAsync(request).ConfigureAwait(false);
 
         if (response.IsSuccessStatusCode)
         {

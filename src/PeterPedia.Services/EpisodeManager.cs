@@ -1,5 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-
 namespace PeterPedia.Services;
 
 public class EpisodeManager : IEpisodeManager

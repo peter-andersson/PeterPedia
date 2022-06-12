@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace PeterPedia.Shared;
+namespace PeterPedia.Services.Models;
 
 public class Movie
 {
@@ -16,6 +16,7 @@ public class Movie
 
     public string OriginalLanguage { get; set; } = null!;
 
+    // TODO: Move annotation to viewmodel?
     [Required(AllowEmptyStrings = false, ErrorMessage = "Title must be specified.")]
     public string Title { get; set; } = null!;
 

@@ -26,9 +26,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CodeHollow.FeedReader" Version="1.2.4" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.42" />
-    <PackageReference Include="HtmlSanitizer" Version="7.1.488" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.43" />
+    <PackageReference Include="HtmlSanitizer" Version="7.1.512" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.5">
       <PrivateAssets>all</PrivateAssets>
@@ -51,6 +50,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PeterPedia.Data\PeterPedia.Data.csproj" />
+    <ProjectReference Include="..\PeterPedia.Services\PeterPedia.Services.csproj" />
   </ItemGroup>
 
 </Project>

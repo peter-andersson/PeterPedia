@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.FileProviders;
 using PeterPedia.Jobs;
+using PeterPedia.Services;
 using Quartz;
 using Serilog;
 
@@ -37,11 +38,13 @@ try
     builder.Services.AddScoped(x =>
         new TheMovieDatabaseService(
             builder.Configuration["TheMovieDbAccessToken"],
-            x.GetRequiredService<IHttpClientFactory>(),
+            x.GetRequiredService<HttpClient>(),
             x.GetRequiredService<IMemoryCache>()
         ));
 
     builder.Services.AddScoped<Navigation>();
+
+    builder.Services.AddHttpClient<FileService>();
 
     builder.Services.AddScoped<IAuthorManager, AuthorManager>();
     builder.Services.AddScoped<IBookManager, BookManager>();

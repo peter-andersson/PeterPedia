@@ -1,4 +1,4 @@
-namespace PeterPedia.Models;
+namespace PeterPedia.Services.Models;
 
 public class Subscription
 {

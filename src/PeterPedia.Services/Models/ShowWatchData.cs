@@ -1,4 +1,4 @@
-namespace PeterPedia;
+namespace PeterPedia.Services.Models;
 
 public class ShowWatchData
 {
