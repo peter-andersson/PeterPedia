@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text;
 
 namespace PeterPedia.Services.Models;
 
@@ -41,6 +42,27 @@ public class Book
         _ => string.Empty,
     };
 
+    public string AuthorText
+    {
+        get
+        {
+            var text = new StringBuilder();
+            var addSeperator = false;
+            foreach (Author author in Authors)
+            {
+                text.Append(author.Name);
+
+                if (addSeperator)
+                {
+                    text.Append(", ");
+                }
+
+                addSeperator = true;
+            }
+
+            return text.ToString();
+        }
+    }
 
     public bool Search(string searchString)
     {
