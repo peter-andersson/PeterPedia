@@ -1,0 +1,20 @@
+﻿@page "/library/books/all"
+
+<LibraryMeny></LibraryMeny>
+
+<h4>All books</h4>
+
+<div class="d-flex mb-2">
+  <input type="text" class="form-control" @bind="Filter" @bind:event="oninput" placeholder="Filter">
+</div>
+
+<!-- TODO: Render all books in a list -->
+<ul class="list-group">
+    @foreach (Book book in Books)
+    {
+      <li class="list-group-item" role="button" @onclick="() => OpenBook(book)">
+        <img src="/images/books/@($"{book.Id}.jpg")" class="book-cover">
+        @book.Title by @book.AuthorText
+      </li>
+    }
+</ul>

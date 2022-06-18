@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PeterPedia.Pages.Books;
+namespace PeterPedia.Pages.Library;
 
 public partial class BookView : ComponentBase
 {
@@ -10,5 +10,5 @@ public partial class BookView : ComponentBase
     [Parameter]
     public Book Book { get; set; } = null!;
 
-    private void SelectBook(Book book) => Navigation.NavigateTo($"book/{book.Id}");
+    private void SelectBook(Book book) => Navigation.NavigateTo($"/library/book/{book.Id}");
 }

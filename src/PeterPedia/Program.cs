@@ -46,8 +46,7 @@ try
 
     builder.Services.AddHttpClient<FileService>();
 
-    builder.Services.AddScoped<IAuthorManager, AuthorManager>();
-    builder.Services.AddScoped<IBookManager, BookManager>();
+    builder.Services.AddScoped<ILibrary, Library>();
     builder.Services.AddScoped<IEpisodeManager, EpisodeManager>();
     builder.Services.AddScoped<IFileService, FileService>();
     builder.Services.AddScoped<IMovieManager, MovieManager>();

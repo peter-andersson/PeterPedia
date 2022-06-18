@@ -1,0 +1,21 @@
+﻿@page "/library"
+
+<LibraryMeny></LibraryMeny>
+
+<h4>Books</h4>
+   
+  <h5>Reading</h5>
+  <div class="row row-cols-1 row-cols-md-4 g-4 mb-2">
+    @foreach (Book book in Reading)
+    {
+      <BookView Book="@book" />      
+    }
+  </div>
+
+  <h5>To be read</h5>
+  <div class="row row-cols-1 row-cols-md-4 g-4 mb-2">
+    @foreach (Book book in ToBeRead)
+    {
+      <BookView Book="@book" />      
+    }
+  </div>

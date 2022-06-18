@@ -40,8 +40,8 @@ public partial class Index : ComponentBase
        
         Links.Add(new Link()
         {
-            Title = "Books",
-            Url = "books"
+            Title = "Library",
+            Url = "library/books"
         });
 
         Links.Add(new Link()

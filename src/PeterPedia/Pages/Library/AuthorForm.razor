@@ -1,6 +1,7 @@
-﻿@page "/books/author/{id:int}"
+﻿@page "/library/author/{id:int}"
 
-<h4 class="mt-2">Manage author</h4>
+<LibraryMeny></LibraryMeny>
+<h4>Manage author</h4>
 
 <EditForm Model="@Author" OnValidSubmit="@HandleValidSubmitAsync" autocomplete="off">
     <div class="mb-3">
@@ -20,7 +21,7 @@
 
     <div class="mb-3">
         <button type="submit" class="btn btn-success" disabled="@IsTaskRunning">@SubmitButtonText</button>
-        @if (Author.Id > 0)
+        @if (Id > 0)
         {
             <button type="button" class="btn btn-danger ms-2" @onclick="DeleteAsync" disabled="@IsTaskRunning">Delete</button>
         }

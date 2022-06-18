@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PeterPedia.Pages.Books;
+namespace PeterPedia.Pages.Library;
 
 public partial class AuthorForm : ComponentBase
 {
     [Inject]
-    private IAuthorManager AuthorManager { get; set; } = null!;
+    private ILibrary Library { get; set; } = null!;
 
     [Inject]
     private Navigation Navigation { get; set; } = null!;
@@ -13,11 +13,11 @@ public partial class AuthorForm : ComponentBase
     [Parameter]
     public int Id { get; set; }
 
-    public Author Author { get; set; } = new();
+    public AuthorEdit Author { get; set; } = new();
 
-    private bool IsTaskRunning { get; set; }
+    public bool IsTaskRunning { get; set; }
 
-    private string SubmitButtonText { get; set; } = string.Empty;
+    public string SubmitButtonText { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -25,11 +25,12 @@ public partial class AuthorForm : ComponentBase
 
         if (Id > 0)
         {
-            Result<Author> result = await AuthorManager.GetAsync(Id);
+            Result<Author> result = await Library.GetAuthorAsync(Id);
 
             if (result.Success)
             {
-                Author = result.Data;
+                Author.Name = result.Data.Name;
+                Author.DateOfBirth = result.Data.DateOfBirth;
             }
         }
         else
@@ -37,7 +38,7 @@ public partial class AuthorForm : ComponentBase
             Author = new();
         }
 
-        SubmitButtonText = Author.Id == 0 ? "Add" : "Save";
+        SubmitButtonText = Id > 0 ? "Save" : "Add";
     }
 
     private async Task HandleValidSubmitAsync()
@@ -49,20 +50,27 @@ public partial class AuthorForm : ComponentBase
 
         IsTaskRunning = true;
 
-        if (Author.Id == 0)
+        var author = new Author()
         {
-            Result<Author> addResult = await AuthorManager.AddAsync(Author);
+            Id = Id,
+            Name = Author.Name,
+            DateOfBirth = Author.DateOfBirth
+        };
 
-            if (addResult.Success)
+        if (Id > 0)
+        {
+            Result<Author> updateResult = await Library.UpdateAuthorAsync(author);
+
+            if (updateResult.Success)
             {
                 Navigation.NavigateBack();
-            }
+            }            
         }
         else
         {
-            Result<Author> updateResult = await AuthorManager.UpdateAsync(Author);
+            Result<Author> addResult = await Library.AddAuthorAsync(author);
 
-            if (updateResult.Success)
+            if (addResult.Success)
             {
                 Navigation.NavigateBack();
             }
@@ -75,7 +83,7 @@ public partial class AuthorForm : ComponentBase
     {
         IsTaskRunning = true;
 
-        Result<Author> result = await AuthorManager.DeleteAsync(Author.Id);
+        Result<Author> result = await Library.DeleteAuthorAsync(Id);
 
         if (result.Success)
         {
