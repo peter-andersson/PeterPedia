@@ -50,7 +50,7 @@
 
             <div class="mb-3">
                 <button type="submit" class="btn btn-success" disabled="@IsTaskRunning">@SubmitButtonText</button>
-                @if (Book.Id > 0)
+                @if (Id > 0)
                 {
                     <button type="button" class="btn btn-danger ms-2" @onclick="DeleteAsync" disabled="@IsTaskRunning">Delete</button>
                 }

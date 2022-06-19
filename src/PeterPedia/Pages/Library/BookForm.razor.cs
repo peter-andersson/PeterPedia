@@ -16,7 +16,7 @@ public partial class BookForm : ComponentBase
     [Parameter]
     public int Id { get; set; }
 
-    public Book Book { get; set; } = null!;
+    public BookEdit Book { get; set; } = new();
 
     public bool IsTaskRunning { get; set; }
 
@@ -30,11 +30,24 @@ public partial class BookForm : ComponentBase
     {
         IsTaskRunning = false;
 
-        Result<Book> bookResult = await Library.GetBookAsync(Id);
+        if (Id > 0)
+        {
+            Result<Book> bookResult = await Library.GetBookAsync(Id);
 
-        Book = bookResult.Success ? bookResult.Data : (new());
+            if (bookResult.Success)
+            {
+                Book.Title = bookResult.Data.Title;
+                Book.State = bookResult.Data.State;
+                Book.Authors.AddRange(bookResult.Data.Authors);
+            }
+        }
+        else
+        {
+            Book = new();
+        }
+        
 
-        SubmitButtonText = Book.Id == 0 ? "Add" : "Save";
+        SubmitButtonText = Id == 0 ? "Add" : "Save";
 
         Result<IList<Author>> authorResult = await Library.GetAuthorsAsync();
 
@@ -55,22 +68,31 @@ public partial class BookForm : ComponentBase
         }
 
         IsTaskRunning = true;
-       
-        if (Book.Id == 0)
+
+        var book = new Book()
         {
-            Result<Book> result = await Library.AddBookAsync(Book);
-            if (result.Success)
-            {
-                Navigation.NavigateBack();
-            }
+            Id = Id,
+            Title = Book.Title,
+            State = Book.State,
+            CoverUrl = Book.CoverUrl
+        };
+
+        book.Authors.AddRange(Book.Authors);
+
+        Result<Book> result;
+
+        if (book.Id == 0)
+        {
+            result = await Library.AddBookAsync(book);            
         }
         else
         {
-            Result<Book> result = await Library.UpdateBookAsync(Book);
-            if (result.Success)
-            {
-                Navigation.NavigateBack();
-            }
+            result = await Library.UpdateBookAsync(book);
+        }
+
+        if (result.Success)
+        {
+            Navigation.NavigateBack();
         }
 
         IsTaskRunning = false;
@@ -80,7 +102,7 @@ public partial class BookForm : ComponentBase
     {
         IsTaskRunning = true;
 
-        Result<Book> result = await Library.DeleteBookAsync(Book.Id);
+        Result<Book> result = await Library.DeleteBookAsync(Id);
         if (result.Success)
         {
             Navigation.NavigateBack();
