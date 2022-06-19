@@ -1,9 +1,15 @@
 .show {
     width: 185px;
     height: 278px;
+    margin-bottom: -15px;
 }
 
 .show-poster {
     width: 185px;
     height: 278px;    
+}
+
+.episode-count {
+    top: 5px;
+    left: 15px;    
 }

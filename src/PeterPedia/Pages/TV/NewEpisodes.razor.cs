@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PeterPedia.Pages.Episodes;
+namespace PeterPedia.Pages.TV;
 
 public partial class NewEpisodes : ComponentBase
 {
     [Inject]
-    private IEpisodeManager EpisodeManager { get; set; } = null!;
+    private ITVShows TVShows { get; set; } = null!;
 
     [Inject]
     private Navigation Navigation { get; set; } = null!;
@@ -14,7 +14,7 @@ public partial class NewEpisodes : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        Result<IList<Episode>> result =  await EpisodeManager.GetEpisodesAsync();
+        Result<IList<Episode>> result =  await TVShows.GetEpisodesAsync();
 
         Episodes.Clear();
         if (result.Success)

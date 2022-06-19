@@ -56,17 +56,7 @@ public class Show
     {
         if (string.IsNullOrEmpty(searchString))
         {
-            return false;
-        }
-
-        if (searchString == "*")
-        {
             return true;
-        }
-
-        if (searchString.Length <= 3)
-        {
-            return false;
         }
 
         // 

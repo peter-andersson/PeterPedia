@@ -1,12 +1,12 @@
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
 
-namespace PeterPedia.Pages.Episodes;
+namespace PeterPedia.Pages.TV;
 
 public partial class AddShow : ComponentBase
 {
     [Inject]
-    private IEpisodeManager EpisodeManager { get; set; } = null!;
+    private ITVShows TVShows { get; set; } = null!;
 
     [Inject]
     private Navigation Navigation { get; set; } = null!;
@@ -40,7 +40,7 @@ public partial class AddShow : ComponentBase
             }
         }
 
-        Result<string> result = await EpisodeManager.AddAsync(showId);
+        Result<string> result = await TVShows.AddAsync(showId);
 
         IsTaskRunning = false;
 

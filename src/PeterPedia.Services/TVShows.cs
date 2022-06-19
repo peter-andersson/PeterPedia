@@ -1,15 +1,15 @@
 namespace PeterPedia.Services;
 
-public class EpisodeManager : IEpisodeManager
+public class TVShows : ITVShows
 {
-    private readonly ILogger<EpisodeManager> _logger;
+    private readonly ILogger<TVShows> _logger;
     private readonly PeterPediaContext _dbContext;
     private readonly TheMovieDatabaseService _tmdbService;
     private readonly IFileService _fileService;
     private readonly IConfiguration _configuration;
 
-    public EpisodeManager(
-        ILogger<EpisodeManager> logger,
+    public TVShows(
+        ILogger<TVShows> logger,
         PeterPediaContext dbContext,
         TheMovieDatabaseService tmdbService,
         IFileService fileService,
@@ -24,11 +24,11 @@ public class EpisodeManager : IEpisodeManager
 
     public async Task<Result<string>> AddAsync(int showId)
     {
-        LogMessage.EpisodeAdd(_logger, showId);
+        TVShowsMessages.Add(_logger, showId);
 
         if (showId == 0)
         {
-            LogMessage.EpisodeAddFailed(_logger, showId, "Id on show to add can't be 0.");
+            TVShowsMessages.AddFailed(_logger, showId, "Id on show to add can't be 0.");
             return new ErrorResult<string>("Id on movie to add can't be 0.");
         }
 
@@ -36,7 +36,7 @@ public class EpisodeManager : IEpisodeManager
 
         if (show is not null)
         {
-            LogMessage.EpisodeAddFailed(_logger, showId, "Show already exists");
+            TVShowsMessages.AddFailed(_logger, showId, "Show already exists");
             return new ErrorResult<string>("Show already exists");
         }
 
@@ -44,8 +44,8 @@ public class EpisodeManager : IEpisodeManager
 
         if (tmdbShow is null)
         {
-            LogMessage.TheMovieDbFailed(_logger);
-            LogMessage.EpisodeAddFailed(_logger, showId, "Failed to fetch data from themoviedb.org");
+            TVShowsMessages.TheMovieDbFailed(_logger);
+            TVShowsMessages.AddFailed(_logger, showId, "Failed to fetch data from themoviedb.org");
             return new ErrorResult<string>("Failed to fetch data from themoviedb.org");
         }
 
@@ -86,22 +86,26 @@ public class EpisodeManager : IEpisodeManager
         _dbContext.Shows.Add(show);
         await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
+        TVShowsMessages.Added(_logger, show.Id, show.Title);
+
         return new SuccessResult<string>($"Added show {show.Title}.");
     }
 
     public async Task<Result> DeleteAsync(int id)
     {
-        LogMessage.EpisodeDelete(_logger, id);
+        TVShowsMessages.Delete(_logger, id);
 
         ShowEF? show = await _dbContext.Shows.Where(s => s.Id == id).AsTracking().SingleOrDefaultAsync().ConfigureAwait(false);
         if (show is null)
         {
-            LogMessage.EpisodeDeleteFailed(_logger, id, "Show not found");
+            TVShowsMessages.DeleteFailed(_logger, id, "Show not found");
             return new NotFoundResult();
         }
 
         _dbContext.Shows.Remove(show);
         await _dbContext.SaveChangesAsync().ConfigureAwait(false);
+
+        TVShowsMessages.Deleted(_logger, id);
 
         return new SuccessResult();
     }
@@ -184,7 +188,7 @@ public class EpisodeManager : IEpisodeManager
 
     public async Task<Result<Show>> UpdateAsync(Show show)
     {
-        LogMessage.EpisodeUpdate(_logger, show);
+        TVShowsMessages.Update(_logger, show.Id);
 
         ShowEF? existingShow = await _dbContext.Shows
             .Where(s => s.Id == show.Id)
@@ -193,7 +197,7 @@ public class EpisodeManager : IEpisodeManager
 
         if (existingShow is null)
         {
-            LogMessage.EpisodeUpdateFailed(_logger, show, "Show not found.");
+            TVShowsMessages.UpdateFailed(_logger, show.Id, "Show not found.");
             return new NotFoundResult<Show>();
         }
 
@@ -207,12 +211,14 @@ public class EpisodeManager : IEpisodeManager
             await RefreshShowAsync(show.Id, etag: null);
         }
 
+        TVShowsMessages.Updated(_logger, show.Id);
+
         return new SuccessResult<Show>(ConvertToShow(existingShow));
     }
 
     public async Task<Result> WatchAsync(ShowWatchData watchData)
     {
-        LogMessage.EpisodeWatch(_logger, watchData);
+        TVShowsMessages.Watch(_logger, watchData.SeasonId, watchData.EpisodeId, watchData.Watched);
 
         SeasonEF? season = null;
         EpisodeEF? episode = null;
@@ -228,7 +234,7 @@ public class EpisodeManager : IEpisodeManager
 
             if (season is null)
             {
-                LogMessage.EpisodeWatchFailed(_logger, watchData, "Season not found.");
+                TVShowsMessages.WatchFailed(_logger, watchData.SeasonId, watchData.EpisodeId, watchData.Watched, "Season not found.");
 
                 return new NotFoundResult();
             }
@@ -251,7 +257,7 @@ public class EpisodeManager : IEpisodeManager
 
             if (episode is null)
             {
-                LogMessage.EpisodeWatchFailed(_logger, watchData, "Episode not found.");
+                TVShowsMessages.WatchFailed(_logger, watchData.SeasonId, watchData.EpisodeId, watchData.Watched, "Episode not found.");
 
                 return new NotFoundResult();
             }

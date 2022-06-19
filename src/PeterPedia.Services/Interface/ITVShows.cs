@@ -1,6 +1,6 @@
 namespace PeterPedia.Services;
 
-public interface IEpisodeManager
+public interface ITVShows
 {
     Task<Result<string>> AddAsync(int showId);
 

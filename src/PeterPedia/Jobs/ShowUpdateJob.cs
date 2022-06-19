@@ -8,19 +8,19 @@ public partial class ShowUpdateJob : IJob
     private static readonly string s_JobName = "ShowUpdateJob";
 
     private readonly ILogger<ShowUpdateJob> _logger;
-    private readonly IEpisodeManager _episodeManager;
+    private readonly ITVShows _tvShows;
 
-    public ShowUpdateJob(ILogger<ShowUpdateJob> logger, IEpisodeManager episodeManager)
+    public ShowUpdateJob(ILogger<ShowUpdateJob> logger, ITVShows episodeManager)
     {
         _logger = logger;
-        _episodeManager = episodeManager;
+        _tvShows = episodeManager;
     }
 
     public async Task Execute(IJobExecutionContext context)
     {
         LogMessage.ExecuteJob(_logger, s_JobName);
 
-        await _episodeManager.RefreshAsync();
+        await _tvShows.RefreshAsync();
 
     }
 }

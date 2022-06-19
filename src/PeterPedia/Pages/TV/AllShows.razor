@@ -1,0 +1,25 @@
+﻿@page "/tv/all"
+
+<EpisodesMeny></EpisodesMeny>
+
+<h4 class="mt-2">All shows</h4>
+
+<div class="d-flex mb-2">
+    <input type="text" class="form-control" @bind="Filter" @bind:event="oninput" @onkeydown="InputKeyDown" placeholder="Filter">
+</div>
+
+@if (NotFound)
+{
+    <h5>No show found!</h5>
+}
+else
+{
+<ul class="list-group">
+    @foreach (Show show in ShowList)
+    {
+      <li class="list-group-item" role="button" @onclick="() => OpenShow(show)">
+        @show.Title - @show.Status - @show.UnwatchedEpisodeCount of @show.EpisodeCount
+      </li>
+    }
+</ul>    
+}
