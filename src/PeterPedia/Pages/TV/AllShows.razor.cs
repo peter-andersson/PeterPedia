@@ -11,7 +11,7 @@ public partial class AllShows : ComponentBase
     [Inject]
     private Navigation Navigation { get; set; } = null!;
 
-    private List<Show> _showList = new();
+    private readonly List<Show> _showList = new();
 
     public string Filter { get; set; } = string.Empty;
 
