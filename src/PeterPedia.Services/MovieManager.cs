@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using TheMovieDatabase;
+using TheMovieDatabase.Models;
 
 namespace PeterPedia.Services;
 

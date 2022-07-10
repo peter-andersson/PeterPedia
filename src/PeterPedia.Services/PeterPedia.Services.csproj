@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PeterPedia.Data\PeterPedia.Data.csproj" />
+    <ProjectReference Include="..\TheMovieDatabase\TheMovieDatabase.csproj" />
   </ItemGroup>
 
 </Project>

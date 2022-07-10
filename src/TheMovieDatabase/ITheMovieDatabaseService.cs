@@ -1,4 +1,4 @@
-namespace PeterPedia.Services;
+namespace TheMovieDatabase;
 
 public interface ITheMovieDatabaseService
 {

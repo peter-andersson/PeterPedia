@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace PeterPedia.Services.Models;
+namespace TheMovieDatabase.Models;
 
 public class DateTimeConverter : JsonConverter<DateTime?>
 {

@@ -1,3 +1,6 @@
+using TheMovieDatabase;
+using TheMovieDatabase.Models;
+
 namespace PeterPedia.Services;
 
 public class TVShows : ITVShows

@@ -1,0 +1,1 @@
+global using TheMovieDatabase.Models;

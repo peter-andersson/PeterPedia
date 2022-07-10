@@ -2,7 +2,7 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace PeterPedia.Services;
+namespace TheMovieDatabase;
 
 public class TheMovieDatabaseService : ITheMovieDatabaseService
 {
