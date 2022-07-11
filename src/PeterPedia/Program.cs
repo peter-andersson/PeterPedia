@@ -5,6 +5,7 @@ using PeterPedia.Jobs;
 using PeterPedia.Services;
 using Quartz;
 using Serilog;
+using TheMovieDatabase;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()

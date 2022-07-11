@@ -26,13 +26,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PeterPedia.Data", "src\Pete
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PeterPedia.Services", "src\PeterPedia.Services\PeterPedia.Services.csproj", "{8A898E0F-68CB-4B8E-9E5D-A3DDE6EB62C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Movies.App", "src\Movies\Movies.App\Movies.App.csproj", "{875EA63F-73ED-44D1-82B8-EE9693118FEB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Movies.App", "src\Movies\Movies.App\Movies.App.csproj", "{875EA63F-73ED-44D1-82B8-EE9693118FEB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Movies", "Movies", "{52E83B5F-D409-410E-A00A-7909A1F22877}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Movies.Api", "src\Movies\Movies.Api\Movies.Api.csproj", "{75E78DCD-52C0-4E2B-8FF0-55FC16D9AF8B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Movies.Api", "src\Movies\Movies.Api\Movies.Api.csproj", "{75E78DCD-52C0-4E2B-8FF0-55FC16D9AF8B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheMovieDatabase", "src\TheMovieDatabase\TheMovieDatabase.csproj", "{4AFD33B9-59C1-4E66-82E5-2FD065D362E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheMovieDatabase", "src\TheMovieDatabase\TheMovieDatabase.csproj", "{4AFD33B9-59C1-4E66-82E5-2FD065D362E0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
