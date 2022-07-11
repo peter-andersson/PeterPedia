@@ -7,8 +7,6 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Movies.Api.Data;
-using TheMovieDatabase;
-
 [assembly: FunctionsStartup(typeof(Movies.Api.Startup))]
 
 namespace Movies.Api;
@@ -49,6 +47,7 @@ public class Startup : FunctionsStartup
         builder.Services.AddAzureClients(azureBuilder => azureBuilder.AddBlobServiceClient(configuration["BlobStorage"]));
 
         builder.Services.AddSingleton<CosmosContext>();
+        builder.Services.AddSingleton<BlobStorage>();
     }
 
 
