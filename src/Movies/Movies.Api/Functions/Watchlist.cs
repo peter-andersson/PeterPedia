@@ -17,7 +17,7 @@ public class Watchlist
 
     [FunctionName("Watchlist")]
     public async Task<IActionResult> RunAsync(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "watchlist")] HttpRequest req,
         CancellationToken cancellationToken)
     {
         try

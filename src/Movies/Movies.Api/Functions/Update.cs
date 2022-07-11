@@ -21,7 +21,7 @@ public class Update
 
     [FunctionName("Update")]
     public async Task<IActionResult> RunAsync(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "update")] HttpRequest req,
         CancellationToken cancellationToken)
     {
         var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
@@ -74,9 +74,9 @@ public class Update
         }
 
         try
-        {
-            _log.LogInformation("Updated movie with id {id], title {title}, watchDate: {watchDate}", existing.Id, existing.Title, existing.WatchedDate);
+        {            
             await _dbContext.UpdateAsync(existing);
+            _log.LogInformation("Updated movie with id {id}, title {title}, watchDate: {watchDate}", existing.Id, existing.Title, existing.WatchedDate);
 
             return new OkResult();
         }
