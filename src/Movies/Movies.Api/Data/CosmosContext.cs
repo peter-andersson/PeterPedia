@@ -6,23 +6,18 @@ namespace Movies.Api.Data;
 
 public class CosmosContext
 {
-    private CosmosClient _cosmosClient;
-
     private readonly string _databaseName = "peterpedia";
     private readonly string _containerName = "movies";
 
-    public CosmosContext(CosmosClient cosmosClient)
-    {
-        _cosmosClient = cosmosClient;
-    }
+    private readonly Container _container;
+
+    public CosmosContext(CosmosClient cosmosClient) => _container = cosmosClient.GetContainer(_databaseName, _containerName);
 
     public async Task<MovieEntity> GetAsync(string id)
     {
-        Container container = _cosmosClient.GetContainer(_databaseName, _containerName);
-
         try
         {
-            ItemResponse<MovieEntity> itemResponse = await container.ReadItemAsync<MovieEntity>(id, new PartitionKey(id));
+            ItemResponse<MovieEntity> itemResponse = await _container.ReadItemAsync<MovieEntity>(id, new PartitionKey(id));
 
             return itemResponse.Resource;
         }
@@ -32,10 +27,29 @@ public class CosmosContext
         }
     }
 
-    public async Task AddAsync(MovieEntity entity)
-    {
-        Container container = _cosmosClient.GetContainer(_databaseName, _containerName);
+    public async Task AddAsync(MovieEntity entity) => _ = await _container.CreateItemAsync(entity, new PartitionKey(entity.Id));
 
-        ItemResponse<MovieEntity> itemResponse = await container.CreateItemAsync(entity, new PartitionKey(entity.Id));
+    public async Task UpdateAsync(MovieEntity entity) => _ = await _container.ReplaceItemAsync(entity, entity.Id, new PartitionKey(entity.Id));
+
+    public async Task<List<MovieEntity>> GetWatchListAsync()
+    {
+        var result = new List<MovieEntity>();
+
+        var query = new QueryDefinition(
+            query: "SELECT * FROM c WHERE IS_NULL(c.WatchedDate)"
+        );
+        
+        using FeedIterator<MovieEntity> feed = _container.GetItemQueryIterator<MovieEntity>(queryDefinition: query);
+
+        while (feed.HasMoreResults)
+        {
+            FeedResponse<MovieEntity> response = await feed.ReadNextAsync();
+            foreach (MovieEntity item in response)
+            {
+                result.Add(item);
+            }
+        }
+
+        return result;
     }
 }
