@@ -7,3 +7,4 @@ global using TheMovieDatabase;
 global using TheMovieDatabase.Models;
 global using Movies.Api.Models;
 global using Movies.Api.Data;
+global using Movies.Shared;
