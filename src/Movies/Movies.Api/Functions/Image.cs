@@ -3,7 +3,6 @@ using Microsoft.Azure.WebJobs;
 
 namespace Movies.Api.Functions;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Required by Azure function runtime.")]
 public class Image
 {
     private readonly ILogger<Image> _log;
@@ -16,20 +15,22 @@ public class Image
     }
 
     [FunctionName("Image")]
+#pragma warning disable IDE0060 // Remove unused parameter
     public async Task<IActionResult> RunAsync(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "image/{id}")] HttpRequest req,
-        string id,
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "image/{image}")] HttpRequest req,
+        string image,
         CancellationToken cancellationToken)
+#pragma warning restore IDE0060 // Remove unused parameter
     {
-        if (string.IsNullOrWhiteSpace(id))
+        if (string.IsNullOrWhiteSpace(image))
         {
             return new NotFoundResult();
         }
 
         try
         {
-            using var stream = new MemoryStream();
-            await _blobStorage.GetPosterAsync(id, stream);
+            var stream = new MemoryStream();
+            await _blobStorage.GetPosterAsync(image, stream);
             return new FileStreamResult(stream, "image/jpeg");
         }
         catch (FileNotFoundException)
