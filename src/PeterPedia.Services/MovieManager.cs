@@ -45,7 +45,7 @@ public class MovieManager : IMovieManager
             return new ErrorResult<string>("Movie already exists");
         }
 
-        TMDbMovie? tmdbMovie = await _tmdbService.GetMovieAsync(id, string.Empty);
+        TMDbMovie? tmdbMovie = await _tmdbService.GetMovieAsync(id.ToString(), string.Empty);
 
         if (tmdbMovie is null)
         {
@@ -239,7 +239,7 @@ public class MovieManager : IMovieManager
         TMDbMovie? tmdbMovie;
         try
         {
-            tmdbMovie = await _tmdbService.GetMovieAsync(movie.Id, etag).ConfigureAwait(false);
+            tmdbMovie = await _tmdbService.GetMovieAsync(movie.Id.ToString(), etag).ConfigureAwait(false);
         }
         catch (InvalidOperationException)
         {

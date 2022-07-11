@@ -18,7 +18,7 @@ public class TheMovieDatabaseService : ITheMovieDatabaseService
         _cache = cache;
     }
 
-    public async Task<TMDbMovie?> GetMovieAsync(int id, string? etag)
+    public async Task<TMDbMovie?> GetMovieAsync(string id, string? etag)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, GetMovieUrl(id));
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
@@ -152,7 +152,7 @@ public class TheMovieDatabaseService : ITheMovieDatabaseService
 
     private string GetTvSeasonUrl(int showId, int seasonNumber) => $"{_baseUrl}/tv/{showId}/season/{seasonNumber}";
 
-    private string GetMovieUrl(int id) => $"{_baseUrl}/movie/{id}";
+    private string GetMovieUrl(string id) => $"{_baseUrl}/movie/{id}";
 
     private async Task<Configuration?> GetConfigurationAsync()
     {
