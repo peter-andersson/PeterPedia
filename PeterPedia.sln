@@ -34,6 +34,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Movies.Api", "src\Movies\Mo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheMovieDatabase", "src\TheMovieDatabase\TheMovieDatabase.csproj", "{4AFD33B9-59C1-4E66-82E5-2FD065D362E0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Movies.Shared", "src\Movies\Movies.Shared\Movies.Shared.csproj", "{9000F331-CDDB-4CC0-B7D2-08BF4FDDC0FF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -128,6 +130,18 @@ Global
 		{4AFD33B9-59C1-4E66-82E5-2FD065D362E0}.Release|x64.Build.0 = Release|Any CPU
 		{4AFD33B9-59C1-4E66-82E5-2FD065D362E0}.Release|x86.ActiveCfg = Release|Any CPU
 		{4AFD33B9-59C1-4E66-82E5-2FD065D362E0}.Release|x86.Build.0 = Release|Any CPU
+		{9000F331-CDDB-4CC0-B7D2-08BF4FDDC0FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9000F331-CDDB-4CC0-B7D2-08BF4FDDC0FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9000F331-CDDB-4CC0-B7D2-08BF4FDDC0FF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9000F331-CDDB-4CC0-B7D2-08BF4FDDC0FF}.Debug|x64.Build.0 = Debug|Any CPU
+		{9000F331-CDDB-4CC0-B7D2-08BF4FDDC0FF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9000F331-CDDB-4CC0-B7D2-08BF4FDDC0FF}.Debug|x86.Build.0 = Debug|Any CPU
+		{9000F331-CDDB-4CC0-B7D2-08BF4FDDC0FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9000F331-CDDB-4CC0-B7D2-08BF4FDDC0FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9000F331-CDDB-4CC0-B7D2-08BF4FDDC0FF}.Release|x64.ActiveCfg = Release|Any CPU
+		{9000F331-CDDB-4CC0-B7D2-08BF4FDDC0FF}.Release|x64.Build.0 = Release|Any CPU
+		{9000F331-CDDB-4CC0-B7D2-08BF4FDDC0FF}.Release|x86.ActiveCfg = Release|Any CPU
+		{9000F331-CDDB-4CC0-B7D2-08BF4FDDC0FF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -141,6 +155,7 @@ Global
 		{52E83B5F-D409-410E-A00A-7909A1F22877} = {DB323946-B3C3-4145-853E-A21DBA0A4E0D}
 		{75E78DCD-52C0-4E2B-8FF0-55FC16D9AF8B} = {52E83B5F-D409-410E-A00A-7909A1F22877}
 		{4AFD33B9-59C1-4E66-82E5-2FD065D362E0} = {DB323946-B3C3-4145-853E-A21DBA0A4E0D}
+		{9000F331-CDDB-4CC0-B7D2-08BF4FDDC0FF} = {52E83B5F-D409-410E-A00A-7909A1F22877}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EB2A5A0A-3E09-44B6-A9F2-77EA3428DBFF}
