@@ -52,4 +52,29 @@ public class CosmosContext
 
         return result;
     }
+
+    public async Task<List<MovieEntity>> GetListAsync(Query queryData)
+    {
+        var result = new List<MovieEntity>();
+
+        var queryText = "SELECT * FROM c WHERE LOWER(c.Title) LIKE @search OR LOWER(c.OriginalTitle) LIKE @search ORDER BY c.Title OFFSET @offset LIMIT @limit";
+
+        QueryDefinition query = new QueryDefinition(query: queryText)
+            .WithParameter("@limit", queryData.PageSize)
+            .WithParameter("@offset", queryData.Page * queryData.PageSize)
+            .WithParameter("@search", queryData.Search);
+
+        using FeedIterator<MovieEntity> feed = _container.GetItemQueryIterator<MovieEntity>(queryDefinition: query);
+
+        while (feed.HasMoreResults)
+        {
+            FeedResponse<MovieEntity> response = await feed.ReadNextAsync();
+            foreach (MovieEntity item in response)
+            {
+                result.Add(item);
+            }
+        }
+
+        return result;
+    }
 }
