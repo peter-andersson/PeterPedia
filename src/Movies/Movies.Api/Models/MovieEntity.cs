@@ -23,6 +23,4 @@ public class MovieEntity
     public int? RunTime { get; set; }
 
     public string ETag { get; set; }
-
-    public override string ToString() => JsonConvert.SerializeObject(this);
 }
