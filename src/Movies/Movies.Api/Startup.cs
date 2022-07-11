@@ -2,6 +2,7 @@ using System;
 using System.Net.Http;
 using Microsoft.Azure.Cosmos.Fluent;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,10 +40,13 @@ public class Startup : FunctionsStartup
                 throw new ArgumentException("Please specify a valid AccountKey in the appSettings.json file or your Azure Functions Settings.");
             }
 
+            // 
             return new CosmosClientBuilder(endpoint, authKey)
                 .WithApplicationName("PeterPedia.Movies")
                 .Build();
         });
+
+        builder.Services.AddAzureClients(azureBuilder => azureBuilder.AddBlobServiceClient(configuration["BlobStorage"]));
 
         builder.Services.AddSingleton<CosmosContext>();
     }
