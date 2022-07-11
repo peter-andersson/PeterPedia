@@ -22,7 +22,7 @@ public class BlobStorage
         using HttpResponseMessage response = await httpClient.GetAsync(posterUrl);
         response.EnsureSuccessStatusCode();
 
-        BlobClient blobClient = _containerClient.GetBlobClient(id);
+        BlobClient blobClient = _containerClient.GetBlobClient($"{id}.jpg");
 
         await blobClient.DeleteIfExistsAsync();
 
@@ -33,9 +33,9 @@ public class BlobStorage
         await blobClient.UploadAsync(stream);
     }
 
-    public async Task GetPosterAsync(string id, MemoryStream stream)
+    public async Task GetPosterAsync(string image, MemoryStream stream)
     {
-        BlobClient blobClient = _containerClient.GetBlobClient(id);
+        BlobClient blobClient = _containerClient.GetBlobClient(image);
 
         try
         {
@@ -44,7 +44,7 @@ public class BlobStorage
         }
         catch (RequestFailedException ex) when (ex.Status == 404)
         {
-            throw new FileNotFoundException("Blob file not found", id, ex);
+            throw new FileNotFoundException("Blob file not found", image, ex);
         }
     }
 }
