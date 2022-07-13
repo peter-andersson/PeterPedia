@@ -3,7 +3,11 @@
 
 <h4 class="mt-2">Edit movie</h4>
 
-        @if (Movie is not null)
+@if (Loading)
+{
+    <Spinner Text="Loading..." />
+}
+else if (Movie is not null)
 {
     <EditForm class="form" Model="@Movie" OnValidSubmit="@SaveAsync">
         <DataAnnotationsValidator />
@@ -55,8 +59,8 @@
         </div>
         <div class="row">
             <div class="d-flex">
-                <button type="submit" class="btn btn-success" disabled=@IsTaskRunning>Save</button>
-                <button type="button" class="btn btn-danger ms-2" @onclick="DeleteAsync" disabled="@IsTaskRunning">Delete</button>
+                <SpinnerButton Type="submit" Class="btn btn-success" IsTaskRunning="@IsSaveTaskRunning" Text="Save" ActionText="Saving..." />
+                <SpinnerButton Type="button" Class="btn btn-danger ms-2" IsTaskRunning="@IsDeleteTaskRunning" Text="Delete" ActionText="Deleting..." OnClickCallback="@DeleteAsync" />
                 <button type="button" class="btn btn-secondary ms-2" @onclick="Close">Cancel</button>
             </div>
         </div>

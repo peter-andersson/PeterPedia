@@ -14,15 +14,20 @@ public partial class Edit : ComponentBase
     [Parameter]
     public string Id { get; set; } = null!;
 
-    public string ErrorMessage { get; set; } = string.Empty;
+    private string ErrorMessage { get; set; } = string.Empty;
 
-    public EditMovie? Movie { get; set; }
+    private EditMovie? Movie { get; set; }
 
-    public bool IsTaskRunning { get; set; }
+    private bool IsSaveTaskRunning { get; set; }
+
+    private bool IsDeleteTaskRunning { get; set; }
+
+    private bool Loading { get; set; } = true;
 
     protected override async Task OnInitializedAsync()
     {
-        IsTaskRunning = false;
+        IsSaveTaskRunning = false;
+        IsDeleteTaskRunning = false;
         ErrorMessage = string.Empty;
 
         try
@@ -38,6 +43,10 @@ public partial class Edit : ComponentBase
         {
             Movie = null;
         }
+        finally
+        {
+            Loading = false;
+        }
     }
 
     public async Task SaveAsync()
@@ -48,8 +57,8 @@ public partial class Edit : ComponentBase
         {
             return;
         }
-        
-        IsTaskRunning = true;
+
+        IsSaveTaskRunning = true;
 
         try
         {
@@ -78,7 +87,7 @@ public partial class Edit : ComponentBase
         }
         finally
         {
-            IsTaskRunning = false;
+            IsSaveTaskRunning = false;
         }
     }
 
@@ -93,7 +102,7 @@ public partial class Edit : ComponentBase
 
         try
         {
-            IsTaskRunning = true;
+            IsDeleteTaskRunning = true;
 
             HttpResponseMessage response = await Http.DeleteAsync($"/api/delete/{Movie.Id}");
 
@@ -112,7 +121,7 @@ public partial class Edit : ComponentBase
         }
         finally
         {
-            IsTaskRunning = false;
+            IsDeleteTaskRunning = false;
         }
     }
 
