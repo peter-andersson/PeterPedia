@@ -5,19 +5,28 @@
 
 <div class="mb-3">
     <label for="search" class="form-label">Search movies by title, can use wildcards using % like, %love%.</label>
-    <input id="search" type="text" class="form-control" @bind="Filter" @bind:event="oninput" @onkeydown="InputKeyDownAsync" placeholder="Filter">
+    <input id="search" type="text" @ref="Input" class="form-control" @bind="Filter" @bind:event="oninput" @onkeydown="InputKeyDownAsync" placeholder="Filter">
 </div>
 
-        @if (MovieList.Length == 0)
+
+@if (Searching)
 {
-    <h5>No movie found!</h5>
+    <Spinner Text="Searching..." />
 }
 else
 {
-    <div class="row row-cols-1 row-cols-md-4 g-4 mt-2">
-        @foreach (Movie movie in MovieList)
-        {
-            <MovieView Movie="@movie" />
-        }
-    </div>
+    if (MovieList.Length == 0)
+    {
+        <h5>No movie found!</h5>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-4 g-4 mt-2">
+            @foreach (Movie movie in MovieList)
+            {
+                <MovieView Movie="@movie" />
+            }
+        </div>
+    }
 }
+

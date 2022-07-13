@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace Movies.App.Pages;
@@ -9,9 +10,13 @@ public partial class Search : ComponentBase
     [Inject]
     private HttpClient Http { get; set; } = null!;
 
-    public Movie[] MovieList { get; set; } = Array.Empty<Movie>();
+    private Movie[] MovieList { get; set; } = Array.Empty<Movie>();
 
-    public string Filter { get; set; } = string.Empty;
+    private string Filter { get; set; } = string.Empty;
+
+    private bool Searching { get; set; } = false;
+
+    private ElementReference? Input { get; set; }
 
     public async Task InputKeyDownAsync(KeyboardEventArgs e)
     {
@@ -21,15 +26,28 @@ public partial class Search : ComponentBase
         }
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (Input is not null)
+            {
+                await Input.Value.FocusAsync();
+            }
+        }
+    }
+
     private async Task QueryAsync()
     {
+        Searching = true;
+
         var query = new Query()
         {
             Search = Filter,
             Page = 0,
             PageSize = 50
         };
-
+        
         try
         {
             HttpResponseMessage response = await Http.PostAsJsonAsync("/api/query", query);
@@ -42,6 +60,10 @@ public partial class Search : ComponentBase
         catch
         {
             MovieList = Array.Empty<Movie>();
+        }
+        finally
+        {
+            Searching = false;
         }
     }
 }
