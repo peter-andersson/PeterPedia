@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace Movies.App.Pages;
 
@@ -13,13 +14,15 @@ public partial class Add : ComponentBase
     [Inject]
     private Navigation Navigation { get; set; } = null!;
 
-    public bool IsTaskRunning { get; set; } = false;
+    private bool IsTaskRunning { get; set; } = false;
 
-    public MovieUrl Movie { get; set; } = new();
+    private MovieUrl Movie { get; set; } = new();
 
-    public string ErrorMessage { get; set; } = string.Empty;
+    private string ErrorMessage { get; set; } = string.Empty;
 
-    public string SuccessMessage { get; set; } = string.Empty;
+    private string SuccessMessage { get; set; } = string.Empty;
+
+    private InputText? Input { get; set; }
 
     public async Task AddAsync()
     {        
@@ -59,6 +62,17 @@ public partial class Add : ComponentBase
         finally
         {
             IsTaskRunning = false;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (Input?.Element != null)
+            {
+                await Input.Element.Value.FocusAsync();
+            }
         }
     }
 

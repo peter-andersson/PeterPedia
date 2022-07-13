@@ -8,16 +8,16 @@
     <ValidationSummary />
 
     <div class="form-floating">
-        <InputText id="add-movie" class="form-control" type="text" @bind-Value="@Movie.Url"></InputText>
+        <InputText id="add-movie" @ref="Input" class="form-control" type="text" @bind-Value="@Movie.Url"></InputText>
         <label for="add-movie">TheMovieDb id or URL</label>
     </div>
     <div class="mt-2 mb-3">
         <button type="button" class="btn btn-danger" @onclick="Close" disabled=@IsTaskRunning>Cancel</button>
-        <button type="submit" class="ms-2 btn btn-success" disabled=@IsTaskRunning>Add</button>
+        <SpinnerButton Type="submit" Class="ms-2 btn btn-success" IsTaskRunning="@IsTaskRunning" Text="Add" ActionText="Adding..." />
     </div>
 </EditForm>
 
-        @if (!string.IsNullOrWhiteSpace(SuccessMessage))
+@if (!string.IsNullOrWhiteSpace(SuccessMessage))
 {
     <div class="alert alert-success" role="alert">
         @SuccessMessage
