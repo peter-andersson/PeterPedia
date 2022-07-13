@@ -30,7 +30,7 @@ public class Add
             return new BadRequestObjectResult("Missing query parameter id");
         }
 
-        MovieEntity movie = await _dbContext.GetAsync(id);
+        MovieEntity? movie = await _dbContext.GetAsync(id);
 
         if (movie is not null)
         {
@@ -42,7 +42,7 @@ public class Add
             return new StatusCodeResult(503);
         }
 
-        TMDbMovie tmdbMovie = await _service.GetMovieAsync(id, string.Empty);
+        TMDbMovie? tmdbMovie = await _service.GetMovieAsync(id, string.Empty);
 
         if (tmdbMovie is null)
         {

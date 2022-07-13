@@ -1,4 +1,5 @@
-﻿@page "/movies/add"
+﻿@page "/add"
+@attribute [Authorize(Roles = "admin")]
 
 <h4 class="mt-2">Add movie</h4>
 
@@ -16,7 +17,7 @@
     </div>
 </EditForm>
 
-@if (!string.IsNullOrWhiteSpace(SuccessMessage))
+        @if (!string.IsNullOrWhiteSpace(SuccessMessage))
 {
     <div class="alert alert-success" role="alert">
         @SuccessMessage
@@ -29,4 +30,6 @@
         @ErrorMessage
     </div>
 }
+
+
 

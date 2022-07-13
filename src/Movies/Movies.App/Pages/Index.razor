@@ -1,9 +1,13 @@
 ﻿@page "/"
+@attribute [Authorize(Roles = "admin")]
 
-<PageTitle>Index</PageTitle>
+<h4 class="mt-2">Movies</h4>
 
-<h1>Hello, world!</h1>
+<div class="row row-cols-1 row-cols-md-4 g-4 mt-2">
+    @foreach (Movie movie in MovieList)
+    {
+        <MovieView Movie="@movie" />
+    }
+</div>
 
-Welcome to your new app.
 
-<SurveyPrompt Title="How is Blazor working for you?" />

@@ -32,7 +32,7 @@ public class Update
             return new BadRequestObjectResult("Missing movie object");
         }
 
-        MovieEntity existing = await _dbContext.GetAsync(movie.Id);
+        MovieEntity? existing = await _dbContext.GetAsync(movie.Id);
 
         if (existing is null)
         {
@@ -41,7 +41,7 @@ public class Update
 
         if (movie.Refresh)
         {
-            TMDbMovie tmdbMovie = await _service.GetMovieAsync(movie.Id, string.Empty);
+            TMDbMovie? tmdbMovie = await _service.GetMovieAsync(movie.Id, string.Empty);
 
             if (tmdbMovie is null)
             {

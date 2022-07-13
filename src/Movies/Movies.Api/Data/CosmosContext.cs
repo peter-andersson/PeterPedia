@@ -13,7 +13,7 @@ public class CosmosContext
 
     public CosmosContext(CosmosClient cosmosClient) => _container = cosmosClient.GetContainer(_databaseName, _containerName);
 
-    public async Task<MovieEntity> GetAsync(string id)
+    public async Task<MovieEntity?> GetAsync(string id)
     {
         try
         {
@@ -77,4 +77,6 @@ public class CosmosContext
 
         return result;
     }
+
+    public async Task DeleteItemAsync(MovieEntity movie) => await _container.DeleteItemAsync<Movie>(movie.Id, new PartitionKey(movie.Id));
 }

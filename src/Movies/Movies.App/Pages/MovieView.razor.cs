@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PeterPedia.Pages.Movies;
+namespace Movies.App.Pages;
 
 public partial class MovieView : ComponentBase
 {
@@ -10,5 +10,5 @@ public partial class MovieView : ComponentBase
     [Parameter]
     public Movie Movie { get; set; } = null!;
 
-    private void SelectMovie(Movie movie) => Navigation.NavigateTo($"/movies/edit/{movie.Id}");
+    private void SelectMovie(Movie movie) => Navigation.NavigateTo($"/edit/{movie.Id}");
 }

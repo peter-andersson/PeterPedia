@@ -30,17 +30,7 @@ public class Query
             var result = new List<Movie>(entities.Count);
             foreach (MovieEntity entity in entities)
             {
-                result.Add(new Movie()
-                {
-                    Id = entity.Id,
-                    ImdbId = entity.ImdbId,
-                    OriginalLanguage = entity.OriginalLanguage,
-                    OriginalTitle = entity.OriginalTitle,
-                    ReleaseDate = entity.ReleaseDate,
-                    RunTime = entity.RunTime,
-                    Title = entity.Title,
-                    WatchedDate = entity.WatchedDate
-                });
+                result.Add(entity.ConvertToMovie());
             }
 
             return new OkObjectResult(result);
