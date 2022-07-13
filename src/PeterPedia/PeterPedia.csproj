@@ -49,6 +49,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Blazor.Shared\Blazor.Shared.csproj" />
     <ProjectReference Include="..\PeterPedia.Data\PeterPedia.Data.csproj" />
     <ProjectReference Include="..\PeterPedia.Services\PeterPedia.Services.csproj" />
   </ItemGroup>

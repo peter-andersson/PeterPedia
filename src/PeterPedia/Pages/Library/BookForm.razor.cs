@@ -79,16 +79,7 @@ public partial class BookForm : ComponentBase
 
         book.Authors.AddRange(Book.Authors);
 
-        Result<Book> result;
-
-        if (book.Id == 0)
-        {
-            result = await Library.AddBookAsync(book);            
-        }
-        else
-        {
-            result = await Library.UpdateBookAsync(book);
-        }
+        Result<Book> result = book.Id == 0 ? await Library.AddBookAsync(book) : await Library.UpdateBookAsync(book);
 
         if (result.Success)
         {
