@@ -8,7 +8,14 @@ public partial class Index : ComponentBase
     [Inject]
     private HttpClient Http { get; set; } = null!;
 
-    public Movie[] MovieList { get; set; } = Array.Empty<Movie>();
+    private Movie[] MovieList { get; set; } = Array.Empty<Movie>();
 
-    protected override async Task OnInitializedAsync() => MovieList = await Http.GetFromJsonAsync<Movie[]>("/api/watchlist") ?? Array.Empty<Movie>();
+    private bool Loading { get; set; } = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        MovieList = await Http.GetFromJsonAsync<Movie[]>("/api/watchlist") ?? Array.Empty<Movie>();
+
+        Loading = false;
+    }
 }
