@@ -1,0 +1,31 @@
+﻿<button class="@Class" type="@Type" disabled=@IsTaskRunning @onclick="OnClickCallback">
+  @if (IsTaskRunning)
+  {
+    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    <span>@ActionText</span>
+  }
+  else
+  {
+    <span>@Text</span>
+  }
+</button>
+
+@code {
+    [Parameter]
+    public string Text { get; set; } = string.Empty;
+
+    [Parameter]
+    public string ActionText { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Class { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Type { get; set; } = string.Empty;
+
+    [Parameter]
+    public bool IsTaskRunning { get; set; }
+
+    [Parameter]
+    public EventCallback OnClickCallback { get; set; }
+}

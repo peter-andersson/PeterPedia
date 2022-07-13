@@ -29,6 +29,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Blazor.Shared\Blazor.Shared.csproj" />
+    <ProjectReference Include="..\..\PeterPedia.Components\PeterPedia.Components.csproj" />
     <ProjectReference Include="..\Movies.Shared\Movies.Shared.csproj" />
   </ItemGroup>
 
