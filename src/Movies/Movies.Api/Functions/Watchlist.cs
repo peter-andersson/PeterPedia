@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.WebJobs;
 
 namespace Movies.Api.Functions;
@@ -7,12 +8,12 @@ namespace Movies.Api.Functions;
 public class Watchlist
 {
     private readonly ILogger<Watchlist> _log;
-    private readonly CosmosContext _dbContext;
+    private readonly IDataStorage<MovieEntity> _dataStorage;
 
-    public Watchlist(ILogger<Watchlist> log, CosmosContext dbContext)
+    public Watchlist(ILogger<Watchlist> log, IDataStorage<MovieEntity> dataStorage)
     {
         _log = log;
-        _dbContext = dbContext;
+        _dataStorage = dataStorage;
     }
 
     [FunctionName("Watchlist")]
@@ -22,21 +23,13 @@ public class Watchlist
     {
         try
         {
-            List<MovieEntity> entities = await _dbContext.GetWatchListAsync();
+            var query = new QueryDefinition(query: "SELECT * FROM c WHERE IS_NULL(c.WatchedDate) ORDER BY c.Title");
+
+            List<MovieEntity> entities = await _dataStorage.QueryAsync(query);
             var result = new List<Movie>(entities.Count);
             foreach (MovieEntity entity in entities)
             {
-                result.Add(new Movie()
-                {
-                    Id = entity.Id,
-                    ImdbId = entity.ImdbId,
-                    OriginalLanguage = entity.OriginalLanguage,
-                    OriginalTitle = entity.OriginalTitle,
-                    ReleaseDate = entity.ReleaseDate,
-                    RunTime = entity.RunTime,
-                    Title = entity.Title,
-                    WatchedDate = entity.WatchedDate
-                });
+                result.Add(entity.ConvertToMovie());
             }
 
             return new OkObjectResult(result);

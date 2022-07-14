@@ -22,8 +22,6 @@ public class PeterPediaContext : DbContext
 
     public DbSet<LinkEF> Links { get; set; } = null!;
 
-    public DbSet<MovieEF> Movies { get; set; } = null!;
-
     public DbSet<PhotoEF> Photos { get; set; } = null!;
 
     public DbSet<SeasonEF> Seasons { get; set; } = null!;
@@ -46,7 +44,6 @@ public class PeterPediaContext : DbContext
         modelBuilder.Entity<BookEF>();
         modelBuilder.Entity<EpisodeEF>();
         modelBuilder.Entity<LinkEF>();
-        modelBuilder.Entity<MovieEF>();
         modelBuilder.Entity<PhotoEF>();
         modelBuilder.Entity<SeasonEF>();
         modelBuilder.Entity<ShowEF>();

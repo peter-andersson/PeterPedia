@@ -5,6 +5,6 @@ global using Microsoft.AspNetCore.Http;
 global using Microsoft.Extensions.Logging;
 global using TheMovieDatabase;
 global using TheMovieDatabase.Models;
-global using Movies.Api.Models;
-global using Movies.Api.Data;
 global using Movies.Shared;
+global using PeterPedia.Data.Models;
+global using PeterPedia.Data.Interface;

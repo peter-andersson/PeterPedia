@@ -1,12 +1,9 @@
-using System;
-using System.Net.Http;
-using Microsoft.Azure.Cosmos.Fluent;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
-using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Movies.Api.Data;
+using PeterPedia.Data.Implementations;
+
 [assembly: FunctionsStartup(typeof(Movies.Api.Startup))]
 
 namespace Movies.Api;
@@ -25,30 +22,13 @@ public class Startup : FunctionsStartup
                     s.GetRequiredService<IMemoryCache>()
                 ));
 
-        builder.Services.AddSingleton((s) => {
-            var endpoint = configuration["EndPointUrl"];
-            if (string.IsNullOrEmpty(endpoint))
-            {
-                throw new ArgumentException("Please specify a valid EndPointUrl in the appSettings.json file or your Azure Functions Settings.");
-            }
+        builder.Services.AddOptions<CosmosOptions>()
+            .Configure<IConfiguration>((settings, configuration) => configuration.GetSection("Cosmos").Bind(settings));
 
-            var authKey = configuration["AccountKey"];
-            if (string.IsNullOrEmpty(authKey))
-            {
-                throw new ArgumentException("Please specify a valid AccountKey in the appSettings.json file or your Azure Functions Settings.");
-            }
+        builder.Services.AddOptions<BlobStorageOptions>()
+            .Configure<IConfiguration>((settings, configuration) => configuration.GetSection("BlobStorage").Bind(settings));
 
-            // 
-            return new CosmosClientBuilder(endpoint, authKey)
-                .WithApplicationName("PeterPedia.Movies")
-                .Build();
-        });
-
-        builder.Services.AddAzureClients(azureBuilder => azureBuilder.AddBlobServiceClient(configuration["BlobStorage"]));
-
-        builder.Services.AddSingleton<CosmosContext>();
-        builder.Services.AddSingleton<BlobStorage>();
+        builder.Services.AddSingleton<IDataStorage<MovieEntity>, CosmosDataStorage<MovieEntity>>();
+        builder.Services.AddSingleton<IFileStorage, BlobStorage>();
     }
-
-
 }

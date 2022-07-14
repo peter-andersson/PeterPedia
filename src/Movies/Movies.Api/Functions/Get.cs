@@ -6,9 +6,9 @@ namespace Movies.Api.Functions;
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Required by Azure function runtime.")]
 public class Get
 {
-    private readonly CosmosContext _dbContext;
+    private readonly IDataStorage<MovieEntity> _dataStoreage;
 
-    public Get(CosmosContext dbContext) => _dbContext = dbContext;
+    public Get(IDataStorage<MovieEntity> dataStorage) => _dataStoreage = dataStorage;
 
     [FunctionName("Get")]    
     public async Task<IActionResult> RunAsync(
@@ -21,7 +21,7 @@ public class Get
             return new BadRequestObjectResult("Missing query parameter id");
         }
 
-        MovieEntity? movie = await _dbContext.GetAsync(id);
+        MovieEntity? movie = await _dataStoreage.GetAsync(id, id);
 
         if (movie is null)
         {

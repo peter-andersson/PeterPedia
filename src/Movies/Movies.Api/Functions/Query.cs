@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.WebJobs;
 using Newtonsoft.Json;
 
@@ -8,12 +9,12 @@ namespace Movies.Api.Functions;
 public class Query
 {
     private readonly ILogger<Query> _log;
-    private readonly CosmosContext _dbContext;
+    private readonly IDataStorage<MovieEntity> _dataStorage;
 
-    public Query(ILogger<Query> log, CosmosContext dbContext)
+    public Query(ILogger<Query> log, IDataStorage<MovieEntity> dataStorage)
     {
         _log = log;
-        _dbContext = dbContext;
+        _dataStorage = dataStorage;
     }
 
     [FunctionName("Query")]
@@ -26,7 +27,14 @@ public class Query
 
         try
         {
-            List<MovieEntity> entities = await _dbContext.GetListAsync(query);
+            var queryText = "SELECT * FROM c WHERE LOWER(c.Title) LIKE @search OR LOWER(c.OriginalTitle) LIKE @search ORDER BY c.Title OFFSET @offset LIMIT @limit";
+
+            QueryDefinition queryDefinition = new QueryDefinition(query: queryText)
+                .WithParameter("@limit", query.PageSize)
+                .WithParameter("@offset", query.Page * query.PageSize)
+                .WithParameter("@search", query.Search);
+
+            List<MovieEntity> entities = await _dataStorage.QueryAsync(queryDefinition);
             var result = new List<Movie>(entities.Count);
             foreach (MovieEntity entity in entities)
             {

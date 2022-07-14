@@ -8,15 +8,15 @@ public class Update
 {
     private readonly ILogger<Update> _log;
     private readonly ITheMovieDatabaseService _service;
-    private readonly CosmosContext _dbContext;
-    private readonly BlobStorage _blobStorage;
+    private readonly IDataStorage<MovieEntity> _dataStorage;
+    private readonly IFileStorage _fileStorage;
 
-    public Update(ILogger<Update> log, ITheMovieDatabaseService service, CosmosContext dbContext, BlobStorage fileStorage)
+    public Update(ILogger<Update> log, ITheMovieDatabaseService service, IDataStorage<MovieEntity> dbContext, IFileStorage fileStorage)
     {
         _log = log;
         _service = service;
-        _dbContext = dbContext;
-        _blobStorage = fileStorage;
+        _dataStorage = dbContext;
+        _fileStorage = fileStorage;
     }
 
     [FunctionName("Update")]
@@ -32,7 +32,7 @@ public class Update
             return new BadRequestObjectResult("Missing movie object");
         }
 
-        MovieEntity? existing = await _dbContext.GetAsync(movie.Id);
+        MovieEntity? existing = await _dataStorage.GetAsync(movie.Id, movie.Id);
 
         if (existing is null)
         {
@@ -55,7 +55,9 @@ public class Update
             }
 
             var posterUrl = await _service.GetImageUrlAsync(tmdbMovie.PosterPath);
-            await _blobStorage.DownloadPosterUrlAsync(movie.Id, posterUrl);
+            using var stream = new MemoryStream();
+            await _service.DownloadImageUrlToStreamAsync(posterUrl, stream);
+            await _fileStorage.UploadBlobAsync($"{existing.Id}.jpg", stream);
 
             existing.ImdbId = tmdbMovie.ImdbId ?? string.Empty;
             existing.OriginalLanguage = tmdbMovie.OriginalLanguage;
@@ -75,7 +77,7 @@ public class Update
 
         try
         {            
-            await _dbContext.UpdateAsync(existing);
+            await _dataStorage.UpdateAsync(existing);
             _log.LogInformation("Updated movie with id {id}, title {title}, watchDate: {watchDate}", existing.Id, existing.Title, existing.WatchedDate);
 
             return new OkResult();

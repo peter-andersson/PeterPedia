@@ -6,12 +6,12 @@ namespace Movies.Api.Functions;
 public class Image
 {
     private readonly ILogger<Image> _log;
-    private readonly BlobStorage _blobStorage;
+    private readonly IFileStorage _fileStorage;
 
-    public Image(ILogger<Image> log, BlobStorage fileStorage)
+    public Image(ILogger<Image> log, IFileStorage fileStorage)
     {
         _log = log;
-        _blobStorage = fileStorage;
+        _fileStorage = fileStorage;
     }
 
     [FunctionName("Image")]
@@ -30,13 +30,14 @@ public class Image
         try
         {
             var stream = new MemoryStream();
-            await _blobStorage.GetPosterAsync(image, stream);
-            return new FileStreamResult(stream, "image/jpeg");
-        }
-        catch (FileNotFoundException)
-        {
-            return new NotFoundResult();
-        }
+            if (await _fileStorage.DownloadBlobAsync(image, stream))
+            {
+                return new FileStreamResult(stream, "image/jpeg");
+            }
+
+            // 
+            return new NotFoundResult();            
+        }       
         catch (Exception ex)
         {
             _log.LogError(ex, "Something went wrong.");

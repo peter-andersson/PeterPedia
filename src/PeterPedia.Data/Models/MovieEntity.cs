@@ -1,8 +1,9 @@
 using Newtonsoft.Json;
+using PeterPedia.Data.Interface;
 
-namespace Movies.Api.Models;
+namespace PeterPedia.Data.Models;
 
-public class MovieEntity
+public class MovieEntity : IEntity
 {
     [JsonProperty(PropertyName = "id")]
     public string Id { get; set; } = string.Empty;
@@ -23,17 +24,5 @@ public class MovieEntity
 
     public string ETag { get; set; } = string.Empty;
 
-    public Movie ConvertToMovie()
-    {
-        return new Movie()
-        {
-            Id = Id,
-            ImdbId = ImdbId,
-            OriginalLanguage = OriginalLanguage,
-            OriginalTitle = OriginalTitle,
-            ReleaseDate = ReleaseDate,
-            RunTime = RunTime,
-            Title = Title,
-        };
-    }
+    public string PartitionKey => Id;    
 }

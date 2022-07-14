@@ -8,15 +8,15 @@ public class Add
 {
     private readonly ILogger<Add> _log;
     private readonly ITheMovieDatabaseService _service;
-    private readonly CosmosContext _dbContext;
-    private readonly BlobStorage _blobStorage;
+    private readonly IDataStorage<MovieEntity> _dataStorage;
+    private readonly IFileStorage _fileStorage;
 
-    public Add(ILogger<Add> log, ITheMovieDatabaseService service, CosmosContext dbContext, BlobStorage fileStorage)
+    public Add(ILogger<Add> log, ITheMovieDatabaseService service, IDataStorage<MovieEntity> dataStorage, IFileStorage fileStorage)
     {
         _log = log;
         _service = service;
-        _dbContext = dbContext;
-        _blobStorage = fileStorage;
+        _dataStorage = dataStorage;
+        _fileStorage = fileStorage;
     }
 
     [FunctionName("Add")]    
@@ -30,7 +30,7 @@ public class Add
             return new BadRequestObjectResult("Missing query parameter id");
         }
 
-        MovieEntity? movie = await _dbContext.GetAsync(id);
+        MovieEntity? movie = await _dataStorage.GetAsync(id, id);
 
         if (movie is not null)
         {
@@ -56,7 +56,9 @@ public class Add
         }
 
         var posterUrl = await _service.GetImageUrlAsync(tmdbMovie.PosterPath);
-        await _blobStorage.DownloadPosterUrlAsync(id, posterUrl);
+        using var stream = new MemoryStream();
+        await _service.DownloadImageUrlToStreamAsync(posterUrl, stream);
+        await _fileStorage.UploadBlobAsync($"{id}.jpg", stream);
 
         movie = new MovieEntity()
         {
@@ -78,7 +80,7 @@ public class Add
 
         try
         {
-            await _dbContext.AddAsync(movie);
+            await _dataStorage.AddAsync(movie);
 
             _log.LogInformation("Added movie with id {id} and title {title}.", movie.Id, movie.Title);
 
