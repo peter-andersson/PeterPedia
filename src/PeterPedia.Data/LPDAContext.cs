@@ -10,8 +10,6 @@ public class PeterPediaContext : DbContext
     {
     }
 
-    public DbSet<AlbumEF> Albums { get; set; } = null!;
-
     public DbSet<ArticleEF> Articles { get; set; } = null!;
 
     public DbSet<AuthorEF> Authors { get; set; } = null!;
@@ -22,15 +20,11 @@ public class PeterPediaContext : DbContext
 
     public DbSet<LinkEF> Links { get; set; } = null!;
 
-    public DbSet<PhotoEF> Photos { get; set; } = null!;
-
     public DbSet<SeasonEF> Seasons { get; set; } = null!;
 
     public DbSet<ShowEF> Shows { get; set; } = null!;
 
     public DbSet<SubscriptionEF> Subscriptions { get; set; } = null!;
-
-    public DbSet<VideoEF> Videos { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -44,11 +38,9 @@ public class PeterPediaContext : DbContext
         modelBuilder.Entity<BookEF>();
         modelBuilder.Entity<EpisodeEF>();
         modelBuilder.Entity<LinkEF>();
-        modelBuilder.Entity<PhotoEF>();
         modelBuilder.Entity<SeasonEF>();
         modelBuilder.Entity<ShowEF>();
         modelBuilder.Entity<SubscriptionEF>();
-        modelBuilder.Entity<VideoEF>();        
 
         modelBuilder
             .Entity<BookEF>()

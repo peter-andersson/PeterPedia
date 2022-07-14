@@ -59,9 +59,7 @@ try
 
         q.AddJobAndTrigger<RemoveArticleJob>(builder.Configuration);
         q.AddJobAndTrigger<RefreshArticleJob>(builder.Configuration);
-        q.AddJobAndTrigger<VideoJob>(builder.Configuration);
         q.AddJobAndTrigger<ShowUpdateJob>(builder.Configuration);
-        q.AddJobAndTrigger<PhotoJob>(builder.Configuration);
     });
 
     builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);

@@ -57,20 +57,8 @@ public partial class Index : ComponentBase
 
         Links.Add(new Link()
         {
-            Title = "Photos",
-            Url = "photos"
-        });
-
-        Links.Add(new Link()
-        {
             Title = "Reader",
             Url = "reader"
-        });
-
-        Links.Add(new Link()
-        {
-            Title = "Videos",
-            Url = "videos"
         });
 
         Links.Sort((link1, link2) => link1.Title.CompareTo(link2.Title));
