@@ -183,4 +183,13 @@ public class TheMovieDatabaseService : ITheMovieDatabaseService
         
         throw new InvalidOperationException($"Failed to fetch configuration with status code {response.StatusCode}");
     }
+
+    public async Task DownloadImageUrlToStreamAsync(string url, Stream stream)
+    {
+        using HttpResponseMessage response = await _httpClient.GetAsync(url);
+        response.EnsureSuccessStatusCode();
+
+        await response.Content.CopyToAsync(stream);
+        stream.Seek(0, SeekOrigin.Begin);
+    }
 }

@@ -7,4 +7,6 @@ public interface ITheMovieDatabaseService
     Task<TMDbMovie?> GetMovieAsync(string id, string? etag);
 
     Task<TMDbShow?> GetTvShowAsync(int id, string? etag);
+
+    Task DownloadImageUrlToStreamAsync(string url, Stream stream);
 }
