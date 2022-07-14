@@ -66,49 +66,44 @@ public partial class Index : ComponentBase
         Cache.Set(CacheKey.Links, Links, TimeSpan.FromMinutes(5));
 
         // Move to cosmosDB
-        // using CosmosClient client = new(accountEndpoint: Configuration["EndPointUrl"], authKeyOrResourceToken: Configuration["AccountKey"]);
-        // var movies = await DbContext.Movies.ToListAsync();
-        //foreach (MovieEF movieEF in movies)
+        //using CosmosClient client = new(accountEndpoint: Configuration["EndPointUrl"], authKeyOrResourceToken: Configuration["AccountKey"]);
+        //var books = await DbContext.Books.Include(b => b.Authors).ToListAsync();
+        //foreach (BookEF bookEF in books)
         //{
-        //    CosmosMovie cosmosMovie = new CosmosMovie()
+        //    CosmosBook cosmosBook = new CosmosBook()
         //    {
-        //        Id = movieEF.Id.ToString(),
-        //        ImdbId = movieEF.ImdbId,
-        //        OriginalTitle = movieEF.OriginalTitle,
-        //        OriginalLanguage = movieEF.OriginalLanguage,
-        //        ReleaseDate = movieEF.ReleaseDate,
-        //        RunTime = movieEF.RunTime,
-        //        Title = movieEF.Title,
-        //        WatchedDate = movieEF.WatchedDate,
-        //        ETag = movieEF.ETag
+        //        id = Guid.NewGuid().ToString(),
+        //        Title = bookEF.Title,                
         //    };
 
-        //    Database database = client.GetDatabase("peterpedia");
-        //    Container container = database.GetContainer("movies");
+        //    foreach (var author in bookEF.Authors)
+        //    {
+        //        cosmosBook.Authors.Add(author.Name);
+        //    }
 
-        //    await container.CreateItemAsync(cosmosMovie, new PartitionKey(cosmosMovie.Id));
-        //} 
+        //    cosmosBook.Read = bookEF.State == 3;
+        //    cosmosBook.WantToRead = bookEF.State == 1;
+        //    cosmosBook.Reading = bookEF.State == 2;
+           
+        //    Database database = client.GetDatabase("peterpedia");
+        //    Container container = database.GetContainer("books");
+
+        //    await container.CreateItemAsync(cosmosBook, new PartitionKey(cosmosBook.id));
+        //}
     }
 
-    //public class CosmosMovie
+    //public class CosmosBook
     //{
-    //    [JsonProperty(PropertyName = "id")]
-    //    public string Id { get; set; } = string.Empty;
-
-    //    public string ImdbId { get; set; } = string.Empty;
-
-    //    public string OriginalTitle { get; set; } = string.Empty;
-
-    //    public string OriginalLanguage { get; set; } = string.Empty;
+    //    public string id { get; set; } = string.Empty;
 
     //    public string Title { get; set; } = string.Empty;
 
-    //    public DateTime? ReleaseDate { get; set; }
+    //    public bool Reading { get; set; }
 
-    //    public DateTime? WatchedDate { get; set; }
+    //    public bool Read { get; set; }
 
-    //    public int? RunTime { get; set; }
+    //    public bool WantToRead { get; set; }
 
-    //    public string ETag { get; set; } = string.Empty;
+    //    public List<string> Authors { get; set; } = new();
     //}
 }
