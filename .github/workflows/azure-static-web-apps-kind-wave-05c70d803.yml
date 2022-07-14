@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+    paths:
+      - src/Library/Library.App/**
+      - src/Library/Library.Api/**
+      - .github/workflows/azure-static-web-apps-kind-wave-05c70d803.yml      
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:

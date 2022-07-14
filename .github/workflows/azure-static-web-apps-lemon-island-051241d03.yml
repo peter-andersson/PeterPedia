@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+    paths:
+      - src/Movies/Movies.App/**
+      - src/Movies/Movies.Api/**
+      - .github/workflows/azure-static-web-apps-lemon-island-051241d03.yml      
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
