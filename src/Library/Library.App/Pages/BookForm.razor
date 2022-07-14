@@ -1,0 +1,60 @@
+﻿@page "/book/{id}"
+@attribute [Authorize(Roles = "admin")]
+
+<h4 class="mt-2">Manage book</h4>
+
+@if (Loading)
+{
+    <Spinner Text="Loading..." />
+}
+else
+{
+    <EditForm Model="@Book" OnValidSubmit="@HandleValidSubmitAsync" autocomplete="off">
+        <div class="mb-3">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+        </div>
+
+        <div class="mb-3">
+            <label class="visually-hidden" for="book-title">Title</label>
+            <InputText type="text" class="form-control" id="book-title" placeholder="Title" @bind-Value="Book.Title" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label" for="book-state">State</label>
+            <InputSelect class="form-control" id="book-state" @bind-Value="Book.State">
+                <option value="ToRead">To be read</option>
+                <option value="Reading">Reading</option>
+                <option value="HaveRead">Have read</option>
+            </InputSelect>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label" for="book-author">Author(s)</label>
+            <InputText type="text" class="form-control" id="book-author" @bind-Value="Book.Authors" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label" for="book-cover">URL to download cover from</label>
+            <InputText type="text" class="form-control" id="book-cover" @bind-Value="Book.CoverUrl" />
+        </div>
+      
+        <div class="mb-3">
+            <SpinnerButton Type="submit" Class="btn btn-success" IsTaskRunning="@IsSaveTaskRunning" Text="Save" ActionText="Saving..." />
+            @if (ShowDelete)
+            {
+                <SpinnerButton Type="button" Class="btn btn-danger ms-2" IsTaskRunning="@IsDeleteTaskRunning" Text="Delete" ActionText="Deleting..." OnClickCallback="@DeleteAsync" />
+            }
+            <button type="button" class="btn btn-secondary ms-2" @onclick="Close">Cancel</button>
+
+                            
+        </div>
+    </EditForm>
+}
+
+@if (!string.IsNullOrWhiteSpace(ErrorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        @ErrorMessage
+    </div>
+}

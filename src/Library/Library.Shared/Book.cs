@@ -14,5 +14,7 @@ public class Book
 
     public List<string> Authors { get; set; } = new();
 
-    public string CoverUrl { get; set; } = string.Empty;
+    public string? CoverUrl { get; set; } = string.Empty;
+
+    public string AuthorText => string.Join(", ", Authors);
 }

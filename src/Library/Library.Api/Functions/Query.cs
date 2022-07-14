@@ -45,46 +45,59 @@ public class Query
             }
             else
             {
+                if (!addedWhere)
+                {
+                    addedWhere = true;
+                    queryBuilder.Append(" WHERE (");
+                }
+                else
+                {
+                    queryBuilder.Append(" AND (");
+                }
+
+                var addOr = false;
                 if (query.IncludeRead)
                 {
-                    if (!addedWhere)
+                    if (addOr)
                     {
-                        addedWhere = true;
-                        queryBuilder.Append(" WHERE c.Read");
+                        queryBuilder.Append(" OR ");
                     }
                     else
                     {
-                        queryBuilder.Append(" AND c.Read");
+                        addOr = true;
                     }
+                    queryBuilder.Append("c.Read");
                 }
 
                 if (query.IncludeReading)
                 {
-                    if (!addedWhere)
+                    if (addOr)
                     {
-                        addedWhere = true;
-                        queryBuilder.Append(" WHERE c.Reading");
+                        queryBuilder.Append(" OR ");
                     }
                     else
                     {
-                        queryBuilder.Append(" AND c.Reading");
+                        addOr = true;
                     }
+
+                    queryBuilder.Append("c.Reading");
                 }
 
                 if (query.IncludeWantToRead)
                 {
-                    if (!addedWhere)
+                    if (addOr)
                     {
-                        addedWhere = true;
-                        queryBuilder.Append(" WHERE c.WantToRead");
+                        queryBuilder.Append(" OR ");
                     }
                     else
                     {
-                        queryBuilder.Append(" AND c.WantToRead");
+                        addOr = true;
                     }
-                }
 
-                queryBuilder.Append(" ORDER BY c.Title");
+                    queryBuilder.Append("c.WantToRead");
+                 }
+
+                queryBuilder.Append(") ORDER BY c.Title");
             }
 
             QueryDefinition queryDefinition = new QueryDefinition(query: queryBuilder.ToString())

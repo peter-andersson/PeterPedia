@@ -1,0 +1,35 @@
+﻿@page "/search"
+@attribute [Authorize(Roles = "admin")]
+
+<h4 class="mt-2">Search</h4>
+
+<div class="mb-3">
+    <label for="search" class="form-label">Search books by title, can use wildcards using % like, %fire%.</label>
+    <input id="search" type="text" @ref="Input" class="form-control" @bind="Filter" @bind:event="oninput" @onkeydown="InputKeyDownAsync" placeholder="Filter">
+</div>
+
+
+@if (Searching)
+{
+    <Spinner Text="Searching..." />
+}
+else
+{
+    if (BookList.Length == 0)
+    {
+        <h5>No book found!</h5>
+    }
+    else
+    {
+        <ul class="list-group">
+            @foreach (Book book in BookList)
+            {
+                <li class="list-group-item" role="button" @onclick="() => OpenBook(book)">
+                    <img src="/api/image/@($"{book.Id}.jpg")" class="book-cover">
+                    @book.Title by @book.AuthorText
+                </li>
+            }
+        </ul>
+    }
+}
+

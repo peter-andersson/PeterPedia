@@ -1,9 +1,37 @@
 ﻿@page "/"
+@attribute [Authorize(Roles = "admin")]
 
-<PageTitle>Index</PageTitle>
+<h4>Books</h4>
 
-<h1>Hello, world!</h1>
+@if (Loading)
+{
+    <Spinner Text="Loading..." />
+}
+else
+{
+    <h5>Reading</h5>
+    @if (Reading.Count == 0)
+    {
+        <div class="row mb-5">Not reading any books</div>
+    }
+    <div class="row row-cols-1 row-cols-md-4 g-4 mb-2">
+        @foreach (Book book in Reading)
+        {
+            <BookView Book="@book" />
+        }
+    </div>
 
-Welcome to your new app.
+    <h5>To be read</h5>
+    @if (ToBeRead.Count == 0)
+    {
+        <div class="row mb-2">No books waiting to be read</div>
+    }
+    <div class="row row-cols-1 row-cols-md-4 g-4 mb-2">
+        @foreach (Book book in ToBeRead)
+        {
+            <BookView Book="@book" />
+        }
+    </div>
+}
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+

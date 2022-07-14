@@ -12,10 +12,6 @@ public class PeterPediaContext : DbContext
 
     public DbSet<ArticleEF> Articles { get; set; } = null!;
 
-    public DbSet<AuthorEF> Authors { get; set; } = null!;
-
-    public DbSet<BookEF> Books { get; set; } = null!;
-
     public DbSet<EpisodeEF> Episodes { get; set; } = null!;
 
     public DbSet<LinkEF> Links { get; set; } = null!;
@@ -34,18 +30,10 @@ public class PeterPediaContext : DbContext
         }
 
         modelBuilder.Entity<ArticleEF>();
-        modelBuilder.Entity<AuthorEF>();
-        modelBuilder.Entity<BookEF>();
         modelBuilder.Entity<EpisodeEF>();
         modelBuilder.Entity<LinkEF>();
         modelBuilder.Entity<SeasonEF>();
         modelBuilder.Entity<ShowEF>();
         modelBuilder.Entity<SubscriptionEF>();
-
-        modelBuilder
-            .Entity<BookEF>()
-            .HasMany(b => b.Authors)
-            .WithMany(a => a.Books)
-            .UsingEntity(e => e.ToTable("authorbook"));
     }
 }

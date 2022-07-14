@@ -266,7 +266,7 @@
           "Microsoft.AspNetCore.Components.WebAssembly": "6.0.7"
         }
       },
-      "movies.shared": {
+      "library.shared": {
         "type": "Project"
       },
       "peterpedia.components": {

@@ -22,7 +22,7 @@ public partial class Edit : ComponentBase
 
     private bool IsDeleteTaskRunning { get; set; }
 
-    private bool Loading { get; set; } = true;
+    private bool Loading { get; set; } = true;    
 
     protected override async Task OnInitializedAsync()
     {

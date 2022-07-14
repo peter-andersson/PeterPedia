@@ -48,7 +48,6 @@ try
 
     builder.Services.AddHttpClient<FileService>();
 
-    builder.Services.AddScoped<ILibrary, Library>();
     builder.Services.AddScoped<ITVShows, TVShows>();
     builder.Services.AddScoped<IFileService, FileService>();
     builder.Services.AddScoped<IReaderManager, ReaderManager>();
