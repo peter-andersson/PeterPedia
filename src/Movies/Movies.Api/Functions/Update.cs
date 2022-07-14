@@ -55,7 +55,7 @@ public class Update
             }
 
             var posterUrl = await _service.GetImageUrlAsync(tmdbMovie.PosterPath);
-            using var stream = new MemoryStream();
+            var stream = new MemoryStream();
             await _service.DownloadImageUrlToStreamAsync(posterUrl, stream);
             await _fileStorage.UploadBlobAsync($"{existing.Id}.jpg", stream);
 
