@@ -11,8 +11,8 @@ public partial class Index : ComponentBase
     [Inject]
     private PeterPediaContext DbContext { get; set; } = null!;
 
-    [Inject]
-    private IConfiguration Configuration { get; set; } = null!;
+    // [Inject]
+    // private IConfiguration Configuration { get; set; } = null!;
 
     [Inject]
     private IMemoryCache Cache { get; set; } = null!;
@@ -53,12 +53,6 @@ public partial class Index : ComponentBase
         {
             Title = "TV Shows",
             Url = "tv"
-        });
-
-        Links.Add(new Link()
-        {
-            Title = "Movies",
-            Url = "movies"
         });
 
         Links.Add(new Link()

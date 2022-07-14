@@ -30,9 +30,6 @@ public static partial class LogMessage
     [LoggerMessage(9, LogLevel.Debug, "Execute job {job}.")]
     public static partial void ExecuteJob(ILogger logger, string job);
 
-    [LoggerMessage(10, LogLevel.Information, "Movie not changed, {movie}")]
-    public static partial void MovieNotChanged(ILogger logger, MovieEF movie);    
-
     [LoggerMessage(23, LogLevel.Debug, "Downloading image from {url} to {filename}")]
     public static partial void DownloadImage(ILogger logger, string url, string filename);
 

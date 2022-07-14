@@ -51,7 +51,6 @@ try
     builder.Services.AddScoped<ILibrary, Library>();
     builder.Services.AddScoped<ITVShows, TVShows>();
     builder.Services.AddScoped<IFileService, FileService>();
-    builder.Services.AddScoped<IMovieManager, MovieManager>();
     builder.Services.AddScoped<IReaderManager, ReaderManager>();
 
     builder.Services.AddQuartz(q =>
@@ -63,7 +62,6 @@ try
         q.AddJobAndTrigger<VideoJob>(builder.Configuration);
         q.AddJobAndTrigger<ShowUpdateJob>(builder.Configuration);
         q.AddJobAndTrigger<PhotoJob>(builder.Configuration);
-        q.AddJobAndTrigger<MovieUpdateJob>(builder.Configuration);
     });
 
     builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
