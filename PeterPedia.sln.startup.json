@@ -8,7 +8,7 @@
     
     /*  Create an item in the dropdown list for each project in the solution?  */
     "ListAllProjects": false,
-    
+
   "MultiProjectConfigurations": {
     "Movies": {
       "Projects": {
@@ -20,6 +20,12 @@
       "Projects": {
         "Library.Api": {},
         "Library.App": {}
+      }
+    },
+    "Episodes": {
+      "Projects": {
+        "Episodes.Api": {},
+        "Episodes.App": {}
       }
     }
   }

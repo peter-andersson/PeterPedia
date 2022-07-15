@@ -8,6 +8,7 @@ public static class TVShowMapper
         {
             Id = entity.Id,
             Title = entity.Title,
+            OriginalTitle = entity.OriginalTitle,
             Status = entity.Status,
             Source = entity.Source,
         };

@@ -5,7 +5,9 @@ public class TVShow
     public string Id { get; set; } = string.Empty;
 
     public string Title { get; set; } = string.Empty;
-    
+
+    public string OriginalTitle { get; set; } = string.Empty;
+
     public string Status { get; set; } = string.Empty;
 
     public List<Season> Seasons { get; set; } = new List<Season>();
@@ -13,6 +15,8 @@ public class TVShow
     public bool Refresh { get; set; }
 
     public string Source { get; set; } = string.Empty;
+
+    public string TheMovieDbUrl => $"https://www.themoviedb.org/tv/{Id}";
 
     public int UnwatchedEpisodeCount
     {
@@ -23,7 +27,7 @@ public class TVShow
             {
                 foreach (Episode episode in season.Episodes)
                 {
-                    if (!episode.Watched && episode.AirDate.HasValue && episode.AirDate.Value > DateTime.UtcNow)
+                    if (!episode.Watched && episode.AirDate.HasValue && episode.AirDate.Value < DateTime.UtcNow)
                     {
                         count += 1;
                     }

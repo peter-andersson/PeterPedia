@@ -12,7 +12,7 @@ public class Season
         {
             foreach (Episode episode in Episodes)
             {
-                if (!episode.Watched && episode.AirDate.HasValue && episode.AirDate.Value > DateTime.UtcNow)
+                if (!episode.Watched && episode.AirDate.HasValue && episode.AirDate.Value < DateTime.UtcNow)
                 {
                     return false;
                 }

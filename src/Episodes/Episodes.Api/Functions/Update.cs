@@ -67,6 +67,30 @@ public class Update
 
             TVShowHelper.UpdateFromTheMovieDb(existing, tmdbShow);
         }
+        else
+        {
+            foreach (Season season in show.Seasons)
+            {
+                SeasonEntity? seasonEntity = existing.Seasons.Where(s => s.SeasonNumber == season.SeasonNumber).FirstOrDefault();
+
+                if (seasonEntity is null)
+                {
+                    continue;
+                }
+
+                foreach (Episode episode in season.Episodes)
+                {
+                    EpisodeEntity? episodeEntity = seasonEntity.Episodes.Where(e => e.EpisodeNumber == episode.EpisodeNumber).FirstOrDefault();
+
+                    if (episodeEntity is null)
+                    {
+                        continue;                        
+                    }
+
+                    episodeEntity.Watched = episode.Watched;
+                }
+            }
+        }
 
         existing.Source = show.Source;
         existing.Title = show.Title;
