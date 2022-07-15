@@ -1,4 +1,4 @@
-name: (Movies) Azure Static Web Apps CI/CD
+name: Movies CI/CD
 
 on:
   push:
