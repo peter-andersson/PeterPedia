@@ -61,7 +61,7 @@ public class TheMovieDatabaseService : ITheMovieDatabaseService
         throw new InvalidOperationException($"Failed to fetch movie {id} with status code {response.StatusCode}");
     }
 
-    public async Task<TMDbShow?> GetTvShowAsync(int id, string? etag)
+    public async Task<TMDbShow?> GetTvShowAsync(string id, string? etag)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, GetTvShowUrl(id));
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
@@ -148,7 +148,7 @@ public class TheMovieDatabaseService : ITheMovieDatabaseService
         throw new InvalidOperationException($"Failed to fetch tv show {showId} season {seasonNumber} with status code {response.StatusCode}");
     }
 
-    private string GetTvShowUrl(int id) => $"{_baseUrl}/tv/{id}";
+    private string GetTvShowUrl(string id) => $"{_baseUrl}/tv/{id}";
 
     private string GetTvSeasonUrl(int showId, int seasonNumber) => $"{_baseUrl}/tv/{showId}/season/{seasonNumber}";
 
