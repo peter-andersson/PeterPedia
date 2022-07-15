@@ -1,21 +1,3 @@
 ﻿@page "/"
 
 <PageTitle>PeterPedia</PageTitle>
-
-    <div class="row mt-2">
-        <div class="col">
-            <a class="link-dark" href="/edit">Edit</a>
-        </div>
-        <div class="col">
-            <a class="link-dark float-end" href="/logs">Logs</a>
-        </div>
-    </div>
-
-    <div class="row mt-2">
-        @foreach (var link in Links)
-        {
-            <div class="col-12 col-md-6 col-lg-4">
-                <a class="fs-2 link-dark" href="@link.Url">@link.Title</a>
-            </div>
-        }
-    </div>

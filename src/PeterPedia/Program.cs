@@ -48,7 +48,6 @@ try
 
     builder.Services.AddHttpClient<FileService>();
 
-    builder.Services.AddScoped<ITVShows, TVShows>();
     builder.Services.AddScoped<IFileService, FileService>();
     builder.Services.AddScoped<IReaderManager, ReaderManager>();
 
@@ -58,7 +57,6 @@ try
 
         q.AddJobAndTrigger<RemoveArticleJob>(builder.Configuration);
         q.AddJobAndTrigger<RefreshArticleJob>(builder.Configuration);
-        q.AddJobAndTrigger<ShowUpdateJob>(builder.Configuration);
     });
 
     builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);

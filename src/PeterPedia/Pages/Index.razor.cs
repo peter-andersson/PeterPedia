@@ -11,99 +11,52 @@ public partial class Index : ComponentBase
     [Inject]
     private PeterPediaContext DbContext { get; set; } = null!;
 
-    // [Inject]
-    // private IConfiguration Configuration { get; set; } = null!;
-
-    [Inject]
-    private IMemoryCache Cache { get; set; } = null!;
-
-    public List<Link> Links { get; set; } = new();
+    //[Inject]
+    //private IConfiguration Configuration { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
-    {
-        Links.Clear();
-
-        if (Cache.TryGetValue(CacheKey.Links, out List<Link> list))
-        {
-            Links.AddRange(list);
-            return;
-        }
-
-        List<LinkEF> links = await DbContext.Links.ToListAsync();
-
-        Links.Clear();
-
-        foreach (LinkEF link in links)
-        {
-            Links.Add(new Link()
-            {
-                Id = link.Id,
-                Title = link.Title,
-                Url = link.Url,
-            });
-        }
-       
-        Links.Add(new Link()
-        {
-            Title = "Library",
-            Url = "library/books"
-        });
-
-        Links.Add(new Link()
-        {
-            Title = "TV Shows",
-            Url = "tv"
-        });
-
-        Links.Add(new Link()
-        {
-            Title = "Reader",
-            Url = "reader"
-        });
-
-        Links.Sort((link1, link2) => link1.Title.CompareTo(link2.Title));
-
-        Cache.Set(CacheKey.Links, Links, TimeSpan.FromMinutes(5));
-
+    {       
         // Move to cosmosDB
         //using CosmosClient client = new(accountEndpoint: Configuration["EndPointUrl"], authKeyOrResourceToken: Configuration["AccountKey"]);
-        //var books = await DbContext.Books.Include(b => b.Authors).ToListAsync();
-        //foreach (BookEF bookEF in books)
+        //var books = await DbContext.Shows.Include(b => b.Seasons).ThenInclude(s => s.Episodes).ToListAsync();
+        //foreach (ShowEF showEF in books)
         //{
-        //    CosmosBook cosmosBook = new CosmosBook()
+        //    var show = new TVShowEntity()
         //    {
-        //        id = Guid.NewGuid().ToString(),
-        //        Title = bookEF.Title,                
+        //        Id = showEF.Id.ToString(),
+        //        Title = showEF.Title,
+        //        ETag = showEF.ETag,
+        //        Status = showEF.Status,
+        //        NextUpdate = DateTime.UtcNow.AddDays(-1),
         //    };
 
-        //    foreach (var author in bookEF.Authors)
+        //    foreach (SeasonEF seasonEF in showEF.Seasons)
         //    {
-        //        cosmosBook.Authors.Add(author.Name);
+        //        var season = new SeasonEntity()
+        //        {
+        //            SeasonNumber = seasonEF.SeasonNumber,
+        //        };
+
+        //        foreach (EpisodeEF episodeEF in seasonEF.Episodes)
+        //        {
+        //            var episode = new EpisodeEntity()
+        //            {
+        //                EpisodeNumber = episodeEF.EpisodeNumber,
+        //                AirDate = episodeEF.AirDate,
+        //                Title = episodeEF.Title,
+        //                Watched = episodeEF.Watched
+        //            };
+
+        //            season.Episodes.Add(episode);
+        //        }
+
+        //        show.Seasons.Add(season);
         //    }
-
-        //    cosmosBook.Read = bookEF.State == 3;
-        //    cosmosBook.WantToRead = bookEF.State == 1;
-        //    cosmosBook.Reading = bookEF.State == 2;
-           
+        
         //    Database database = client.GetDatabase("peterpedia");
-        //    Container container = database.GetContainer("books");
+        //    Container container = database.GetContainer("episodes");
 
-        //    await container.CreateItemAsync(cosmosBook, new PartitionKey(cosmosBook.id));
+        //    await container.UpsertItemAsync(show, new PartitionKey(show.Id));
         //}
     }
-
-    //public class CosmosBook
-    //{
-    //    public string id { get; set; } = string.Empty;
-
-    //    public string Title { get; set; } = string.Empty;
-
-    //    public bool Reading { get; set; }
-
-    //    public bool Read { get; set; }
-
-    //    public bool WantToRead { get; set; }
-
-    //    public List<string> Authors { get; set; } = new();
-    //}
 }
