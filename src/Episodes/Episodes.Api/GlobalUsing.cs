@@ -1,0 +1,10 @@
+global using System.Threading;
+global using System.Threading.Tasks;
+global using Microsoft.Azure.WebJobs.Extensions.Http;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.Extensions.Logging;
+global using TheMovieDatabase;
+global using TheMovieDatabase.Models;
+global using PeterPedia.Data.Models;
+global using PeterPedia.Data.Interface;
+global using Episodes.Shared;
