@@ -23,7 +23,7 @@ public class Query
         CancellationToken cancellationToken)
     {
         var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-        Shared.Query query = JsonConvert.DeserializeObject<Shared.Query>(requestBody);
+        QueryData query = JsonConvert.DeserializeObject<QueryData>(requestBody);
 
         try
         {

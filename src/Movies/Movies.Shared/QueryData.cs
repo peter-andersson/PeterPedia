@@ -1,6 +1,6 @@
 namespace Movies.Shared;
 
-public class Query
+public class QueryData
 {
     public string Search { get; set; } = string.Empty;
 
