@@ -31,9 +31,9 @@ public class UpdateTVShows
     }
 
     [FunctionName("UpdateTVShows")]
-    public async Task RunAsync([TimerTrigger("0 0 * * * *")]TimerInfo myTimer, ILogger log)
+    public async Task RunAsync([TimerTrigger("0 0 * * * *")]TimerInfo myTimer)
     {
-        log.LogDebug(myTimer.FormatNextOccurrences(1));
+        _log.LogDebug(myTimer.FormatNextOccurrences(1));
 
         var blobStorageOptions = new BlobStorageOptions()
         {
