@@ -8,6 +8,9 @@ on:
       - src/Episodes/Episodes.App/**
       - src/Episodes/Episodes.Api/**
       - src/PeterPedia.Data/**
+      - src/PeterPedia.Shared/**
+      - src/PeterPedia.Blazor/**
+      - src/TheMovieDatabase/**
       - .github/workflows/episodes.yml
   pull_request:
     types: [opened, synchronize, reopened, closed]
@@ -17,6 +20,9 @@ on:
       - src/Episodes/Episodes.App/**
       - src/Episodes/Episodes.Api/**
       - src/PeterPedia.Data/**
+      - src/PeterPedia.Shared/**
+      - src/PeterPedia.Blazor/**
+      - src/TheMovieDatabase/**      
       - .github/workflows/episodes.yml      
 
 jobs:
