@@ -20,4 +20,6 @@ public static class HttpRequestExtensions
         req.HttpContext.Response.Headers.Add("Cache-Control", "public, max-age=604800");
         return new FileStreamResult(stream, contentType);
     }
+
+    public static IActionResult Redirect(this HttpRequest _, string url) => new RedirectResult(url, false);
 }
