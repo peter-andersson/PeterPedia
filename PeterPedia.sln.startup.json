@@ -27,6 +27,17 @@
         "Episodes.Api": {},
         "Episodes.App": {}
       }
+    },
+    "Reader": {
+      "Projects": {
+        "Reader.Api": {},
+        "Reader.App": {}
+      }
+    },
+    "Functions": {
+      "Projects": {
+        "PeterPedia.Functions": {}
+      }
     }
   }
 }
