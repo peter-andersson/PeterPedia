@@ -32,7 +32,7 @@ public class UpdateSubscriptions
     }
 
     [FunctionName("UpdateSubscriptions")]
-    public async Task RunAsync([TimerTrigger("0 0 * * * *", RunOnStartup = true)] TimerInfo myTimer)
+    public async Task RunAsync([TimerTrigger("0 0 * * * *")] TimerInfo myTimer)
     {
         _log.LogDebug(myTimer.FormatNextOccurrences(1));
 
