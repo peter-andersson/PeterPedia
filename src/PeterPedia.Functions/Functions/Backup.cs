@@ -16,21 +16,23 @@ public class Backup
     private readonly IDataStorage<TVShowEntity> _tvStorage;
     private readonly IDataStorage<MovieEntity> _movieStorage;
     private readonly IDataStorage<BookEntity> _bookStorage;
+    private readonly IDataStorage<SubscriptionEntity> _subscriptionStorage;
 
-    public Backup(ILogger<Backup> log, IConfiguration configuration, IDataStorage<TVShowEntity> tvStorage, IDataStorage<MovieEntity> movieStorage, IDataStorage<BookEntity> bookStorage)
+    public Backup(ILogger<Backup> log, IConfiguration configuration, IDataStorage<TVShowEntity> tvStorage, IDataStorage<MovieEntity> movieStorage, IDataStorage<BookEntity> bookStorage, IDataStorage<SubscriptionEntity> subscriptionStorage)
     {
         _log = log;
         _configuration = configuration;
         _tvStorage = tvStorage;
         _movieStorage = movieStorage;
         _bookStorage = bookStorage;
+        _subscriptionStorage = subscriptionStorage;
     }
 
     [FunctionName("Backup")]
-#pragma warning disable IDE0060 // Remove unused parameter
     public async Task RunAsync([TimerTrigger("0 0 0 * * SUN")]TimerInfo myTimer, ILogger log)
-#pragma warning restore IDE0060 // Remove unused parameter
     {
+        log.LogDebug(myTimer.FormatNextOccurrences(1));
+
         try
         {
             var query = new QueryDefinition(query: "SELECT * FROM c");
@@ -39,8 +41,11 @@ public class Backup
             {
                 Shows = await _tvStorage.QueryAsync(query),
                 Movies = await _movieStorage.QueryAsync(query),
-                Books = await _bookStorage.QueryAsync(query)
+                Books = await _bookStorage.QueryAsync(query)                
             };
+
+            query = new QueryDefinition(query: "SELECT * FROM c WHERE c.Type = \"subscription\"");
+            data.Subscriptions = await _subscriptionStorage.QueryAsync(query);
 
             var client = new BlobServiceClient(_configuration["BlobStorage:ConnectionString"]);
             BlobContainerClient container = client.GetBlobContainerClient(_configuration["BlobStorage:BackupContainer"]);
@@ -61,5 +66,7 @@ public class Backup
         public List<MovieEntity> Movies { get; set; } = null!;
 
         public List<BookEntity> Books { get; set; } = null!;
+
+        public List<SubscriptionEntity> Subscriptions { get; set; } = null!;
     }
 }
