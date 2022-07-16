@@ -9,6 +9,7 @@ on:
       - main
     paths:
       - src/PeterPedia.Functions/**
+      - src\PeterPedia.Data/**
       - .github/workflows/main_peterpedia-functions.yml
   workflow_dispatch:
 

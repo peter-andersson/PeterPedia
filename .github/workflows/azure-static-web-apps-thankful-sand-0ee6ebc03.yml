@@ -7,6 +7,7 @@ on:
     paths:
       - src/Episodes/Episodes.App/**
       - src/Episodes/Episodes.Api/**
+      - src\PeterPedia.Data/**
       - .github/workflows/azure-static-web-apps-thankful-sand-0ee6ebc03.yml
   pull_request:
     types: [opened, synchronize, reopened, closed]

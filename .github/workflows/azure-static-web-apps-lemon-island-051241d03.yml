@@ -7,6 +7,7 @@ on:
     paths:
       - src/Movies/Movies.App/**
       - src/Movies/Movies.Api/**
+      - src\PeterPedia.Data/**
       - .github/workflows/azure-static-web-apps-lemon-island-051241d03.yml      
   pull_request:
     types: [opened, synchronize, reopened, closed]

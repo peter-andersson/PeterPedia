@@ -7,6 +7,7 @@ on:
     paths:
       - src/Library/Library.App/**
       - src/Library/Library.Api/**
+      - src\PeterPedia.Data/**
       - .github/workflows/azure-static-web-apps-kind-wave-05c70d803.yml      
   pull_request:
     types: [opened, synchronize, reopened, closed]
