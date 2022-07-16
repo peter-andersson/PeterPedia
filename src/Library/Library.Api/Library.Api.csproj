@@ -15,6 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\PeterPedia.Data\PeterPedia.Data.csproj" />
+    <ProjectReference Include="..\..\PeterPedia.Shared\PeterPedia.Shared.csproj" />
     <ProjectReference Include="..\Library.Shared\Library.Shared.csproj" />
   </ItemGroup>
   <ItemGroup>

@@ -20,7 +20,7 @@ public partial class Index : ComponentBase
     {
         Loading = true;
 
-        var query = new Query()
+        var query = new QueryData()
         {
             Search = string.Empty,
             IncludeReading = true,

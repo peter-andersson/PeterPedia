@@ -3,7 +3,6 @@ using Microsoft.Azure.WebJobs;
 
 namespace Movies.Api.Functions;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Required by Azure function runtime.")]
 public class Get
 {
     private readonly IDataStorage<MovieEntity> _dataStoreage;
@@ -14,21 +13,15 @@ public class Get
     public async Task<IActionResult> RunAsync(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "get/{id}")] HttpRequest req,
         string id,
-        CancellationToken cancellationToken)
+        CancellationToken _)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
-            return new BadRequestObjectResult("Missing query parameter id");
+            return req.BadRequest("Missing query parameter id");
         }
 
         MovieEntity? movie = await _dataStoreage.GetAsync(id, id);
 
-        if (movie is null)
-        {
-            return new NotFoundResult();
-        }
-
-        // 
-        return new OkObjectResult(movie.ConvertToMovie());
+        return movie is not null ? req.Ok(movie.ConvertToMovie()) : req.NotFound();
     }
 }

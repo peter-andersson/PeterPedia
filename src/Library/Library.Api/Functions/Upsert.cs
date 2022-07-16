@@ -29,7 +29,7 @@ public class Upsert
 
         if (book is null)
         {
-            return new BadRequestObjectResult("Missing book object");
+            return req.BadRequest("Missing book object");
         }
 
         BookEntity? existing = await _dataStorage.GetAsync(book.Id, book.Id);
@@ -68,7 +68,7 @@ public class Upsert
         catch (Exception ex)
         {
             _log.LogError(ex, "Something went wrong.");
-            return new StatusCodeResult(500);
+            return req.InternalServerError();
         }
 
         if (!string.IsNullOrWhiteSpace(book.CoverUrl))
@@ -92,6 +92,6 @@ public class Upsert
             }
         }
 
-        return new OkResult();
+        return req.Ok();
     }
 }

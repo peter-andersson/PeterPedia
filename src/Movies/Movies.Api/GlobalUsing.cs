@@ -8,3 +8,4 @@ global using TheMovieDatabase.Models;
 global using Movies.Shared;
 global using PeterPedia.Data.Models;
 global using PeterPedia.Data.Interface;
+global using PeterPedia.Shared;

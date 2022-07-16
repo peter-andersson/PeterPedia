@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 
 namespace Episodes.Api.Functions;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Required by Azure function runtime.")]
 public class Query
 {
     private readonly ILogger<Query> _log;
@@ -20,9 +19,15 @@ public class Query
     [FunctionName("Query")]
     public async Task<IActionResult> RunAsync(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "query")] HttpRequest req,
-        CancellationToken cancellationToken)
+        CancellationToken _)
     {
         var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+
+        if (string.IsNullOrWhiteSpace(requestBody))
+        {
+            return req.BadRequest("Missing query object");
+        }
+
         QueryData query = JsonConvert.DeserializeObject<QueryData>(requestBody);
 
         try
@@ -41,12 +46,12 @@ public class Query
                 result.Add(entity.ConvertToShow());
             }
 
-            return new OkObjectResult(result);
+            return req.Ok(result);
         }
         catch (Exception ex)
         {
             _log.LogError(ex, "Something went wrong.");
-            return new StatusCodeResult(500);
+            return req.InternalServerError();
         }
     }
 }

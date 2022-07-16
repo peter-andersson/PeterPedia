@@ -4,7 +4,6 @@ using Microsoft.Azure.WebJobs;
 
 namespace Movies.Api.Functions;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Required by Azure function runtime.")]
 public class Watchlist
 {
     private readonly ILogger<Watchlist> _log;
@@ -19,7 +18,7 @@ public class Watchlist
     [FunctionName("Watchlist")]
     public async Task<IActionResult> RunAsync(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "watchlist")] HttpRequest req,
-        CancellationToken cancellationToken)
+        CancellationToken _)
     {
         try
         {
@@ -32,12 +31,12 @@ public class Watchlist
                 result.Add(entity.ConvertToMovie());
             }
 
-            return new OkObjectResult(result);
+            return req.Ok(result);
         }
         catch (Exception ex)
         {
             _log.LogError(ex, "Something went wrong.");
-            return new StatusCodeResult(500);
+            return req.InternalServerError();
         }
     }
 }

@@ -3,7 +3,6 @@ using Microsoft.Azure.WebJobs;
 
 namespace Movies.Api.Functions;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Required by Azure function runtime.")]
 public class Add
 {
     private readonly ILogger<Add> _log;
@@ -23,23 +22,18 @@ public class Add
     public async Task<IActionResult> RunAsync(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "add/{id}")] HttpRequest req,
         string id,
-        CancellationToken cancellationToken)
+        CancellationToken _)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
-            return new BadRequestObjectResult("Missing query parameter id");
+            return req.BadRequest("Missing query parameter id");
         }
 
         MovieEntity? movie = await _dataStorage.GetAsync(id, id);
 
         if (movie is not null)
         {
-            return new ConflictResult();
-        }
-
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return new StatusCodeResult(503);
+            return req.Conflict();
         }
 
         TMDbMovie? tmdbMovie = await _service.GetMovieAsync(id, string.Empty);
@@ -47,12 +41,7 @@ public class Add
         if (tmdbMovie is null)
         {
             _log.LogError("Failed to fetch data for movie with id {id} from themoviedb.org.", id);
-            return new StatusCodeResult(500);
-        }
-
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return new StatusCodeResult(503);
+            return req.InternalServerError();
         }
 
         var posterUrl = await _service.GetImageUrlAsync(tmdbMovie.PosterPath);
@@ -73,23 +62,18 @@ public class Add
             ETag = tmdbMovie.ETag
         };
 
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return new StatusCodeResult(503);
-        }
-
         try
         {
             await _dataStorage.AddAsync(movie);
 
             _log.LogInformation("Added movie with id {id} and title {title}.", movie.Id, movie.Title);
 
-            return new OkResult();
+            return req.Ok();
         }
         catch (Exception ex)
         {
             _log.LogError(ex, "Something went wrong.");
-            return new StatusCodeResult(500);
+            return req.InternalServerError();
         }
     }
 }

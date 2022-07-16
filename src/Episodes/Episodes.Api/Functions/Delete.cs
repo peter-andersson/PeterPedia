@@ -3,7 +3,6 @@ using Microsoft.Azure.WebJobs;
 
 namespace Episodes.Api.Functions;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Required by Azure function runtime.")]
 public class Delete
 {
     private readonly ILogger<Delete> _log;
@@ -19,18 +18,18 @@ public class Delete
     public async Task<IActionResult> RunAsync(
         [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "delete/{id}")] HttpRequest req,
         string id,
-        CancellationToken cancellationToken)
+        CancellationToken _)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
-            return new BadRequestObjectResult("Missing query parameter id");
+            return req.BadRequest("Missing query parameter id");
         }
 
         TVShowEntity? show = await _dataStorage.GetAsync(id, id);
 
         if (show is null)
         {
-            return new NotFoundResult();
+            return req.NotFound();
         }
 
         try
@@ -39,12 +38,12 @@ public class Delete
 
             _log.LogInformation("Deleted tv show with id {id} and title {title}.", show.Id, show.Title);
 
-            return new OkResult();
+            return req.Ok();
         }
         catch (Exception ex)
         {
             _log.LogError(ex, "Something went wrong.");
-            return new StatusCodeResult(500);
+            return req.InternalServerError();
         }        
     }
 }

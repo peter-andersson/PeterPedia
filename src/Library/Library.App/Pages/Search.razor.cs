@@ -43,7 +43,7 @@ public partial class Search : ComponentBase
     {
         Searching = true;
 
-        var query = new Query()
+        var query = new QueryData()
         {
             Search = Filter,
             IncludeRead = true,

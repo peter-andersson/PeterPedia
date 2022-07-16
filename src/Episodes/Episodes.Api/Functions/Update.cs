@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Newtonsoft.Json;
-using PeterPedia.Shared;
 
 namespace Episodes.Api.Functions;
 
@@ -23,21 +22,21 @@ public class Update
     [FunctionName("Update")]
     public async Task<IActionResult> RunAsync(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "update")] HttpRequest req,
-        CancellationToken cancellationToken)
+        CancellationToken _)
     {
         var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
         TVShow show = JsonConvert.DeserializeObject<TVShow>(requestBody);
 
         if (show is null)
         {
-            return new BadRequestObjectResult("Missing movie object");
+            return req.BadRequest("Missing movie object");
         }
 
         TVShowEntity? existing = await _dataStorage.GetAsync(show.Id, show.Id);
 
         if (existing is null)
         {
-            return new NotFoundResult();
+            return req.NotFound();
         }
 
         if (show.Refresh)
@@ -47,12 +46,7 @@ public class Update
             if (tmdbShow is null)
             {
                 _log.LogError("Failed to fetch data for tv show with id {id} from themoviedb.org", show.Id);
-                return new StatusCodeResult(500);
-            }
-
-            if (cancellationToken.IsCancellationRequested)
-            {
-                return new StatusCodeResult(503);
+                return req.InternalServerError();
             }
 
             var posterUrl = await _service.GetImageUrlAsync(tmdbShow.PosterPath);
@@ -95,22 +89,17 @@ public class Update
         existing.Source = show.Source;
         existing.Title = show.Title;
 
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return new StatusCodeResult(503);
-        }
-
         try
         {
             await _dataStorage.UpdateAsync(existing);
             _log.LogInformation("Updated tv show with id {id}, title {title}", existing.Id, existing.Title);
 
-            return new OkResult();
+            return req.Ok();
         }
         catch (Exception ex)
         {
             _log.LogError(ex, "Something went wrong.");
-            return new StatusCodeResult(500);
+            return req.InternalServerError();
         }
     }
 }

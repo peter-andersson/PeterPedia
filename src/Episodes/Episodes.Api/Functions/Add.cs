@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
-using PeterPedia.Shared;
 
 namespace Episodes.Api.Functions;
 
@@ -20,28 +19,21 @@ public class Add
     }
 
     [FunctionName("Add")]
-#pragma warning disable IDE0060 // Remove unused parameter
     public async Task<IActionResult> RunAsync(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "add/{id}")] HttpRequest req,
         string id,
-        CancellationToken cancellationToken)
+        CancellationToken _)
     {
-#pragma warning restore IDE0060 // Remove unused parameter
         if (string.IsNullOrWhiteSpace(id))
         {
-            return new BadRequestObjectResult("Missing query parameter id");
+            return req.BadRequest("Missing query parameter id");
         }
 
         TVShowEntity? show = await _dataStorage.GetAsync(id, id);
 
         if (show is not null)
         {
-            return new ConflictResult();
-        }
-
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return new StatusCodeResult(503);
+            return req.Conflict();
         }
 
         TMDbShow? tmdbShow = await _service.GetTvShowAsync(id, string.Empty);
@@ -49,12 +41,7 @@ public class Add
         if (tmdbShow is null)
         {
             _log.LogError("Failed to fetch data for tv show with id {id} from themoviedb.org.", id);
-            return new StatusCodeResult(500);
-        }
-
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return new StatusCodeResult(503);
+            return req.InternalServerError();
         }
 
         var posterUrl = await _service.GetImageUrlAsync(tmdbShow.PosterPath);
@@ -95,23 +82,18 @@ public class Add
             show.Seasons.Add(season);
         }
 
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return new StatusCodeResult(503);
-        }
-
         try
         {
             await _dataStorage.AddAsync(show);
 
             _log.LogInformation("Added tv show with id {id} and title {title}.", show.Id, show.Title);
 
-            return new OkResult();
+            return req.Ok();
         }
         catch (Exception ex)
         {
             _log.LogError(ex, "Something went wrong.");
-            return new StatusCodeResult(500);
+            return req.InternalServerError();
         }
     }
 }

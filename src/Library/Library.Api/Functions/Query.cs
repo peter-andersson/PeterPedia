@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 
 namespace Library.Api.Functions;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Required by Azure function runtime.")]
 public class Query
 {
     private readonly ILogger<Query> _log;
@@ -21,10 +20,16 @@ public class Query
     [FunctionName("Query")]
     public async Task<IActionResult> RunAsync(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "query")] HttpRequest req,
-        CancellationToken cancellationToken)
+        CancellationToken _)
     {
         var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-        Shared.Query query = JsonConvert.DeserializeObject<Shared.Query>(requestBody);
+
+        if (string.IsNullOrWhiteSpace(requestBody))
+        {
+            return req.BadRequest("Missing query data");
+        }
+
+        QueryData query = JsonConvert.DeserializeObject<QueryData>(requestBody);
 
         try
         {
@@ -110,12 +115,12 @@ public class Query
                 result.Add(entity.ConvertToBook());
             }
 
-            return new OkObjectResult(result);
+            return req.Ok(result);
         }
         catch (Exception ex)
         {
             _log.LogError(ex, "Something went wrong.");
-            return new StatusCodeResult(500);
+            return req.InternalServerError();
         }
     }
 }

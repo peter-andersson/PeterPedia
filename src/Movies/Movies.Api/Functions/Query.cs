@@ -23,6 +23,12 @@ public class Query
         CancellationToken cancellationToken)
     {
         var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+
+        if (string.IsNullOrWhiteSpace(requestBody))
+        {
+            return req.BadRequest("Missing query data in request");
+        }
+
         QueryData query = JsonConvert.DeserializeObject<QueryData>(requestBody);
 
         try
@@ -41,12 +47,12 @@ public class Query
                 result.Add(entity.ConvertToMovie());
             }
 
-            return new OkObjectResult(result);
+            return req.Ok(result);
         }
         catch (Exception ex)
         {
             _log.LogError(ex, "Something went wrong.");
-            return new StatusCodeResult(500);
+            return req.InternalServerError();
         }
     }
 }

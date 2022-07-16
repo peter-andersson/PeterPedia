@@ -15,16 +15,14 @@ public class Image
     }
 
     [FunctionName("Image")]
-#pragma warning disable IDE0060 // Remove unused parameter
     public async Task<IActionResult> RunAsync(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = "image/{image}")] HttpRequest req,
         string image,
-        CancellationToken cancellationToken)
-#pragma warning restore IDE0060 // Remove unused parameter
+        CancellationToken _)
     {
         if (string.IsNullOrWhiteSpace(image))
         {
-            return new NotFoundResult();
+            return req.NotFound();
         }
 
         try
@@ -32,16 +30,16 @@ public class Image
             var stream = new MemoryStream();
             if (await _fileStorage.DownloadAsync(image, stream))
             {
-                return new FileStreamResult(stream, "image/jpeg");
+                return req.CachedFileStream(stream, "image/jpeg");
             }
 
             // 
-            return new NotFoundResult();            
+            return req.NotFound();
         }       
         catch (Exception ex)
         {
             _log.LogError(ex, "Something went wrong.");
-            return new StatusCodeResult(500);
+            return req.InternalServerError();
         }
     }
 }
