@@ -25,7 +25,7 @@ public class Delete
             return req.BadRequest("Missing query parameter id");
         }
 
-        BookEntity? book = await _dataStorage.GetAsync(id, id);
+        BookEntity? book = await _dataStorage.GetAsync(id);
 
         if (book is null)
         {

@@ -25,7 +25,7 @@ public class Delete
             return req.BadRequest("Missing query parameter id");
         }
 
-        TVShowEntity? show = await _dataStorage.GetAsync(id, id);
+        TVShowEntity? show = await _dataStorage.GetAsync(id);
 
         if (show is null)
         {

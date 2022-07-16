@@ -32,7 +32,7 @@ public class Upsert
             return req.BadRequest("Missing book object");
         }
 
-        BookEntity? existing = await _dataStorage.GetAsync(book.Id, book.Id);
+        BookEntity? existing = await _dataStorage.GetAsync(book.Id);
 
         var update = true;
 

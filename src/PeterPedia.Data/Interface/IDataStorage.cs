@@ -4,13 +4,15 @@ namespace PeterPedia.Data.Interface;
 
 public interface IDataStorage<TEntity> where TEntity : IEntity
 {
+    public Container Container { get; }
+
     Task AddAsync(TEntity entity);
 
     Task DeleteAsync(TEntity entity);
 
-    Task<TEntity?> GetAsync(string id, string partitionKey);
+    Task<TEntity?> GetAsync(string id);
     
     Task<List<TEntity>> QueryAsync(QueryDefinition query);
 
-    Task UpdateAsync(TEntity entity);
+    Task UpdateAsync(TEntity entity);    
 }

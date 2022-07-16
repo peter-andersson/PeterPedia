@@ -20,7 +20,7 @@ public class Get
             return req.BadRequest("Missing query parameter id");
         }
 
-        MovieEntity? movie = await _dataStoreage.GetAsync(id, id);
+        MovieEntity? movie = await _dataStoreage.GetAsync(id);
 
         return movie is not null ? req.Ok(movie.ConvertToMovie()) : req.NotFound();
     }

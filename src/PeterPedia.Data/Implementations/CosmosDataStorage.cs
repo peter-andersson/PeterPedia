@@ -9,8 +9,7 @@ namespace PeterPedia.Data.Implementations;
 public class CosmosDataStorage<TEntity> : IDataStorage<TEntity> where TEntity : IEntity
 {
     private readonly CosmosClient _cosmosClient;
-    private readonly Container _container;
-    
+
     public CosmosDataStorage(IOptions<CosmosOptions> options)
     {
         if (string.IsNullOrEmpty(options.Value.EndPointUrl))
@@ -27,18 +26,20 @@ public class CosmosDataStorage<TEntity> : IDataStorage<TEntity> where TEntity : 
             .WithApplicationName(options.Value.ApplicationName)
             .Build();
 
-        _container = _cosmosClient.GetContainer(options.Value.Database, options.Value.Container);
+        Container = _cosmosClient.GetContainer(options.Value.Database, options.Value.Container);
     }
 
-    public async Task AddAsync(TEntity entity) => _ = await _container.CreateItemAsync(entity, new PartitionKey(entity.PartitionKey));
+    public Container Container { get; }
 
-    public async Task DeleteAsync(TEntity entity) => await _container.DeleteItemAsync<TEntity>(entity.Id, new PartitionKey(entity.PartitionKey));
+    public async Task AddAsync(TEntity entity) => _ = await Container.CreateItemAsync(entity, new PartitionKey(entity.Id));
 
-    public async Task<TEntity?> GetAsync(string id, string partitionKey)
+    public async Task DeleteAsync(TEntity entity) => await Container.DeleteItemAsync<TEntity>(entity.Id, new PartitionKey(entity.Id));
+
+    public async Task<TEntity?> GetAsync(string id)
     {
         try
         {
-            ItemResponse<TEntity> itemResponse = await _container.ReadItemAsync<TEntity>(id, new PartitionKey(partitionKey));
+            ItemResponse<TEntity> itemResponse = await Container.ReadItemAsync<TEntity>(id, new PartitionKey(id));
 
             return itemResponse.Resource;
         }
@@ -52,7 +53,7 @@ public class CosmosDataStorage<TEntity> : IDataStorage<TEntity> where TEntity : 
     {
         var result = new List<TEntity>();
 
-        using FeedIterator<TEntity> feed = _container.GetItemQueryIterator<TEntity>(queryDefinition: query);
+        using FeedIterator<TEntity> feed = Container.GetItemQueryIterator<TEntity>(queryDefinition: query);
 
         while (feed.HasMoreResults)
         {
@@ -66,5 +67,5 @@ public class CosmosDataStorage<TEntity> : IDataStorage<TEntity> where TEntity : 
         return result;
     }
 
-    public async Task UpdateAsync(TEntity entity) => _ = await _container.ReplaceItemAsync(entity, entity.Id, new PartitionKey(entity.PartitionKey));
+    public async Task UpdateAsync(TEntity entity) => _ = await Container.ReplaceItemAsync(entity, entity.Id, new PartitionKey(entity.Id));
 }

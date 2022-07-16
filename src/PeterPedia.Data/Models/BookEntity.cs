@@ -17,6 +17,4 @@ public class BookEntity : IEntity
     public bool WantToRead { get; set; }
 
     public List<string> Authors { get; set; } = new();
-
-    public string PartitionKey => Id;
 }

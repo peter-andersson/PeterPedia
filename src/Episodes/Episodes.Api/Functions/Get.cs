@@ -20,7 +20,7 @@ public class Get
             return req.BadRequest("Missing query parameter id");
         }
 
-        TVShowEntity? show = await _dataStoreage.GetAsync(id, id);
+        TVShowEntity? show = await _dataStoreage.GetAsync(id);
 
         return show is not null ? req.Ok(show.ConvertToShow()) : req.NotFound();
     }

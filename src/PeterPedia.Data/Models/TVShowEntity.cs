@@ -20,8 +20,6 @@ public class TVShowEntity : IEntity
 
     public DateTime? NextUpdate { get; set; }
 
-    public string PartitionKey => Id;
-
     public List<SeasonEntity> Seasons { get; private set; } = new List<SeasonEntity>();
 
     public int UnwatchedEpisodeCount

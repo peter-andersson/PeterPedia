@@ -22,7 +22,5 @@ public class MovieEntity : IEntity
 
     public int? RunTime { get; set; }
 
-    public string ETag { get; set; } = string.Empty;
-
-    public string PartitionKey => Id;    
+    public string ETag { get; set; } = string.Empty; 
 }

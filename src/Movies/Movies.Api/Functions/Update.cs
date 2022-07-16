@@ -32,7 +32,7 @@ public class Update
             return req.BadRequest("Missing movie object");
         }
 
-        MovieEntity? existing = await _dataStorage.GetAsync(movie.Id, movie.Id);
+        MovieEntity? existing = await _dataStorage.GetAsync(movie.Id);
 
         if (existing is null)
         {

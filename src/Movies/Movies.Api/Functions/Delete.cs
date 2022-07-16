@@ -25,7 +25,7 @@ public class Delete
             return req.BadRequest("Missing query parameter id");
         }
 
-        MovieEntity? movie = await _dataStorage.GetAsync(id, id);
+        MovieEntity? movie = await _dataStorage.GetAsync(id);
 
         if (movie is null)
         {

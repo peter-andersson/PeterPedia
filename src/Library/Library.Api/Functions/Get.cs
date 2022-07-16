@@ -20,7 +20,7 @@ public class Get
             return req.BadRequest("Missing query parameter id");
         }
 
-        BookEntity? book = await _dataStoreage.GetAsync(id, id);
+        BookEntity? book = await _dataStoreage.GetAsync(id);
 
         return book is not null ? req.Ok(book.ConvertToBook()) : req.NotFound();
     }
