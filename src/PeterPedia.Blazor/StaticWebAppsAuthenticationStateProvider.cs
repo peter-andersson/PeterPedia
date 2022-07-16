@@ -1,10 +1,10 @@
 using System.Net.Http.Json;
 using System.Security.Claims;
-using Blazor.Shared.Models;
+using PeterPedia.Blazor.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
-namespace Blazor.Shared;
+namespace PeterPedia.Blazor;
 
 // From https://github.com/anthonychu/blazor-auth-static-web-apps
 public class StaticWebAppsAuthenticationStateProvider : AuthenticationStateProvider

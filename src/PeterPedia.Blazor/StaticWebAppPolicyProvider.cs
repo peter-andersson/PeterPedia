@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 
-namespace Blazor.Shared;
+namespace PeterPedia.Blazor;
 
 public class StaticWebAppPolicyProvider : IAuthorizationPolicyProvider
 {

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 
-namespace Blazor.Shared;
+namespace PeterPedia.Blazor;
 
 public class Navigation : IDisposable
 {

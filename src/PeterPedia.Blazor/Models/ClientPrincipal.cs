@@ -1,4 +1,4 @@
-namespace Blazor.Shared.Models;
+namespace PeterPedia.Blazor.Models;
 
 public class ClientPrincipal
 {
