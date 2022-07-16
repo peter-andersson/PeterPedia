@@ -1,12 +1,13 @@
+using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
-namespace PeterPedia.Pages.Reader;
+namespace Reader.App.Pages;
 
-public partial class AddSubscription : ComponentBase
+public partial class Add : ComponentBase
 {
     [Inject]
-    private IReaderManager ReaderManager { get; set; } = null!;
+    private HttpClient Http { get; set; } = null!;
 
     [Inject]
     private Navigation Navigation { get; set; } = null!;
@@ -38,19 +39,31 @@ public partial class AddSubscription : ComponentBase
         ErrorMessage = string.Empty;
         IsTaskRunning = true;
 
-        var result = await ReaderManager.AddSubscriptionAsync(NewSubscriptionUrl);
-
-        IsTaskRunning = false;
-
-        if (string.IsNullOrWhiteSpace(result))
+        var newSubscription = new NewSubscription()
         {
-            SuccessMessage = "Subscription added";
-            NewSubscriptionUrl = string.Empty;
-        }
-        else
+            Url = NewSubscriptionUrl,
+        };
+
+        try
         {
-            ErrorMessage = result;
+            HttpResponseMessage response = await Http.PostAsJsonAsync("/api/add", newSubscription);
+
+            var result = await response.Content.ReadAsStringAsync();
+
+            if (string.IsNullOrWhiteSpace(result))
+            {
+                SuccessMessage = "Subscription added";
+                NewSubscriptionUrl = string.Empty;
+            }
+            else
+            {
+                ErrorMessage = result;
+            }
         }
+        finally
+        {
+            IsTaskRunning = false;
+        } 
     }
 
     private void Close() => Navigation.NavigateBack();

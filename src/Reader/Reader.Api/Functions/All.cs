@@ -22,7 +22,7 @@ public class All
     {      
         try
         {
-            var queryText = "SELECT * FROM c WHERE type = \"subscription\" ORDER BY c.Title";
+            var queryText = "SELECT * FROM c WHERE c.Type = \"subscription\" ORDER BY c.Title";
 
             var queryDefinition = new QueryDefinition(query: queryText);
 

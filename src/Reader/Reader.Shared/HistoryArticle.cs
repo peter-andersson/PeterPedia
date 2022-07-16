@@ -1,6 +1,6 @@
 namespace Reader.Shared;
 
-public class History
+public class HistoryArticle
 {
     public string Title { get; set; } = string.Empty;
 

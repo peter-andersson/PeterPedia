@@ -1,33 +1,23 @@
+using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components;
 
-namespace PeterPedia.Pages.Reader;
+namespace Reader.App.Pages;
 
 public partial class Subscriptions : ComponentBase
 {
     [Inject]
-    private IReaderManager ReaderManager { get; set; } = null!;
+    private HttpClient Http { get; set; } = null!;
 
-    private readonly List<Subscription> _subscriptions = new();
+    private Subscription[] SubscriptionList { get; set; } = Array.Empty<Subscription>();
 
-    public List<Subscription> SubscriptionList
-    {
-        get
-        {
-            IEnumerable<Subscription> query = string.IsNullOrWhiteSpace(Filter)
-                ? _subscriptions
-                : _subscriptions.Where(sub => sub.Title.Contains(Filter, StringComparison.InvariantCultureIgnoreCase));
-
-            return query.OrderBy(sub => sub.Title).ToList();
-        }
-    }
-
-    public string Filter { get; set; } = string.Empty;
-
+    private bool Loading { get; set; } = true;
+    
     protected override async Task OnInitializedAsync()
     {
-        List<Subscription> subscriptions = await ReaderManager.GetSubscriptionsAsync();
+        Loading = true;
 
-        _subscriptions.Clear();
-        _subscriptions.AddRange(subscriptions);
+        SubscriptionList = await Http.GetFromJsonAsync<Subscription[]>("/api/all") ?? Array.Empty<Subscription>();
+
+        Loading = false;
     }
 }

@@ -1,18 +1,23 @@
+using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components;
 
-namespace PeterPedia.Pages.Reader;
+namespace Reader.App.Pages;
 
 public partial class History : ComponentBase
 {
     [Inject]
-    private IReaderManager ReaderManager { get; set; } = null!;
+    private HttpClient Http { get; set; } = null!;
 
-    public List<Article> Articles { get; set; } = new();
+    private HistoryArticle[] Articles { get; set; } = Array.Empty<HistoryArticle>();
+
+    private bool Loading { get; set; } = true;
 
     protected override async Task OnInitializedAsync()
     {
-        List<Article> articles = await ReaderManager.GetHistoryAsync();
+        Loading = true;
 
-        Articles.AddRange(articles);
-    }   
+        Articles = await Http.GetFromJsonAsync<HistoryArticle[]>("/api/history") ?? Array.Empty<HistoryArticle>();
+
+        Loading = false;
+    }
 }

@@ -1,17 +1,17 @@
 using Microsoft.AspNetCore.Components;
 
-namespace PeterPedia.Pages.Reader;
+namespace Reader.App.Pages;
 
 public partial class ArticleView
 {
     [Inject]
-    private IReaderManager ReaderManager { get; set; } = null!;
+    private HttpClient Http { get; set; } = null!;
 
     [Parameter]
-    public Article Article { get; set; } = null!;
+    public UnreadItem Article { get; set; } = null!;
 
     [Parameter]
-    public EventCallback<Article> OnArticleRemove { get; set; }
+    public EventCallback<UnreadItem> OnArticleRemove { get; set; }
 
     public bool IsTaskRunning { get; set; }
 
@@ -23,12 +23,21 @@ public partial class ArticleView
         }
 
         IsTaskRunning = true;
-        var result = await ReaderManager.DeleteArticleAsync(Article.Id);
-        IsTaskRunning = false;
 
-        if (result)
+        try
         {
+            HttpResponseMessage response = await Http.DeleteAsync($"/api/deleteArticle/{Article.Id}");
+            response.EnsureSuccessStatusCode();
+
             await OnArticleRemove.InvokeAsync(Article);
+        }
+        catch
+        {
+            // TODO: Handle error
+        }
+        finally
+        {
+            IsTaskRunning = false;
         }
     }
 }

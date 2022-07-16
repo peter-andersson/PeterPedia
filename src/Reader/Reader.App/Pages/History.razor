@@ -1,16 +1,20 @@
-﻿@page "/reader/history"
+﻿@page "/history"
+@attribute [Authorize(Roles = "admin")]
 
-<div class="row mt-2">
-    <div class="col">
-        <a class="btn btn-primary" href="/reader">Return to reader</a>
-    </div>
-</div>
+<h4 class="mt-2">History</h4>
 
-<div class="row mt-2">
-    <div class="list-group">
-        @foreach (Article article in Articles)
-        {
-            <a href="@article.Url" class="list-group-item list-group-item-action">@article.Title - @article.ReadDate?.ToString("d MMM yyyy HH:mm:ss")</a>
-        }
+@if (Loading)
+{
+    <Spinner Text="Loading..." />
+}
+else
+{
+    <div class="row mt-2">
+        <div class="list-group">
+            @foreach (HistoryArticle article in Articles)
+            {
+                <a href="@article.Url" class="list-group-item list-group-item-action">@article.Title - @article.ReadDate.ToString("d MMM yyyy HH:mm:ss")</a>
+            }
+        </div>
     </div>
-</div>
+}
