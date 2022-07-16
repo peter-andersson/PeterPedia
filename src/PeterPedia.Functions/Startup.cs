@@ -64,5 +64,31 @@ public class Startup : FunctionsStartup
             };
             return new CosmosDataStorage<BookEntity>(Options.Create(cosmosOptions));
         });
+
+        builder.Services.AddSingleton<IDataStorage<SubscriptionEntity>>((s) =>
+        {
+            var cosmosOptions = new CosmosOptions()
+            {
+                ApplicationName = configuration["Cosmos:ApplicationName"],
+                EndPointUrl = configuration["Cosmos:EndPointUrl"],
+                AccountKey = configuration["Cosmos:AccountKey"],
+                Database = configuration["Cosmos:Database"],
+                Container = configuration["Cosmos:ReaderContainer"]
+            };
+            return new CosmosDataStorage<SubscriptionEntity>(Options.Create(cosmosOptions));
+        });
+
+        builder.Services.AddSingleton<IDataStorage<ArticleEntity>>((s) =>
+        {
+            var cosmosOptions = new CosmosOptions()
+            {
+                ApplicationName = configuration["Cosmos:ApplicationName"],
+                EndPointUrl = configuration["Cosmos:EndPointUrl"],
+                AccountKey = configuration["Cosmos:AccountKey"],
+                Database = configuration["Cosmos:Database"],
+                Container = configuration["Cosmos:ReaderContainer"]
+            };
+            return new CosmosDataStorage<ArticleEntity>(Options.Create(cosmosOptions));
+        });
     }
 }

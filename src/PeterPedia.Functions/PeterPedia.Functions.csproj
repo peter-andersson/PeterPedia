@@ -8,6 +8,8 @@
     <UserSecretsId>b7172e78-881b-4526-b512-2219ee16a5a1</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="CodeHollow.FeedReader" Version="1.2.4" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.43" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
