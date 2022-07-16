@@ -31,7 +31,11 @@ public class UpdateTVShows
     }
 
     [FunctionName("UpdateTVShows")]
-    public async Task RunAsync([TimerTrigger("0 0 * * * *")]TimerInfo myTimer, ILogger log)
+    public async Task RunAsync([TimerTrigger("0 0 * * * *",
+#if DEBUG
+    RunOnStartup= true
+#endif
+        )]TimerInfo myTimer, ILogger log)
     {
         log.LogDebug(myTimer.FormatNextOccurrences(1));
 
@@ -79,9 +83,12 @@ public class UpdateTVShows
         if (!await _fileStorage.ExistsAsync(filename))
         {
             var posterUrl = await _service.GetImageUrlAsync(tmdbShow.PosterPath);
-            var stream = new MemoryStream();
-            await _service.DownloadImageUrlToStreamAsync(posterUrl, stream);
-            await _fileStorage.UploadAsync(filename, stream);
+            if (!string.IsNullOrWhiteSpace(posterUrl))
+            {
+                var stream = new MemoryStream();
+                await _service.DownloadImageUrlToStreamAsync(posterUrl, stream);
+                await _fileStorage.UploadAsync(filename, stream);
+            }            
         }
 
         show.ETag = tmdbShow.ETag;
