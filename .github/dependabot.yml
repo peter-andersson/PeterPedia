@@ -5,17 +5,79 @@
 
 version: 2
 updates:
-  - package-ecosystem: "nuget"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      
-  - package-ecosystem: "npm"
-    directory: "/"
-    schedule:
-      interval: "weekly"      
-      
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"         
+      interval: "weekly"   
+
+  - package-ecosystem: "nuget"
+    directory: "/src/Episodes/Episodes.Api"
+    schedule:
+      interval: "weekly"    
+
+  - package-ecosystem: "nuget"
+    directory: "/src/Library/Library.Api"
+    schedule:
+      interval: "weekly"      
+
+  - package-ecosystem: "nuget"
+    directory: "/src/Movies/Movies.Api"
+    schedule:
+      interval: "weekly"      
+
+  - package-ecosystem: "nuget"
+    directory: "/src/Reader/Reader.Api"
+    schedule:
+      interval: "weekly" 
+
+  - package-ecosystem: "nuget"
+    directory: "/src/Episodes/Episodes.App"
+    schedule:
+      interval: "weekly"    
+
+  - package-ecosystem: "nuget"
+    directory: "/src/Library/Library.AppApi"
+    schedule:
+      interval: "weekly"      
+
+  - package-ecosystem: "nuget"
+    directory: "/src/Movies/Movies.App"
+    schedule:
+      interval: "weekly"      
+
+  - package-ecosystem: "nuget"
+    directory: "/src/Reader/Reader.App"
+    schedule:
+      interval: "weekly" 
+
+  - package-ecosystem: "nuget"
+    directory: "/src/PeterPedia.Functions"
+    schedule:
+      interval: "weekly"      
+
+  - package-ecosystem: "nuget"
+    directory: "/tests/PeterPedia.Tests"
+    schedule:
+      interval: "weekly"                    
+      
+  - package-ecosystem: "npm"
+    directory: "/src/Episodes/Episodes.App"
+    schedule:
+      interval: "weekly"    
+
+  - package-ecosystem: "npm"
+    directory: "/src/Library/Library.App"
+    schedule:
+      interval: "weekly"      
+
+  - package-ecosystem: "npm"
+    directory: "/src/Movies/Movies.App"
+    schedule:
+      interval: "weekly"      
+
+  - package-ecosystem: "npm"
+    directory: "/src/Reader/Reader.App"
+    schedule:
+      interval: "weekly"                          
+      
+      
