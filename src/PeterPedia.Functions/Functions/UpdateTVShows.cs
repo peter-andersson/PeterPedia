@@ -31,7 +31,7 @@ public class UpdateTVShows
     }
 
     [FunctionName("UpdateTVShows")]
-    public async Task RunAsync([TimerTrigger("0 0 * * * *"]TimerInfo myTimer, ILogger log)
+    public async Task RunAsync([TimerTrigger("0 0 * * * *")]TimerInfo myTimer, ILogger log)
     {
         log.LogDebug(myTimer.FormatNextOccurrences(1));
 
