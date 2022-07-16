@@ -7,7 +7,7 @@ on:
     paths:
       - src/Library/Library.App/**
       - src/Library/Library.Api/**
-      - src\PeterPedia.Data/**
+      - src/PeterPedia.Data/**
       - .github/workflows/library.yml      
   pull_request:
     types: [opened, synchronize, reopened, closed]
@@ -16,7 +16,7 @@ on:
     paths:
       - src/Library/Library.App/**
       - src/Library/Library.Api/**
-      - src\PeterPedia.Data/**
+      - src/PeterPedia.Data/**
       - .github/workflows/library.yml
 jobs:
   build_and_deploy_job:

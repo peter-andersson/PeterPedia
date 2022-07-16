@@ -7,7 +7,7 @@ on:
     paths:
       - src/Episodes/Episodes.App/**
       - src/Episodes/Episodes.Api/**
-      - src\PeterPedia.Data/**
+      - src/PeterPedia.Data/**
       - .github/workflows/episodes.yml
   pull_request:
     types: [opened, synchronize, reopened, closed]
@@ -16,7 +16,7 @@ on:
     paths:
       - src/Episodes/Episodes.App/**
       - src/Episodes/Episodes.Api/**
-      - src\PeterPedia.Data/**
+      - src/PeterPedia.Data/**
       - .github/workflows/episodes.yml      
 
 jobs:

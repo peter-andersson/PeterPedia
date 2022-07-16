@@ -7,7 +7,7 @@ on:
     paths:
       - src/Movies/Movies.App/**
       - src/Movies/Movies.Api/**
-      - src\PeterPedia.Data/**
+      - src/PeterPedia.Data/**
       - .github/workflows/movies.yml      
   pull_request:
     types: [opened, synchronize, reopened, closed]
@@ -16,7 +16,7 @@ on:
     paths:
       - src/Movies/Movies.App/**
       - src/Movies/Movies.Api/**
-      - src\PeterPedia.Data/**
+      - src/PeterPedia.Data/**
       - .github/workflows/movies.yml
 jobs:
   build_and_deploy_job:
