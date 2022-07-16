@@ -60,7 +60,7 @@ public class Add
         var posterUrl = await _service.GetImageUrlAsync(tmdbShow.PosterPath);
         var stream = new MemoryStream();
         await _service.DownloadImageUrlToStreamAsync(posterUrl, stream);
-        await _fileStorage.UploadBlobAsync($"{id}.jpg", stream);
+        await _fileStorage.UploadAsync($"{id}.jpg", stream);
 
         show = new TVShowEntity()
         {

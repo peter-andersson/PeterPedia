@@ -58,7 +58,7 @@ public class Update
             var posterUrl = await _service.GetImageUrlAsync(tmdbShow.PosterPath);
             var stream = new MemoryStream();
             await _service.DownloadImageUrlToStreamAsync(posterUrl, stream);
-            await _fileStorage.UploadBlobAsync($"{existing.Id}.jpg", stream);
+            await _fileStorage.UploadAsync($"{existing.Id}.jpg", stream);
             
             existing.ETag = tmdbShow.ETag;
             existing.OriginalTitle = tmdbShow.Title;

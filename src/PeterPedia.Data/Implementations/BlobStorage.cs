@@ -1,3 +1,4 @@
+using Azure;
 using Azure.Storage.Blobs;
 using Microsoft.Extensions.Options;
 using PeterPedia.Data.Interface;
@@ -27,30 +28,35 @@ public class BlobStorage : IFileStorage
         _containerClient = _serviceClient.GetBlobContainerClient(options.Value.Container);
     }
 
-    public async Task UploadBlobAsync(string blob, Stream stream)
+    public async Task<bool> ExistsAsync(string blob)
     {
         BlobClient blobClient = _containerClient.GetBlobClient(blob);
 
-        await blobClient.DeleteIfExistsAsync();
-
-        stream.Seek(0, SeekOrigin.Begin);
-        await blobClient.UploadAsync(stream);
+        return await blobClient.ExistsAsync();
     }
 
-    public async Task<bool> DownloadBlobAsync(string blob, Stream stream)
+    public async Task UploadAsync(string blob, Stream stream)
     {
         BlobClient blobClient = _containerClient.GetBlobClient(blob);
 
-        if (await blobClient.ExistsAsync())
+        stream.Seek(0, SeekOrigin.Begin);
+        await blobClient.UploadAsync(stream, overwrite: true);
+    }
+
+    public async Task<bool> DownloadAsync(string blob, Stream stream)
+    {
+        BlobClient blobClient = _containerClient.GetBlobClient(blob);
+
+        try
         {
             await blobClient.DownloadToAsync(stream);
             stream.Seek(0, SeekOrigin.Begin);
 
             return true;
         }
-        else
+        catch (RequestFailedException ex) when (ex.Status == 404)
         {
             return false;
-        }     
-    }
+        }        
+    }    
 }

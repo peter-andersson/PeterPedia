@@ -84,7 +84,7 @@ public class Upsert
                 await response.Content.CopyToAsync(stream, cancellationToken);
                 stream.Seek(0, SeekOrigin.Begin);
 
-                await _fileStorage.UploadBlobAsync($"{existing.Id}.jpg", stream);
+                await _fileStorage.UploadAsync($"{existing.Id}.jpg", stream);
             }
             catch (Exception ex)
             {

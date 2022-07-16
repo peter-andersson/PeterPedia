@@ -30,7 +30,7 @@ public class Image
         try
         {
             var stream = new MemoryStream();
-            if (await _fileStorage.DownloadBlobAsync(image, stream))
+            if (await _fileStorage.DownloadAsync(image, stream))
             {
                 return new FileStreamResult(stream, "image/jpeg");
             }

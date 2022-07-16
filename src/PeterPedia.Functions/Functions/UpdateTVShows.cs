@@ -31,10 +31,10 @@ public class UpdateTVShows
     }
 
     [FunctionName("UpdateTVShows")]
-#pragma warning disable IDE0060 // Remove unused parameter
-    public async Task RunAsync([TimerTrigger("0 0 * * * *" )]TimerInfo myTimer, ILogger log)
-#pragma warning restore IDE0060 // Remove unused parameter
+    public async Task RunAsync([TimerTrigger("0 0 * * * *")]TimerInfo myTimer, ILogger log)
     {
+        log.LogDebug(myTimer.FormatNextOccurrences(1));
+
         var blobStorageOptions = new BlobStorageOptions()
         {
             ConnectionString = _configuration["BlobStorage:ConnectionString"],
@@ -74,11 +74,15 @@ public class UpdateTVShows
             _log.LogInformation("Failed to fetch data for tv show with id {id} from themoviedb.org", show.Id);
             return;
         }
-       
-        var posterUrl = await _service.GetImageUrlAsync(tmdbShow.PosterPath);
-        var stream = new MemoryStream();
-        await _service.DownloadImageUrlToStreamAsync(posterUrl, stream);
-        await _fileStorage.UploadBlobAsync($"{show.Id}.jpg", stream);
+
+        var filename = $"{show.Id}.jpg";
+        if (!await _fileStorage.ExistsAsync(filename))
+        {
+            var posterUrl = await _service.GetImageUrlAsync(tmdbShow.PosterPath);
+            var stream = new MemoryStream();
+            await _service.DownloadImageUrlToStreamAsync(posterUrl, stream);
+            await _fileStorage.UploadAsync(filename, stream);
+        }
 
         show.ETag = tmdbShow.ETag;
         show.OriginalTitle = tmdbShow.Title;

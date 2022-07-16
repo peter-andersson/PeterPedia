@@ -57,7 +57,7 @@ public class Update
             var posterUrl = await _service.GetImageUrlAsync(tmdbMovie.PosterPath);
             var stream = new MemoryStream();
             await _service.DownloadImageUrlToStreamAsync(posterUrl, stream);
-            await _fileStorage.UploadBlobAsync($"{existing.Id}.jpg", stream);
+            await _fileStorage.UploadAsync($"{existing.Id}.jpg", stream);
 
             existing.ImdbId = tmdbMovie.ImdbId ?? string.Empty;
             existing.OriginalLanguage = tmdbMovie.OriginalLanguage;
