@@ -1,10 +1,22 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <UserSecretsId>8bdcc7f7-e323-409e-9864-3220bdb5ddb5</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="CodeHollow.FeedReader" Version="1.2.4" />
+    <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\PeterPedia.Data\PeterPedia.Data.csproj" />
+    <ProjectReference Include="..\..\PeterPedia.Shared\PeterPedia.Shared.csproj" />
+    <ProjectReference Include="..\Reader.Shared\Reader.Shared.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">
