@@ -1,3 +1,3 @@
-global using Blazor.Shared;
+global using PeterPedia.Blazor;
 global using Library.Shared;
 global using Library.App.Models;

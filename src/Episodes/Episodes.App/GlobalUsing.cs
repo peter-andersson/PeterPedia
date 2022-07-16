@@ -1,2 +1,2 @@
-global using Blazor.Shared;
+global using PeterPedia.Blazor;
 global using Episodes.Shared;

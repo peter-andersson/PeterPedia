@@ -258,21 +258,15 @@
           "System.Text.Encodings.Web": "6.0.0"
         }
       },
-      "blazor.shared": {
-        "type": "Project",
-        "dependencies": {
-          "Microsoft.AspNetCore.Authorization": "6.0.7",
-          "Microsoft.AspNetCore.Components.Authorization": "6.0.7",
-          "Microsoft.AspNetCore.Components.WebAssembly": "6.0.7"
-        }
-      },
       "episodes.shared": {
         "type": "Project"
       },
-      "peterpedia.components": {
+      "peterpedia.blazor": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.AspNetCore.Components.Web": "6.0.7"
+          "Microsoft.AspNetCore.Components.Authorization": "6.0.7",
+          "Microsoft.AspNetCore.Components.Web": "6.0.7",
+          "Microsoft.AspNetCore.Components.WebAssembly": "6.0.7"
         }
       }
     },
