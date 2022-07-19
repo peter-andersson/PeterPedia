@@ -15,6 +15,16 @@ public partial class ArticleView
 
     public bool IsTaskRunning { get; set; }
 
+    private async Task OpenAsync()
+    {
+        if (Article is null)
+        {
+            return;
+        }
+
+        await OnArticleRemove.InvokeAsync(Article);
+    }
+
     private async Task DeleteAsync()
     {
         if (Article is null)
