@@ -28,7 +28,7 @@ public class Startup : FunctionsStartup
         builder.Services.AddOptions<BlobStorageOptions>()
             .Configure<IConfiguration>((settings, configuration) => configuration.GetSection("BlobStorage").Bind(settings));
 
-        builder.Services.AddSingleton<IDataStorage<TVShowEntity>, CosmosDataStorage<TVShowEntity>>();
+        builder.Services.AddSingleton<IRepository, CosmosRepository>();
         builder.Services.AddSingleton<IFileStorage, BlobStorage>();
     }
 }

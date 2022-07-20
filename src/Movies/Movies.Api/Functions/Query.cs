@@ -5,22 +5,21 @@ using Newtonsoft.Json;
 
 namespace Movies.Api.Functions;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Required by Azure function runtime.")]
 public class Query
 {
     private readonly ILogger<Query> _log;
-    private readonly IDataStorage<MovieEntity> _dataStorage;
+    private readonly IRepository _repository;
 
-    public Query(ILogger<Query> log, IDataStorage<MovieEntity> dataStorage)
+    public Query(ILogger<Query> log, IRepository repository)
     {
         _log = log;
-        _dataStorage = dataStorage;
+        _repository = repository;
     }
 
     [FunctionName("Query")]
     public async Task<IActionResult> RunAsync(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "query")] HttpRequest req,
-        CancellationToken cancellationToken)
+        CancellationToken _)
     {
         var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
 
@@ -40,7 +39,7 @@ public class Query
                 .WithParameter("@offset", query.Page * query.PageSize)
                 .WithParameter("@search", query.Search);
 
-            List<MovieEntity> entities = await _dataStorage.QueryAsync(queryDefinition);
+            List<MovieEntity> entities = await _repository.QueryAsync<MovieEntity>(queryDefinition);
             var result = new List<Movie>(entities.Count);
             foreach (MovieEntity entity in entities)
             {

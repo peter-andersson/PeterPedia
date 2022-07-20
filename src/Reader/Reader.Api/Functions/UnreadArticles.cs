@@ -7,12 +7,12 @@ namespace Reader.Api.Functions;
 public class UnreadArticles
 {
     private readonly ILogger<UnreadArticles> _log;
-    private readonly IDataStorage<ArticleEntity> _dataStorage;
+    private readonly IRepository _repository;
 
-    public UnreadArticles(ILogger<UnreadArticles> log, IDataStorage<ArticleEntity> dataStorage)
+    public UnreadArticles(ILogger<UnreadArticles> log, IRepository repository)
     {
         _log = log;
-        _dataStorage = dataStorage;
+        _repository = repository;
     }
 
     [FunctionName("UnreadArticles")]
@@ -22,9 +22,9 @@ public class UnreadArticles
     {
         try
         {
-            var query = new QueryDefinition(query: "SELECT * FROM c WHERE c.Type = \"article\" AND IS_NULL(c.ReadDate) ORDER BY c.PublishDate");
+            var query = new QueryDefinition(query: "SELECT * FROM c WHERE c.Type = 'article' AND IS_NULL(c.ReadDate) ORDER BY c.PublishDate");
 
-            List<ArticleEntity> entities = await _dataStorage.QueryAsync(query);
+            List<ArticleEntity> entities = await _repository.QueryAsync<ArticleEntity>(query);
 
             var groups = new Dictionary<string, UnreadGroup>();
             

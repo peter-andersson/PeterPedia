@@ -6,12 +6,12 @@ namespace Episodes.Api.Functions;
 public class Delete
 {
     private readonly ILogger<Delete> _log;
-    private readonly IDataStorage<TVShowEntity> _dataStorage;    
+    private readonly IRepository _repository;    
 
-    public Delete(ILogger<Delete> log, IDataStorage<TVShowEntity> dataStorage)
+    public Delete(ILogger<Delete> log, IRepository repository)
     {
         _log = log;
-        _dataStorage = dataStorage;
+        _repository = repository;
     }
 
     [FunctionName("Delete")]    
@@ -25,7 +25,7 @@ public class Delete
             return req.BadRequest("Missing query parameter id");
         }
 
-        TVShowEntity? show = await _dataStorage.GetAsync(id);
+        TVShowEntity? show = await _repository.GetAsync<TVShowEntity>(id);
 
         if (show is null)
         {
@@ -34,7 +34,7 @@ public class Delete
 
         try
         {
-            await _dataStorage.DeleteAsync(show);
+            await _repository.DeleteAsync(show);
 
             _log.LogInformation("Deleted tv show with id {id} and title {title}.", show.Id, show.Title);
 

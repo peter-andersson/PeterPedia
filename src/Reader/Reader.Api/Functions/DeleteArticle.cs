@@ -6,12 +6,12 @@ namespace Movies.Api.Functions;
 public class DeleteArticle
 {
     private readonly ILogger<DeleteArticle> _log;
-    private readonly IDataStorage<ArticleEntity> _dataStorage;
+    private readonly IRepository _repository;
 
-    public DeleteArticle(ILogger<DeleteArticle> log, IDataStorage<ArticleEntity> dataStorage)
+    public DeleteArticle(ILogger<DeleteArticle> log, IRepository repository)
     {
         _log = log;
-        _dataStorage = dataStorage;
+        _repository = repository;
     }
 
     [FunctionName("DeleteArticle")]
@@ -25,7 +25,7 @@ public class DeleteArticle
             return req.BadRequest("Missing id for article to delete.");
         }
 
-        ArticleEntity? article = await _dataStorage.GetAsync(id);
+        ArticleEntity? article = await _repository.GetAsync<ArticleEntity>(id);
 
         if (article is null)
         {
@@ -36,7 +36,7 @@ public class DeleteArticle
         {
             article.ReadDate = DateTime.UtcNow;
 
-            await _dataStorage.UpdateAsync(article);
+            await _repository.UpdateAsync(article);
 
             return req.Ok();
         }

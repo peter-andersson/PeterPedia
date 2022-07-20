@@ -7,12 +7,12 @@ namespace Reader.Api.Functions;
 public class ArticleHistory
 {
     private readonly ILogger<ArticleHistory> _log;
-    private readonly IDataStorage<ArticleEntity> _dataStorage;
+    private readonly IRepository _repository;
 
-    public ArticleHistory(ILogger<ArticleHistory> log, IDataStorage<ArticleEntity> dataStorage)
+    public ArticleHistory(ILogger<ArticleHistory> log, IRepository repository)
     {
         _log = log;
-        _dataStorage = dataStorage;
+        _repository = repository;
     }
 
     [FunctionName("ArticleHistory")]
@@ -22,9 +22,9 @@ public class ArticleHistory
     {
         try
         {
-            var query = new QueryDefinition(query: "SELECT * FROM c WHERE c.Type = \"article\" AND NOT IS_NULL(c.ReadDate) ORDER BY c.ReadDate DESC OFFSET 0 LIMIT 20");
+            var query = new QueryDefinition(query: "SELECT * FROM c WHERE c.Type = 'article' AND NOT IS_NULL(c.ReadDate) ORDER BY c.ReadDate DESC OFFSET 0 LIMIT 20");
 
-            List<ArticleEntity> entities = await _dataStorage.QueryAsync(query);
+            List<ArticleEntity> entities = await _repository.QueryAsync<ArticleEntity>(query);
             var result = new List<HistoryArticle>(entities.Count);
             foreach (ArticleEntity entity in entities)
             {

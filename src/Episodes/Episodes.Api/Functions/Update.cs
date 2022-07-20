@@ -8,14 +8,14 @@ public class Update
 {
     private readonly ILogger<Update> _log;
     private readonly ITheMovieDatabaseService _service;
-    private readonly IDataStorage<TVShowEntity> _dataStorage;
+    private readonly IRepository _repository;
     private readonly IFileStorage _fileStorage;
 
-    public Update(ILogger<Update> log, ITheMovieDatabaseService service, IDataStorage<TVShowEntity> dbContext, IFileStorage fileStorage)
+    public Update(ILogger<Update> log, ITheMovieDatabaseService service, IRepository repository, IFileStorage fileStorage)
     {
         _log = log;
         _service = service;
-        _dataStorage = dbContext;
+        _repository = repository;
         _fileStorage = fileStorage;
     }
 
@@ -32,7 +32,7 @@ public class Update
             return req.BadRequest("Missing movie object");
         }
 
-        TVShowEntity? existing = await _dataStorage.GetAsync(show.Id);
+        TVShowEntity? existing = await _repository.GetAsync<TVShowEntity>(show.Id);
 
         if (existing is null)
         {
@@ -91,7 +91,7 @@ public class Update
 
         try
         {
-            await _dataStorage.UpdateAsync(existing);
+            await _repository.UpdateAsync(existing);
             _log.LogInformation("Updated tv show with id {id}, title {title}", existing.Id, existing.Title);
 
             return req.Ok();

@@ -5,9 +5,9 @@ namespace Library.Api.Functions;
 
 public class Get
 {
-    private readonly IDataStorage<BookEntity> _dataStoreage;
+    private readonly IRepository _repository;
 
-    public Get(IDataStorage<BookEntity> dataStorage) => _dataStoreage = dataStorage;
+    public Get(IRepository repository) => _repository = repository;
 
     [FunctionName("Get")]    
     public async Task<IActionResult> RunAsync(
@@ -20,7 +20,7 @@ public class Get
             return req.BadRequest("Missing query parameter id");
         }
 
-        BookEntity? book = await _dataStoreage.GetAsync(id);
+        BookEntity? book = await _repository.GetAsync<BookEntity>(id);
 
         return book is not null ? req.Ok(book.ConvertToBook()) : req.NotFound();
     }

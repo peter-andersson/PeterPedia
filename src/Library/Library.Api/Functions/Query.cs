@@ -9,12 +9,12 @@ namespace Library.Api.Functions;
 public class Query
 {
     private readonly ILogger<Query> _log;
-    private readonly IDataStorage<BookEntity> _dataStorage;
+    private readonly IRepository _repository;
 
-    public Query(ILogger<Query> log, IDataStorage<BookEntity> dataStorage)
+    public Query(ILogger<Query> log, IRepository repository)
     {
         _log = log;
-        _dataStorage = dataStorage;
+        _repository = repository;
     }
 
     [FunctionName("Query")]
@@ -108,7 +108,7 @@ public class Query
             QueryDefinition queryDefinition = new QueryDefinition(query: queryBuilder.ToString())
                 .WithParameter("@search", query.Search);
 
-            List<BookEntity> entities = await _dataStorage.QueryAsync(queryDefinition);
+            List<BookEntity> entities = await _repository.QueryAsync<BookEntity>(queryDefinition);
             var result = new List<Book>(entities.Count);
             foreach (BookEntity entity in entities)
             {

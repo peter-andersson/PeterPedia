@@ -6,12 +6,12 @@ namespace Movies.Api.Functions;
 public class OpenArticle
 {
     private readonly ILogger<OpenArticle> _log;
-    private readonly IDataStorage<ArticleEntity> _dataStorage;
+    private readonly IRepository _repository;
 
-    public OpenArticle(ILogger<OpenArticle> log, IDataStorage<ArticleEntity> dataStorage)
+    public OpenArticle(ILogger<OpenArticle> log, IRepository repository)
     {
         _log = log;
-        _dataStorage = dataStorage;
+        _repository = repository;
     }
 
     [FunctionName("OpenArticle")]
@@ -25,7 +25,7 @@ public class OpenArticle
             return req.BadRequest("Missing id for article to open.");
         }
 
-        ArticleEntity? article = await _dataStorage.GetAsync(id);
+        ArticleEntity? article = await _repository.GetAsync<ArticleEntity>(id);
 
         if (article is null)
         {
@@ -36,7 +36,7 @@ public class OpenArticle
         {
             article.ReadDate = DateTime.UtcNow;
 
-            await _dataStorage.UpdateAsync(article);
+            await _repository.UpdateAsync(article);
 
             return req.Redirect(article.Url);
         }

@@ -13,19 +13,13 @@ public class Backup
 {
     private readonly ILogger<Backup> _log;
     private readonly IConfiguration _configuration;
-    private readonly IDataStorage<TVShowEntity> _tvStorage;
-    private readonly IDataStorage<MovieEntity> _movieStorage;
-    private readonly IDataStorage<BookEntity> _bookStorage;
-    private readonly IDataStorage<SubscriptionEntity> _subscriptionStorage;
+    private readonly IRepository _repository;
 
-    public Backup(ILogger<Backup> log, IConfiguration configuration, IDataStorage<TVShowEntity> tvStorage, IDataStorage<MovieEntity> movieStorage, IDataStorage<BookEntity> bookStorage, IDataStorage<SubscriptionEntity> subscriptionStorage)
+    public Backup(ILogger<Backup> log, IConfiguration configuration, IRepository repository)
     {
         _log = log;
         _configuration = configuration;
-        _tvStorage = tvStorage;
-        _movieStorage = movieStorage;
-        _bookStorage = bookStorage;
-        _subscriptionStorage = subscriptionStorage;
+        _repository = repository;
     }
 
     [FunctionName("Backup")]
@@ -39,13 +33,13 @@ public class Backup
 
             var data = new BackupData
             {
-                Shows = await _tvStorage.QueryAsync(query),
-                Movies = await _movieStorage.QueryAsync(query),
-                Books = await _bookStorage.QueryAsync(query)                
+                Shows = await _repository.QueryAsync<TVShowEntity>(_configuration["Cosmos:EpisodesContainer"], query),
+                Movies = await _repository.QueryAsync<MovieEntity>(_configuration["Cosmos:MoviesContainer"], query),
+                Books = await _repository.QueryAsync<BookEntity>(_configuration["Cosmos:BooksContainer"], query)                
             };
 
-            query = new QueryDefinition(query: "SELECT * FROM c WHERE c.Type = \"subscription\"");
-            data.Subscriptions = await _subscriptionStorage.QueryAsync(query);
+            query = new QueryDefinition(query: "SELECT * FROM c WHERE c.Type = 'subscription'");
+            data.Subscriptions = await _repository.QueryAsync<SubscriptionEntity>(_configuration["Cosmos:ReaderContainer"], query);
 
             var client = new BlobServiceClient(_configuration["BlobStorage:ConnectionString"]);
             BlobContainerClient container = client.GetBlobContainerClient(_configuration["BlobStorage:BackupContainer"]);

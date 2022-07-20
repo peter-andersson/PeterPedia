@@ -6,8 +6,8 @@ using CodeHollow.FeedReader;
 using CodeHollow.FeedReader.Feeds;
 using HtmlAgilityPack;
 using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.Cosmos.Scripts;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using PeterPedia.Data.Interface;
@@ -18,17 +18,16 @@ namespace PeterPedia.Functions.Functions;
 public class UpdateSubscriptions
 {
     private readonly ILogger<UpdateSubscriptions> _log;
-    private readonly IDataStorage<SubscriptionEntity> _subscriptionStorage;
-    private readonly IDataStorage<ArticleEntity> _articleStorage;
+    private readonly IRepository _repository;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly string _containerId;
 
-
-    public UpdateSubscriptions(ILogger<UpdateSubscriptions> log, IDataStorage<SubscriptionEntity> subscriptionStorage, IDataStorage<ArticleEntity> articleStorage, IHttpClientFactory httpClientFactory)
+    public UpdateSubscriptions(ILogger<UpdateSubscriptions> log, IRepository subscriptionStorage, IHttpClientFactory httpClientFactory, IConfiguration configuration)
     {
         _log = log;
-        _subscriptionStorage = subscriptionStorage;
-        _articleStorage = articleStorage;
+        _repository = subscriptionStorage;
         _httpClientFactory = httpClientFactory;
+        _containerId = configuration["Cosmos:ReaderContainer"];
     }
 
     [FunctionName("UpdateSubscriptions")]
@@ -36,9 +35,9 @@ public class UpdateSubscriptions
     {
         _log.LogDebug(myTimer.FormatNextOccurrences(1));
 
-        var query = new QueryDefinition(query: "SELECT * FROM c WHERE c.Type = \"subscription\" AND c.NextUpdate < GetCurrentDateTime() ORDER BY c.NextUpdate OFFSET 0 LIMIT 20");
+        var query = new QueryDefinition(query: "SELECT * FROM c WHERE c.Type = 'subscription' AND c.NextUpdate < GetCurrentDateTime() ORDER BY c.NextUpdate OFFSET 0 LIMIT 20");
 
-        List<SubscriptionEntity> entities = await _subscriptionStorage.QueryAsync(query);
+        List<SubscriptionEntity> entities = await _repository.QueryAsync<SubscriptionEntity>(_containerId, query);
 
         foreach (SubscriptionEntity subscription in entities)
         {
@@ -46,7 +45,7 @@ public class UpdateSubscriptions
 
             subscription.NextUpdate = DateTime.UtcNow.AddMinutes(subscription.UpdateIntervalMinute);
 
-            await _subscriptionStorage.UpdateAsync(subscription);
+            await _repository.UpdateAsync(_containerId, subscription);
         }
     }
 
@@ -85,14 +84,14 @@ public class UpdateSubscriptions
                     continue;
                 }
 
-                QueryDefinition query = new QueryDefinition(query: "SELECT * FROM c WHERE c.Type = \"article\" AND c.Url = @url")
+                QueryDefinition query = new QueryDefinition(query: "SELECT * FROM c WHERE c.Type = 'article' AND c.Url = @url")
                     .WithParameter("@url", article.Url);
 
-                List<ArticleEntity> entities = await _articleStorage.QueryAsync(query);
+                List<ArticleEntity> entities = await _repository.QueryAsync<ArticleEntity>(_containerId, query);
 
                 if (entities.Count == 0)
                 {
-                    await _articleStorage.AddAsync(article);
+                    await _repository.AddAsync(_containerId, article);
                 }
             }
         }

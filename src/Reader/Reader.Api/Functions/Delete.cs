@@ -6,12 +6,12 @@ namespace Reader.Api.Functions;
 public class Delete
 {
     private readonly ILogger<Delete> _log;
-    private readonly IDataStorage<SubscriptionEntity> _dataStorage;    
+    private readonly IRepository _repository;    
 
-    public Delete(ILogger<Delete> log, IDataStorage<SubscriptionEntity> dataStorage)
+    public Delete(ILogger<Delete> log, IRepository repository)
     {
         _log = log;
-        _dataStorage = dataStorage;
+        _repository = repository;
     }
 
     [FunctionName("Delete")]    
@@ -25,7 +25,7 @@ public class Delete
             return req.BadRequest("Missing query parameter id");
         }
 
-        SubscriptionEntity? subscription = await _dataStorage.GetAsync(id);
+        SubscriptionEntity? subscription = await _repository.GetAsync<SubscriptionEntity>(id);
 
         if (subscription is null)
         {
@@ -34,7 +34,7 @@ public class Delete
 
         try
         {
-            await _dataStorage.DeleteAsync(subscription);
+            await _repository.DeleteAsync(subscription);
 
             _log.LogInformation("Deleted subscription with id {id} and title {title}.", subscription.Id, subscription.Title);
 

@@ -5,9 +5,9 @@ namespace Movies.Api.Functions;
 
 public class Get
 {
-    private readonly IDataStorage<MovieEntity> _dataStoreage;
+    private readonly IRepository _repository;
 
-    public Get(IDataStorage<MovieEntity> dataStorage) => _dataStoreage = dataStorage;
+    public Get(IRepository repository) => _repository = repository;
 
     [FunctionName("Get")]    
     public async Task<IActionResult> RunAsync(
@@ -20,7 +20,7 @@ public class Get
             return req.BadRequest("Missing query parameter id");
         }
 
-        MovieEntity? movie = await _dataStoreage.GetAsync(id);
+        MovieEntity? movie = await _repository.GetAsync<MovieEntity>(id);
 
         return movie is not null ? req.Ok(movie.ConvertToMovie()) : req.NotFound();
     }

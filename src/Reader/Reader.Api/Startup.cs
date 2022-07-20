@@ -16,7 +16,6 @@ public class Startup : FunctionsStartup
         builder.Services.AddOptions<CosmosOptions>()
             .Configure<IConfiguration>((settings, configuration) => configuration.GetSection("Cosmos").Bind(settings));
 
-        builder.Services.AddSingleton<IDataStorage<SubscriptionEntity>, CosmosDataStorage<SubscriptionEntity>>();
-        builder.Services.AddSingleton<IDataStorage<ArticleEntity>, CosmosDataStorage<ArticleEntity>>();
+        builder.Services.AddSingleton<IRepository, CosmosRepository>();
     }
 }
