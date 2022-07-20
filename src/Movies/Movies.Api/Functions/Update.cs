@@ -8,14 +8,14 @@ public class Update
 {
     private readonly ILogger<Update> _log;
     private readonly ITheMovieDatabaseService _service;
-    private readonly IDataStorage<MovieEntity> _dataStorage;
+    private readonly IRepository _repository;
     private readonly IFileStorage _fileStorage;
 
-    public Update(ILogger<Update> log, ITheMovieDatabaseService service, IDataStorage<MovieEntity> dbContext, IFileStorage fileStorage)
+    public Update(ILogger<Update> log, ITheMovieDatabaseService service, IRepository repository, IFileStorage fileStorage)
     {
         _log = log;
         _service = service;
-        _dataStorage = dbContext;
+        _repository = repository;
         _fileStorage = fileStorage;
     }
 
@@ -32,7 +32,7 @@ public class Update
             return req.BadRequest("Missing movie object");
         }
 
-        MovieEntity? existing = await _dataStorage.GetAsync(movie.Id);
+        MovieEntity? existing = await _repository.GetAsync<MovieEntity>(movie.Id);
 
         if (existing is null)
         {
@@ -67,7 +67,7 @@ public class Update
 
         try
         {            
-            await _dataStorage.UpdateAsync(existing);
+            await _repository.UpdateAsync(existing);
             _log.LogInformation("Updated movie with id {id}, title {title}, watchDate: {watchDate}", existing.Id, existing.Title, existing.WatchedDate);
 
             return req.Ok();

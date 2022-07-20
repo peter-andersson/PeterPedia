@@ -6,12 +6,12 @@ namespace Movies.Api.Functions;
 public class Delete
 {
     private readonly ILogger<Delete> _log;
-    private readonly IDataStorage<MovieEntity> _dataStorage;    
+    private readonly IRepository _repository;    
 
-    public Delete(ILogger<Delete> log, IDataStorage<MovieEntity> dataStorage)
+    public Delete(ILogger<Delete> log, IRepository repository)
     {
         _log = log;
-        _dataStorage = dataStorage;
+        _repository = repository;
     }
 
     [FunctionName("Delete")]    
@@ -25,7 +25,7 @@ public class Delete
             return req.BadRequest("Missing query parameter id");
         }
 
-        MovieEntity? movie = await _dataStorage.GetAsync(id);
+        MovieEntity? movie = await _repository.GetAsync<MovieEntity>(id);
 
         if (movie is null)
         {
@@ -34,7 +34,7 @@ public class Delete
 
         try
         {
-            await _dataStorage.DeleteAsync(movie);
+            await _repository.DeleteAsync(movie);
 
             _log.LogInformation("Deleted movie with id {id} and title {title}.", movie.Id, movie.Title);
 
