@@ -7,14 +7,14 @@ namespace Library.Api.Functions;
 public class Upsert
 {
     private readonly ILogger<Upsert> _log;
-    private readonly IDataStorage<BookEntity> _dataStorage;
+    private readonly IRepository _repository;
     private readonly IFileStorage _fileStorage;
     private readonly IHttpClientFactory _clientFactory;
 
-    public Upsert(ILogger<Upsert> log, IDataStorage<BookEntity> dbContext, IFileStorage fileStorage, IHttpClientFactory clientFactory)
+    public Upsert(ILogger<Upsert> log, IRepository repository, IFileStorage fileStorage, IHttpClientFactory clientFactory)
     {
         _log = log;
-        _dataStorage = dbContext;
+        _repository = repository;
         _fileStorage = fileStorage;
         _clientFactory = clientFactory;
     }
@@ -32,7 +32,7 @@ public class Upsert
             return req.BadRequest("Missing book object");
         }
 
-        BookEntity? existing = await _dataStorage.GetAsync(book.Id);
+        BookEntity? existing = await _repository.GetAsync<BookEntity>(book.Id);
 
         var update = true;
 
@@ -56,12 +56,12 @@ public class Upsert
             if (update)
             {
 
-                await _dataStorage.UpdateAsync(existing);
+                await _repository.UpdateAsync(existing);
                 _log.LogInformation("Updated book with id {id}, title {title}", existing.Id, existing.Title);                
             }
             else
             {
-                await _dataStorage.AddAsync(existing);
+                await _repository.AddAsync(existing);
                 _log.LogInformation("Added book with id {id}, title {title}", existing.Id, existing.Title);
             }
         }

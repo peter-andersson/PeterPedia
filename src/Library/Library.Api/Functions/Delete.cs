@@ -6,12 +6,12 @@ namespace Library.Api.Functions;
 public class Delete
 {
     private readonly ILogger<Delete> _log;
-    private readonly IDataStorage<BookEntity> _dataStorage;    
+    private readonly IRepository _repository;    
 
-    public Delete(ILogger<Delete> log, IDataStorage<BookEntity> dataStorage)
+    public Delete(ILogger<Delete> log, IRepository repository)
     {
         _log = log;
-        _dataStorage = dataStorage;
+        _repository = repository;
     }
 
     [FunctionName("Delete")]    
@@ -25,7 +25,7 @@ public class Delete
             return req.BadRequest("Missing query parameter id");
         }
 
-        BookEntity? book = await _dataStorage.GetAsync(id);
+        BookEntity? book = await _repository.GetAsync<BookEntity>(id);
 
         if (book is null)
         {
@@ -34,7 +34,7 @@ public class Delete
 
         try
         {
-            await _dataStorage.DeleteAsync(book);
+            await _repository.DeleteAsync(book);
 
             _log.LogInformation("Deleted book with id {id} and title {title}.", book.Id, book.Title);
 

@@ -21,7 +21,7 @@ public class Startup : FunctionsStartup
         builder.Services.AddOptions<BlobStorageOptions>()
             .Configure<IConfiguration>((settings, configuration) => configuration.GetSection("BlobStorage").Bind(settings));
 
-        builder.Services.AddSingleton<IDataStorage<BookEntity>, CosmosDataStorage<BookEntity>>();
+        builder.Services.AddSingleton<IRepository, CosmosRepository>();
         builder.Services.AddSingleton<IFileStorage, BlobStorage>();
     }
 }
