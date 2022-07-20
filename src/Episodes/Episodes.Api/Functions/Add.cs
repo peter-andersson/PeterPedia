@@ -7,14 +7,14 @@ public class Add
 {
     private readonly ILogger<Add> _log;
     private readonly ITheMovieDatabaseService _service;
-    private readonly IDataStorage<TVShowEntity> _dataStorage;
+    private readonly IRepository _repository;
     private readonly IFileStorage _fileStorage;
 
-    public Add(ILogger<Add> log, ITheMovieDatabaseService service, IDataStorage<TVShowEntity> dataStorage, IFileStorage fileStorage)
+    public Add(ILogger<Add> log, ITheMovieDatabaseService service, IRepository repository, IFileStorage fileStorage)
     {
         _log = log;
         _service = service;
-        _dataStorage = dataStorage;
+        _repository = repository;
         _fileStorage = fileStorage;
     }
 
@@ -29,7 +29,7 @@ public class Add
             return req.BadRequest("Missing query parameter id");
         }
 
-        TVShowEntity? show = await _dataStorage.GetAsync(id);
+        TVShowEntity? show = await _repository.GetAsync<TVShowEntity>(id);
 
         if (show is not null)
         {
@@ -84,7 +84,7 @@ public class Add
 
         try
         {
-            await _dataStorage.AddAsync(show);
+            await _repository.AddAsync(show);
 
             _log.LogInformation("Added tv show with id {id} and title {title}.", show.Id, show.Title);
 

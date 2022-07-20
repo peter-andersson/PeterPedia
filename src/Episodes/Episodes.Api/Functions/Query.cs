@@ -8,12 +8,12 @@ namespace Episodes.Api.Functions;
 public class Query
 {
     private readonly ILogger<Query> _log;
-    private readonly IDataStorage<TVShowEntity> _dataStorage;
+    private readonly IRepository _repository;
 
-    public Query(ILogger<Query> log, IDataStorage<TVShowEntity> dataStorage)
+    public Query(ILogger<Query> log, IRepository repository)
     {
         _log = log;
-        _dataStorage = dataStorage;
+        _repository = repository;
     }
 
     [FunctionName("Query")]
@@ -39,7 +39,7 @@ public class Query
                 .WithParameter("@offset", query.Page * query.PageSize)
                 .WithParameter("@search", query.Search);
 
-            List<TVShowEntity> entities = await _dataStorage.QueryAsync(queryDefinition);
+            List<TVShowEntity> entities = await _repository.QueryAsync<TVShowEntity>(queryDefinition);
             var result = new List<TVShow>(entities.Count);
             foreach (TVShowEntity entity in entities)
             {

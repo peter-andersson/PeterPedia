@@ -7,12 +7,12 @@ namespace Episodes.Api.Functions;
 public class Watchlist
 {
     private readonly ILogger<Watchlist> _log;
-    private readonly IDataStorage<TVShowEntity> _dataStorage;
+    private readonly IRepository _repository;
 
-    public Watchlist(ILogger<Watchlist> log, IDataStorage<TVShowEntity> dataStorage)
+    public Watchlist(ILogger<Watchlist> log, IRepository repository)
     {
         _log = log;
-        _dataStorage = dataStorage;
+        _repository = repository;
     }
 
     [FunctionName("Watchlist")]
@@ -24,7 +24,7 @@ public class Watchlist
         {
             var query = new QueryDefinition(query: "SELECT * FROM c WHERE c.UnwatchedEpisodeCount > 0 ORDER BY c.Title");
 
-            List<TVShowEntity> entities = await _dataStorage.QueryAsync(query);
+            List<TVShowEntity> entities = await _repository.QueryAsync<TVShowEntity>(query);
             var result = new List<TVShow>(entities.Count);
             foreach (TVShowEntity entity in entities)
             {

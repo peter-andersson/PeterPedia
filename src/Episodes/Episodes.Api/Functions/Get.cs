@@ -5,9 +5,9 @@ namespace Episodes.Api.Functions;
 
 public class Get
 {
-    private readonly IDataStorage<TVShowEntity> _dataStoreage;
+    private readonly IRepository _repository;
 
-    public Get(IDataStorage<TVShowEntity> dataStorage) => _dataStoreage = dataStorage;
+    public Get(IRepository repository) => _repository = repository;
 
     [FunctionName("Get")]    
     public async Task<IActionResult> RunAsync(
@@ -20,7 +20,7 @@ public class Get
             return req.BadRequest("Missing query parameter id");
         }
 
-        TVShowEntity? show = await _dataStoreage.GetAsync(id);
+        TVShowEntity? show = await _repository.GetAsync<TVShowEntity>(id);
 
         return show is not null ? req.Ok(show.ConvertToShow()) : req.NotFound();
     }
