@@ -9,60 +9,40 @@ namespace Episodes.App.Pages;
 public partial class Add : ComponentBase
 {
     [Inject]
-    private HttpClient Http { get; set; } = null!;
+    private ITVService Service { get; set; } = null!;
 
     [Inject]
-    private Navigation Navigation { get; set; } = null!;
+    private IToastService ToastService { get; set; } = null!;
 
     private bool IsTaskRunning { get; set; } = false;
 
     private TVUrl TVShow { get; set; } = new();
 
-    private string ErrorMessage { get; set; } = string.Empty;
-
-    private string SuccessMessage { get; set; } = string.Empty;
-
     private InputText? Input { get; set; }
 
     public async Task AddAsync()
-    {        
-        ErrorMessage = string.Empty;
-        SuccessMessage = string.Empty;
-
+    {
         var id = TVShow.Id;
         if (id is null)
         {
-            ErrorMessage = "No tv show specified";
+            ToastService.ShowError("No tv show specified");
             return;
         }
 
         IsTaskRunning = true;
 
-        try
-        {
-            HttpResponseMessage response = await Http.PostAsync($"/api/add/{id}", null);
+        Result result = await Service.AddAsync(id);
 
-            switch (response.StatusCode)
-            {
-                case HttpStatusCode.OK:
-                    SuccessMessage = "TV show addded";
-                    break;
-                case HttpStatusCode.Conflict:
-                    ErrorMessage = "TV show already exists";
-                    break;
-                case HttpStatusCode.InternalServerError:
-                    ErrorMessage = "Failed to add TV show";
-                    break;
-            }
-        }
-        catch (Exception e)
+        if (result.Success)
         {
-            ErrorMessage = e.Message;
+            ToastService.ShowSuccess("TV show added");
         }
-        finally
+        else
         {
-            IsTaskRunning = false;
+            ToastService.ShowError(result.ErrorMessage);
         }
+
+        IsTaskRunning = false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -76,8 +56,6 @@ public partial class Add : ComponentBase
         }
     }
 
-    private void Close() => Navigation.NavigateBack();
-
     public class TVUrl
     {
         [Required]
@@ -87,7 +65,7 @@ public partial class Add : ComponentBase
         {
             get
             {
-                var movieRegex = new Regex("^https://www.themoviedb.org/movie/(\\d+)");
+                var movieRegex = new Regex("^https://www.themoviedb.org/tv/(\\d+)");
 
                 if (movieRegex.IsMatch(Url ?? string.Empty))
                 {

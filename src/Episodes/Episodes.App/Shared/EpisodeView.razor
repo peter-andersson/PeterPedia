@@ -1,0 +1,11 @@
+﻿<li class="list-group-item">
+    <span>@($"{Episode.EpisodeNumber} - {Episode.Title} - {Episode.AirDate?.ToString("MMM d, yyyy")}")</span>
+    @if (Episode.Watched)
+    {
+        <SpinnerButton Type="button" Class="btn btn-primary float-end" IsTaskRunning="@IsTaskRunning" Text="Not watched" ActionText="Updating..." OnClickCallback="@(async () => await UnwatchAsync())" />
+    }
+    else
+    {
+        <SpinnerButton Type="button" Class="btn btn-primary float-end" IsTaskRunning="@IsTaskRunning" Text="Watched" ActionText="Updating..." OnClickCallback="@(async () => await WatchAsync())" />
+    }
+</li>

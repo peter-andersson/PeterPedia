@@ -2,6 +2,17 @@
   "version": 1,
   "dependencies": {
     "net6.0": {
+      "Blazored.Toast": {
+        "type": "Direct",
+        "requested": "[3.2.2, )",
+        "resolved": "3.2.2",
+        "contentHash": "6RiWHpgIgJJFWZHnmSZb/6IBP6LS6F5brLDGTBls/B4bTf0SzPsRoTUu2g6y7sY59/PFC1XeKbwXHys9PCe6lw==",
+        "dependencies": {
+          "Microsoft.AspNetCore.Components": "3.1.6",
+          "Microsoft.AspNetCore.Components.Web": "3.1.6",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "3.1.6"
+        }
+      },
       "Microsoft.AspNetCore.Components.Authorization": {
         "type": "Direct",
         "requested": "[6.0.7, )",

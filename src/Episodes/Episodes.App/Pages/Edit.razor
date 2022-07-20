@@ -75,62 +75,7 @@ else if (Show is not null)
             </div>
             @foreach (var season in Show.Seasons.OrderBy(s => s.SeasonNumber))
             {
-                @if (ShowAll || !season.IsAllWatched)
-                {
-                    <div class="col-12">
-                        <h3 class="mb-3">
-                            Season @season.SeasonNumber
-                            @if (season.IsAllWatched)
-                            {
-                                <SpinnerButton Type="button" Class="btn btn-primary float-end" IsTaskRunning="@IsTaskRunning" Text="Not watched" ActionText="Updating..." OnClickCallback="@(async () => await UnwatchSeasonAsync(season))" />
-                            }
-                            else
-                            {
-                                <SpinnerButton Type="button" Class="btn btn-primary float-end" IsTaskRunning="@IsTaskRunning" Text="Watched" ActionText="Updating..." OnClickCallback="@(async () => await WatchSeasonAsync(season))" />
-                            }
-                        </h3>
-                        <ul class="list-group list-group-flush mb-3">
-                            @if (IsTaskRunning)
-                            {
-                                <li class="list-group-item">Processing season...</li>
-                            }
-                            else
-                            {
-                                @foreach (var episode in season.Episodes.OrderBy(e => e.EpisodeNumber))
-                                {
-                                    @if (ShowAll)
-                                    {
-                                        <li class="list-group-item">
-                                            <span>@($"{episode.EpisodeNumber} - {episode.Title} - {episode.AirDate?.ToString("MMM d, yyyy")}")</span>
-                                            @if (episode.Watched)
-                                            {
-                                                <SpinnerButton Type="button" Class="btn btn-primary float-end" IsTaskRunning="@IsTaskRunning" Text="Not watched" ActionText="Updating..." OnClickCallback="@(async () => await UnwatchEpisodeAsync(episode))" />
-                                            }
-                                            else
-                                            {
-                                                <SpinnerButton Type="button" Class="btn btn-primary float-end" IsTaskRunning="@IsTaskRunning" Text="Watched" ActionText="Updating..." OnClickCallback="@(async () => await WatchEpisodeAsync(episode))" />
-                                            }
-                                        </li>
-                                    }
-                                    else if ((episode.Watched == false) && (episode.AirDate != null) && (episode.AirDate <= DateTime.UtcNow))
-                                    {
-                                        <li class="list-group-item">
-                                            <span>@($"{episode.EpisodeNumber} - {episode.Title} - {episode.AirDate?.ToString("MMM d, yyyy")}")</span>
-                                            @if (episode.Watched)
-                                            {
-                                                <SpinnerButton Type="button" Class="btn btn-primary float-end" IsTaskRunning="@IsTaskRunning" Text="Not watched" ActionText="Updating..." OnClickCallback="@(async () => await UnwatchEpisodeAsync(episode))" />
-                                            }
-                                            else
-                                            {
-                                                <SpinnerButton Type="button" Class="btn btn-primary float-end" IsTaskRunning="@IsTaskRunning" Text="Watched" ActionText="Updating..." OnClickCallback="@(async () => await WatchEpisodeAsync(episode))" />
-                                            }
-                                        </li>
-                                    }
-                                }
-                            }
-                        </ul>
-                    </div>
-                }
+                <SeasonView TVShow="Show" Season="season" ShowAll="ShowAll" />
             }
         </div>
     </div>
@@ -138,12 +83,5 @@ else if (Show is not null)
 else
 {
     <h5>No tv show found!</h5>
-}
-
-@if (!string.IsNullOrWhiteSpace(ErrorMessage))
-{
-    <div class="alert alert-danger" role="alert">
-        @ErrorMessage
-    </div>
 }
 

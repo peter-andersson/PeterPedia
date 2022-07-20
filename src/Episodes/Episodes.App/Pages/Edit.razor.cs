@@ -3,10 +3,13 @@ using Microsoft.AspNetCore.Components;
 
 namespace Episodes.App.Pages;
 
-public partial class Edit : ComponentBase
+public partial class Edit : ComponentBase, IDisposable
 {
     [Inject]
-    private HttpClient Http { get; set; } = null!;
+    private ITVService Service { get; set; } = null!;
+
+    [Inject]
+    private IToastService ToastService { get; set; } = null!;
 
     [Inject]
     private Navigation Navigation { get; set; } = null!;
@@ -14,46 +17,34 @@ public partial class Edit : ComponentBase
     [Parameter]
     public string Id { get; set; } = null!;
 
-    private string ErrorMessage { get; set; } = string.Empty;
-
     private TVShow? Show { get; set; }
 
     private bool IsSaveTaskRunning { get; set; }
 
     private bool IsDeleteTaskRunning { get; set; }
 
-    private bool IsTaskRunning { get; set; }
-
     private bool Loading { get; set; } = true;
 
     private bool ShowAll { get; set; } = false;
-    
+
+    private bool _disposed = false;
+
     protected override async Task OnInitializedAsync()
     {
         IsSaveTaskRunning = false;
         IsDeleteTaskRunning = false;
-        ErrorMessage = string.Empty;
 
-        try
-        {
-            Show = await Http.GetFromJsonAsync<TVShow>($"/api/get/{Id}");
-        }
-        catch
-        {
-            Show = null;
-        }
-        finally
-        {
-            Loading = false;
-        }
+        Service.OnChange += StateHasChanged;
+
+        Show = await Service.GetAsync(Id);
+
+        Loading = false;
     }
 
     private void ToggleShowAll() => ShowAll = !ShowAll;
 
     private async Task SaveAsync()
     {
-        ErrorMessage = string.Empty;
-
         if (Show is null)
         {
             return;
@@ -61,148 +52,64 @@ public partial class Edit : ComponentBase
 
         IsSaveTaskRunning = true;
 
-        try
-        {           
-            HttpResponseMessage response = await Http.PostAsJsonAsync("/api/update", Show);
+        Result result = await Service.UpdateAsync(Show);
 
-            if (response.IsSuccessStatusCode)
-            {
-                Navigation.NavigateBack();
-            }
-            else
-            {
-                ErrorMessage = "Failed to update tv show.";
-            }
-        }
-        catch
+        if (result.Success)
         {
-            Show = null;
+            ToastService.ShowSuccess("TV show updated.");
         }
-        finally
+        else
         {
-            IsSaveTaskRunning = false;
+            ToastService.ShowError(result.ErrorMessage);
         }
+
+        IsSaveTaskRunning = false;
     }
 
     private async Task DeleteAsync()
     {
-        ErrorMessage = string.Empty;
-
         if (Show is null)
         {
             return;
         }
 
-        try
-        {
-            IsDeleteTaskRunning = true;
+        IsDeleteTaskRunning = true;
 
-            HttpResponseMessage response = await Http.DeleteAsync($"/api/delete/{Show.Id}");
+        Result result = await Service.DeleteAsync(Show);
 
-            if (response.IsSuccessStatusCode)
-            {
-                Navigation.NavigateBack();
-            }
-            else
-            {
-                ErrorMessage = "Failed to delete tv show.";
-            }
-        }
-        catch
+        if (result.Success)
         {
-            ErrorMessage = "Failed to delete tv show.";
+            ToastService.ShowSuccess("TV show updated.");
         }
-        finally
+        else
         {
-            IsDeleteTaskRunning = false;
+            ToastService.ShowError(result.ErrorMessage);
         }
+
+        IsDeleteTaskRunning = false;
     }
-
-    private async Task WatchSeasonAsync(Season season)
-    {
-        ErrorMessage = string.Empty;
-
-        if (Show is null)
-        {
-            return;
-        }
-
-        IsTaskRunning = true;
-
-        foreach (Episode episode in season.Episodes)
-        {
-            episode.Watched = true;
-        }
-
-        await UpdateTVShowAsync();
-    }
-
-    private async Task UnwatchSeasonAsync(Season season)
-    {
-        ErrorMessage = string.Empty;
-
-        if (Show is null)
-        {
-            return;
-        }
-
-        IsTaskRunning = true;
-
-        foreach (Episode episode in season.Episodes)
-        {
-            episode.Watched = false;
-        }
-
-        await UpdateTVShowAsync();        
-    }
-
-    private async Task WatchEpisodeAsync(Episode episode)
-    {
-        ErrorMessage = string.Empty;
-
-        if (Show is null)
-        {
-            return;
-        }
-
-        IsTaskRunning = true;
-
-        episode.Watched = true;
-
-        await UpdateTVShowAsync();
-    }
-
-    private async Task UnwatchEpisodeAsync(Episode episode)
-    {
-        ErrorMessage = string.Empty;
-
-        if (Show is null)
-        {
-            return;
-        }
-
-        IsTaskRunning = true;
-
-        episode.Watched = false;
-
-        await UpdateTVShowAsync();
-    }
-
-    private async Task UpdateTVShowAsync()
-    {
-        try
-        {
-            HttpResponseMessage response = await Http.PostAsJsonAsync("/api/update", Show);
-        }
-        catch
-        {
-            ErrorMessage = "Failed to update tv show.";
-        }
-        finally
-        {
-            IsTaskRunning = false;
-        }
-    }
-
+    
     private void Close() => Navigation.NavigateBack();
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        if (disposing)
+        {
+            Service.OnChange -= StateHasChanged;
+            Show = null;
+        }
+
+        _disposed = true;
+    }
 }

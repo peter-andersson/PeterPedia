@@ -54,11 +54,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Episodes.App", "src\Episode
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Reader", "Reader", "{EC3FDB53-FC49-4990-B74D-90EE2F258562}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reader.Api", "src\Reader\Reader.Api\Reader.Api.csproj", "{B5BFC2D9-B2FA-4281-9D40-887779D12417}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reader.Api", "src\Reader\Reader.Api\Reader.Api.csproj", "{B5BFC2D9-B2FA-4281-9D40-887779D12417}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reader.App", "src\Reader\Reader.App\Reader.App.csproj", "{31C65153-5E2B-453F-8FA5-4046AB33A5BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reader.App", "src\Reader\Reader.App\Reader.App.csproj", "{31C65153-5E2B-453F-8FA5-4046AB33A5BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reader.Shared", "src\Reader\Reader.Shared\Reader.Shared.csproj", "{FCB81476-C535-4F42-AEC9-6A9B013212EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reader.Shared", "src\Reader\Reader.Shared\Reader.Shared.csproj", "{FCB81476-C535-4F42-AEC9-6A9B013212EE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PeterPedia.Blazor", "src\PeterPedia.Blazor\PeterPedia.Blazor.csproj", "{6F1A6A9D-62CB-419D-B1B4-E605913D49C0}"
 EndProject

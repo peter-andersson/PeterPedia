@@ -1,4 +1,3 @@
-using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components;
 
 namespace Episodes.App.Pages;
@@ -6,7 +5,7 @@ namespace Episodes.App.Pages;
 public partial class Index : ComponentBase
 {
     [Inject]
-    private HttpClient Http { get; set; } = null!;
+    private ITVService Service { get; set; } = null!;
 
     [Inject]
     private Navigation Navigation { get; set; } = null!;
@@ -17,9 +16,7 @@ public partial class Index : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        ShowList = await Http.GetFromJsonAsync<TVShow[]>("/api/watchlist") ?? Array.Empty<TVShow>();
-
-        ShowList = ShowList.Where(s => s.UnwatchedEpisodeCount > 0).ToArray();
+        ShowList = await Service.GetWatchListAsync();
 
         Loading = false;
     }

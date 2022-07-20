@@ -1,0 +1,36 @@
+﻿@if (ShowAll || !Season.IsAllWatched)
+{
+    <div class="col-12">
+        <h3 class="mb-3">
+            Season @Season.SeasonNumber
+            @if (Season.IsAllWatched)
+            {
+                <SpinnerButton Type="button" Class="btn btn-primary float-end" IsTaskRunning="@IsTaskRunning" Text="Not watched" ActionText="Updating..." OnClickCallback="@(async () => await UnwatchAsync())" />
+            }
+            else
+            {
+                <SpinnerButton Type="button" Class="btn btn-primary float-end" IsTaskRunning="@IsTaskRunning" Text="Watched" ActionText="Updating..." OnClickCallback="@(async () => await WatchAsync())" />
+            }
+        </h3>
+        <ul class="list-group list-group-flush mb-3">
+            @if (IsTaskRunning)
+            {
+                <li class="list-group-item">Processing season...</li>
+            }
+            else
+            {
+                @foreach (var episode in Season.Episodes.OrderBy(e => e.EpisodeNumber))
+                {
+                    @if (ShowAll)
+                    {
+                        <EpisodeView TVShow="TVShow" Episode="episode" />
+                    }
+                    else if ((episode.Watched == false) && (episode.AirDate != null) && (episode.AirDate <= DateTime.UtcNow))
+                    {
+                        <EpisodeView TVShow="TVShow" Episode="episode" />
+                    }
+                }
+            }
+        </ul>
+    </div>
+}
