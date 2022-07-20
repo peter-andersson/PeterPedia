@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace Reader.App.Pages;
+namespace Reader.App.Shared;
 
 public partial class ArticleView
 {
