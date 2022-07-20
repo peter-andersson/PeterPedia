@@ -1,4 +1,3 @@
-using System;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
@@ -18,16 +17,18 @@ public class UpdateTVShows
     private readonly ILogger<UpdateTVShows> _log;
     private readonly IConfiguration _configuration;
     private readonly ITheMovieDatabaseService _service;
-    private readonly IDataStorage<TVShowEntity> _dataStorage;
+    private readonly IRepository _repository;
+    private readonly string _containerId;
 
     private IFileStorage? _fileStorage;
 
-    public UpdateTVShows(ILogger<UpdateTVShows> log, IConfiguration configuration, ITheMovieDatabaseService service, IDataStorage<TVShowEntity> dataStorage)
+    public UpdateTVShows(ILogger<UpdateTVShows> log, IConfiguration configuration, ITheMovieDatabaseService service, IRepository repository)
     {
         _log = log;
         _configuration = configuration;
         _service = service;
-        _dataStorage = dataStorage;
+        _repository = repository;
+        _containerId = configuration["Cosmos:EpisodesContainer"];
     }
 
     [FunctionName("UpdateTVShows")]
@@ -44,13 +45,13 @@ public class UpdateTVShows
 
         var query = new QueryDefinition(query: "SELECT * FROM c WHERE c.NextUpdate < GetCurrentDateTime() ORDER BY c.NextUpdate OFFSET 0 LIMIT 20");
 
-        List<TVShowEntity> entities = await _dataStorage.QueryAsync(query);
+        List<TVShowEntity> entities = await _repository.QueryAsync<TVShowEntity>(_containerId, query);
 
         foreach (TVShowEntity show in entities)
         {
             await UpdateShowAsync(show);
 
-            await _dataStorage.UpdateAsync(show);
+            await _repository.UpdateAsync(_containerId, show);
         }
     }
 
