@@ -5,9 +5,9 @@ namespace Reader.Api.Functions;
 
 public class Get
 {
-    private readonly IDataStorage<SubscriptionEntity> _dataStoreage;
+    private readonly IRepository _repository;
 
-    public Get(IDataStorage<SubscriptionEntity> dataStorage) => _dataStoreage = dataStorage;
+    public Get(IRepository repository) => _repository = repository;
 
     [FunctionName("Get")]    
     public async Task<IActionResult> RunAsync(
@@ -20,7 +20,7 @@ public class Get
             return req.BadRequest("Missing query parameter id");
         }
 
-        SubscriptionEntity? subscription = await _dataStoreage.GetAsync(id);
+        SubscriptionEntity? subscription = await _repository.GetAsync<SubscriptionEntity>(id);
 
         return subscription is not null ? req.Ok(subscription.ConvertToDTO()) : req.NotFound();
     }

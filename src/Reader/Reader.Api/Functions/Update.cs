@@ -7,12 +7,12 @@ namespace Reader.Api.Functions;
 public class Update
 {
     private readonly ILogger<Update> _log;
-    private readonly IDataStorage<SubscriptionEntity> _dataStorage;
+    private readonly IRepository _repository;
 
-    public Update(ILogger<Update> log, IDataStorage<SubscriptionEntity> dbContext)
+    public Update(ILogger<Update> log, IRepository repository)
     {
         _log = log;
-        _dataStorage = dbContext;
+        _repository = repository;
     }
 
     [FunctionName("Update")]
@@ -34,7 +34,7 @@ public class Update
             return req.BadRequest("Missing movie object");
         }
 
-        SubscriptionEntity? existing = await _dataStorage.GetAsync(subscription.Id);
+        SubscriptionEntity? existing = await _repository.GetAsync<SubscriptionEntity>(subscription.Id);
 
         if (existing is null)
         {
@@ -49,7 +49,7 @@ public class Update
 
         try
         {            
-            await _dataStorage.UpdateAsync(existing);
+            await _repository.UpdateAsync(existing);
             _log.LogInformation("Updated subscription with id {id}, title {title}", existing.Id, existing.Title);
 
             return req.Ok();

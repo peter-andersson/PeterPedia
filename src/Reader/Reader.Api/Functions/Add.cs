@@ -8,12 +8,12 @@ namespace Reader.Api.Functions;
 public class Add
 {
     private readonly ILogger<Add> _log;
-    private readonly IDataStorage<SubscriptionEntity> _dataStorage;
+    private readonly IRepository _repository;
 
-    public Add(ILogger<Add> log, IDataStorage<SubscriptionEntity> dataStorage)
+    public Add(ILogger<Add> log, IRepository repository)
     {
         _log = log;
-        _dataStorage = dataStorage;
+        _repository = repository;
     }
 
     [FunctionName("Add")]    
@@ -84,7 +84,7 @@ public class Add
 
         try
         {
-            await _dataStorage.AddAsync(subscription);
+            await _repository.AddAsync(subscription);
 
             _log.LogInformation("Added subscription with id {id} and title {title}.", subscription.Id, subscription.Title);
 

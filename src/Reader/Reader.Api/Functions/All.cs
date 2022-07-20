@@ -7,12 +7,12 @@ namespace Reader.Api.Functions;
 public class All
 {
     private readonly ILogger<All> _log;
-    private readonly IDataStorage<SubscriptionEntity> _dataStorage;
+    private readonly IRepository _repository;
 
-    public All(ILogger<All> log, IDataStorage<SubscriptionEntity> dataStorage)
+    public All(ILogger<All> log, IRepository repository)
     {
         _log = log;
-        _dataStorage = dataStorage;
+        _repository = repository;
     }
 
     [FunctionName("All")]
@@ -22,11 +22,11 @@ public class All
     {      
         try
         {
-            var queryText = "SELECT * FROM c WHERE c.Type = \"subscription\" ORDER BY c.Title";
+            var queryText = "SELECT * FROM c WHERE c.Type = 'subscription' ORDER BY c.Title";
 
             var queryDefinition = new QueryDefinition(query: queryText);
 
-            List<SubscriptionEntity> entities = await _dataStorage.QueryAsync(queryDefinition);
+            List<SubscriptionEntity> entities = await _repository.QueryAsync<SubscriptionEntity>(queryDefinition);
             var result = new List<Subscription>(entities.Count);
             foreach (SubscriptionEntity entity in entities)
             {
