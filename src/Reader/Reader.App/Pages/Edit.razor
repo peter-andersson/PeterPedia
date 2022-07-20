@@ -29,6 +29,12 @@ else if (Subscription is not null)
                     <label for="update-interval">Update interval in minutes</label>
                 </div>
             </div>
+            <div class="col-12 mb-2">
+                <div class="form-floating">
+                    <InputNumber id="url" class="form-control" @bind-Value="Subscription.Url" />
+                    <label for="url">Url</label>
+                </div>
+            </div>
         </div>
         <div class="row">
             <div class="d-flex">
