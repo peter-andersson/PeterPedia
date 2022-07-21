@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PeterPedia.Data.Implementations;
 using PeterPedia.Data.Interface;
+using PeterPedia.Data.Models;
 using TheMovieDatabase;
 
 [assembly: FunctionsStartup(typeof(PeterPedia.Functions.Startup))]
@@ -17,6 +18,9 @@ public class Startup : FunctionsStartup
         IConfiguration configuration = builder.GetContext().Configuration;
 
         builder.Services.AddHttpClient();
+
+        builder.Services.AddOptions<CosmosOptions>()
+            .Configure<IConfiguration>((settings, configuration) => configuration.GetSection("Cosmos").Bind(settings));
 
         builder.Services.AddSingleton<ITheMovieDatabaseService>((s) => new TheMovieDatabaseService(
                             configuration["TheMovieDbAccessToken"],

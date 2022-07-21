@@ -25,6 +25,11 @@ public class CosmosRepository : IRepository
             throw new ArgumentException("Please specify a valid AccountKey in the appSettings.json file or your Azure Functions Settings.");
         }
 
+        if (string.IsNullOrEmpty(options.Value.Container))
+        {
+            throw new ArgumentException("Please specify a valid Container in the appSettings.json file or your Azure Functions Settings.");
+        }
+
         _cosmosClient = new CosmosClientBuilder(options.Value.EndPointUrl, options.Value.AccountKey)
             .WithApplicationName(options.Value.ApplicationName)
             .Build();
