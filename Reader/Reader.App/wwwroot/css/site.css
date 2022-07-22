@@ -9832,26 +9832,26 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
-#blazor-error-ui {
-  display: none;
+/*#blazor-error-ui {
+    display: none;
 }
 
 .modal-content {
-  background-color: #f7fafc;
+    background-color: #f7fafc;
 }
 
 .toast-container {
-  z-index: 9999999;
+    z-index: 9999999;
 }
 
 .invalid {
-  outline: 1px solid red;
+    outline: 1px solid red;
 }
 
 .validation-message {
-  color: red;
+    color: red;
 }
-
+*/
 .page-menu .nav-link {
   color: black;
   padding: 0.5rem 1rem 0.5rem 0rem;

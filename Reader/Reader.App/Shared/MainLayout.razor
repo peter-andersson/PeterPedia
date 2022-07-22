@@ -4,15 +4,13 @@
 
 <AuthorizeView>
     <Authorized>
-        <div class="page">
-            <div class="sidebar">
+        <div class="grid grid-cols-12 gap-4">
+            <div class="col-span-2">
                 <NavMenu />
             </div>
 
-            <main>
-                <article class="content px-4">
-                    @Body
-                </article>
+            <main class="col-start-3 col-span-10">
+              @Body
             </main>
         </div>
     </Authorized>
