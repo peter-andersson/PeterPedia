@@ -10,7 +10,6 @@
   <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 
   <link href="css/app.css" rel="stylesheet" />
-  <link href="css/site.min.css" rel="stylesheet" />
   <link href="Reader.App.styles.css" rel="stylesheet" />
 </head>
 
@@ -31,10 +30,10 @@
     </div>
   </div>
 
-  <div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
+  <div id="blazor-error-ui" class="hidden">
+    <div class="fixed top-2.5 left-2.5 right-2.5 bg-red-600 text-black">
+      An unhandled error has occurred. Reload page and try again.
+    </div>
   </div>
   <script src="_framework/blazor.webassembly.js"></script>
 </body>
