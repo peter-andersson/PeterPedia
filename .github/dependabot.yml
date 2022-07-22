@@ -11,54 +11,49 @@ updates:
       interval: "weekly"   
 
   - package-ecosystem: "nuget"
-    directory: "/src/Episodes/Episodes.Api"
+    directory: "/Episodes/Episodes.Api"
     schedule:
       interval: "weekly"    
 
   - package-ecosystem: "nuget"
-    directory: "/src/Library/Library.Api"
+    directory: "/Library/Library.Api"
     schedule:
       interval: "weekly"      
 
   - package-ecosystem: "nuget"
-    directory: "/src/Movies/Movies.Api"
+    directory: "/Movies/Movies.Api"
     schedule:
       interval: "weekly"      
 
   - package-ecosystem: "nuget"
-    directory: "/src/Reader/Reader.Api"
+    directory: "/Reader/Reader.Api"
     schedule:
       interval: "weekly" 
 
   - package-ecosystem: "nuget"
-    directory: "/src/Episodes/Episodes.App"
+    directory: "/Episodes/Episodes.App"
     schedule:
       interval: "weekly"    
 
   - package-ecosystem: "nuget"
-    directory: "/src/Library/Library.App"
+    directory: "/Library/Library.App"
     schedule:
       interval: "weekly"      
 
   - package-ecosystem: "nuget"
-    directory: "/src/Movies/Movies.App"
+    directory: "/Movies/Movies.App"
     schedule:
       interval: "weekly"      
 
   - package-ecosystem: "nuget"
-    directory: "/src/Reader/Reader.App"
+    directory: "/Reader/Reader.App"
     schedule:
       interval: "weekly" 
 
   - package-ecosystem: "nuget"
-    directory: "/src/PeterPedia.Functions"
+    directory: "/PeterPedia.Functions"
     schedule:
-      interval: "weekly"      
-
-  - package-ecosystem: "nuget"
-    directory: "/tests/PeterPedia.Tests"
-    schedule:
-      interval: "weekly"                    
+      interval: "weekly"                       
       
   # - package-ecosystem: "npm"
   #   directory: "/src/Episodes/Episodes.App"
