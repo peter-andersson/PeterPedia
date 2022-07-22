@@ -5,25 +5,13 @@ on:
     branches:
       - main
     paths:
-      - src/Movies/Movies.App/**
-      - src/Movies/Movies.Api/**
-      - src/PeterPedia.Data/**      
-      - src/PeterPedia.Blazor/**
-      - src/PeterPedia.Shared/**
-      - src/TheMovieDatabase/**
-      - .github/workflows/movies.yml      
-  # pull_request:
-  #   types: [opened, synchronize, reopened, closed]
-  #   branches:
-  #     - main
-  #   paths:
-  #     - src/Movies/Movies.App/**
-  #     - src/Movies/Movies.Api/**
-  #     - src/PeterPedia.Data/**
-  #     - src/PeterPedia.Blazor/**
-  #     - src/PeterPedia.Shared/**
-  #     - src/TheMovieDatabase/**
-  #     - .github/workflows/movies.yml
+      - Movies/Movies.App/**
+      - Movies/Movies.Api/**
+      - PeterPedia.Data/**      
+      - PeterPedia.Blazor/**
+      - PeterPedia.Shared/**
+      - TheMovieDatabase/**
+      - .github/workflows/movies.yml        
 jobs:
   build_and_deploy_job:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
@@ -48,15 +36,3 @@ jobs:
           api_location: "src/Movies/Movies.Api" # Api source code path - optional
           output_location: "wwwroot" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
-
-  # close_pull_request_job:
-  #   if: github.event_name == 'pull_request' && github.event.action == 'closed'
-  #   runs-on: ubuntu-latest
-  #   name: Close Pull Request Job
-  #   steps:
-  #     - name: Close Pull Request
-  #       id: closepullrequest
-  #       uses: Azure/static-web-apps-deploy@v1
-  #       with:
-  #         azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_LEMON_ISLAND_051241D03 }}
-  #         action: "close"

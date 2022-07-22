@@ -8,10 +8,10 @@ on:
     branches:
       - main
     paths:
-      - src/PeterPedia.Functions/**
-      - src/PeterPedia.Data/**
-      - src/PeterPedia.Shared/**
-      - src/TheMovieDatabase/**
+      - PeterPedia.Functions/**
+      - PeterPedia.Data/**
+      - PeterPedia.Shared/**
+      - TheMovieDatabase/**
       - .github/workflows/peterpedia-functions.yml
   workflow_dispatch:
 
