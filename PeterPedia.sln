@@ -45,6 +45,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Episodes.App", "Episodes\Episodes.App\Episodes.App.csproj", "{FE2A576F-053F-47DC-8446-D0A5BD93148A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Reader", "Reader", "{EC3FDB53-FC49-4990-B74D-90EE2F258562}"
+	ProjectSection(SolutionItems) = preProject
+		Reader\README.md = Reader\README.md
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reader.Api", "Reader\Reader.Api\Reader.Api.csproj", "{B5BFC2D9-B2FA-4281-9D40-887779D12417}"
 EndProject
