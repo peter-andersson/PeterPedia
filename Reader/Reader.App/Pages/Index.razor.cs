@@ -16,8 +16,6 @@ public partial class Index : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        throw new NotImplementedException();
-
         UnreadArticles = await Http.GetFromJsonAsync<UnreadGroup[]>("/api/unread") ?? Array.Empty<UnreadGroup>();
 
         Loading = false;

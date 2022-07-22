@@ -4,18 +4,16 @@
 
 <AuthorizeView>
     <Authorized>
-        <div class="grid grid-cols-12 gap-4">
-            <div class="col-span-2">
-                <NavMenu />
-            </div>
+        <div class="flex flex-col gap-4">
+            <NavMenu />
 
-            <main class="col-start-3 col-span-10">
-              @Body
+            <main>
+                @Body
             </main>
         </div>
     </Authorized>
     <NotAuthorized>
-      <Login />
+        <Login />
     </NotAuthorized>
 </AuthorizeView>
 

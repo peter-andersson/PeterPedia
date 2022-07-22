@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+    .active {
+        @apply font-bold border-b-2 border-indigo-500;
+    }
+}
