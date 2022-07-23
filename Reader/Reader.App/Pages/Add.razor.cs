@@ -1,70 +1,63 @@
-using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace Reader.App.Pages;
 
 public partial class Add : ComponentBase
 {
     [Inject]
-    private HttpClient Http { get; set; } = null!;
+    private IReaderService Service { get; set; } = null!;
 
     [Inject]
-    private Navigation Navigation { get; set; } = null!;
+    private IToastService ToastService { get; set; } = null!;
 
-    public bool IsTaskRunning { get; set; } = false;
+    private bool IsTaskRunning { get; set; } = false;
 
-    public string NewSubscriptionUrl { get; set; } = string.Empty;
+    private NewSubscription NewSubscription { get; set; } = new();
 
-    public string SuccessMessage { get; set; } = string.Empty;
+    private List<string> Urls { get; set; } = new List<string>();
 
-    public string ErrorMessage { get; set; } = string.Empty;
+    private InputText? Input { get; set; }
 
-    public async Task InputKeyDownAsync(KeyboardEventArgs e)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        if (firstRender)
         {
-            await AddAsync();
+            if (Input?.Element != null)
+            {
+                await Input.Element.Value.FocusAsync();
+            }
         }
     }
 
     public async Task AddAsync()
     {
-        if (string.IsNullOrEmpty(NewSubscriptionUrl))
+        if (string.IsNullOrEmpty(NewSubscription.Url))
         {
             return;
         }
 
-        SuccessMessage = string.Empty;
-        ErrorMessage = string.Empty;
+        Urls.Clear();
         IsTaskRunning = true;
 
-        var newSubscription = new NewSubscription()
+        AddResult result = await Service.AddAsync(NewSubscription);
+
+        if (string.IsNullOrWhiteSpace(result.ErrorMessage) && result.Urls.Count == 0)
         {
-            Url = NewSubscriptionUrl,
-        };
-
-        try
-        {
-            HttpResponseMessage response = await Http.PostAsJsonAsync("/api/add", newSubscription);
-
-            var result = await response.Content.ReadAsStringAsync();
-
-            if (string.IsNullOrWhiteSpace(result))
-            {
-                SuccessMessage = "Subscription added";
-                NewSubscriptionUrl = string.Empty;
-            }
-            else
-            {
-                ErrorMessage = result;
-            }
+            ToastService.ShowSuccess("Subscription added");
+            NewSubscription.Url = string.Empty;
         }
-        finally
+        else if (result.Urls.Count > 0)
         {
-            IsTaskRunning = false;
-        } 
-    }
+            Urls.Clear();
 
-    private void Close() => Navigation.NavigateBack();
+            Urls.AddRange(result.Urls);
+        }
+        else
+        {
+            ToastService.ShowError(result.ErrorMessage);
+        }
+
+        IsTaskRunning = false;
+    }
 }

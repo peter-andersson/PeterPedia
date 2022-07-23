@@ -1,35 +1,37 @@
 ﻿@page "/add"
 @attribute [Authorize(Roles = "admin")]
 
-<h4 class="mt-2">Add subscription</h4>
+<Title Text="Add subscription" />
 
-<div class="row">
-    <div class="col">
-        <div class="form-floating">
-            <input id="add-subscription" class="form-control w-100" @bind="NewSubscriptionUrl" @bind:event="oninput" @onkeydown="InputKeyDownAsync" autofocus />
-            <label for="add-subscription">URL to subscription</label>
-        </div>
-    </div>
-</div>
-<div class="row mt-2">
-    <div class="col">
-        <div class="d-flex">
-            <button type="button" class="btn btn-success" @onclick="AddAsync" disabled=@IsTaskRunning>Add</button>
-            <button type="button" class="btn btn-secondary ms-2" @onclick="Close">Cancel</button>
-        </div>
-    </div>
-</div>
+<EditForm Model="@NewSubscription" OnValidSubmit="@AddAsync" class="flex flex-col gap-2">
+    <label for="url">URL to subscription</label>
+    <InputText id="url" @ref="Input" class="form-input bg-black rounded-lg" type="text" @bind-Value="@NewSubscription.Url" bind-Value:event="OnInput"></InputText>
 
-@if (!string.IsNullOrWhiteSpace(SuccessMessage))
-{
-    <div class="alert alert-success" role="alert">
-        @SuccessMessage
-    </div>
-}
+    <button Type="submit" Class="btn btn-primary md:w-36" disabled="@IsTaskRunning">
+        @if (IsTaskRunning)
+        {
+            <div class="flex items-center gap-2">
+                <svg class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z" />
+                    <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z" />
+                </svg>
+                <span>Adding...</span>
+            </div>
+        }
+        else
+        {
+            <span>Add</span>
+        }
+    </button>
 
-@if (!string.IsNullOrWhiteSpace(ErrorMessage))
-{
-    <div class="alert alert-danger" role="alert">
-        @ErrorMessage
-    </div>
-}
+    @if (Urls.Count > 0)
+    {
+        <div class="text-lg">Found multiple posible urls in request</div>
+        <ul>
+            @foreach (var url in Urls)
+            {
+                <li>@url</li>
+            }
+        </ul>
+    }
+</EditForm>

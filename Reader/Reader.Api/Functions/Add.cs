@@ -1,5 +1,6 @@
 using CodeHollow.FeedReader;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.WebJobs;
 using Newtonsoft.Json;
 
@@ -33,6 +34,16 @@ public class Add
         if (string.IsNullOrWhiteSpace(newSubscription.Url))
         {
             return req.BadRequest("Missing url on subscription");
+        }
+
+        QueryDefinition query = new QueryDefinition(query: "SELECT * FROM c WHERE c.Type = 'subscription' AND c.Url = @url")
+            .WithParameter("@url", newSubscription.Url);
+
+        List<SubscriptionEntity> entities = await _repository.QueryAsync<SubscriptionEntity>(query);
+
+        if (entities.Count != 0)
+        {
+            return req.Conflict();
         }
 
         IEnumerable<HtmlFeedLink> feedLinks = await FeedReader.GetFeedUrlsFromUrlAsync(newSubscription.Url);

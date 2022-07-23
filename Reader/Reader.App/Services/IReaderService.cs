@@ -2,7 +2,9 @@ namespace Reader.App.Services;
 
 public interface IReaderService
 {
-    Task<UnreadGroup[]> UnreadArticles();
+    Task<AddResult> AddAsync(NewSubscription subscription);
+    
+    UnreadGroup? GetUnreadGroupAsync(string group);
 
-    UnreadGroup? GetUnreadGroup(string group);
+    Task<UnreadGroup[]> UnreadArticlesAsync();
 }

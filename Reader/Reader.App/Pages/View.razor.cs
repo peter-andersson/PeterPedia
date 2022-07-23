@@ -12,7 +12,7 @@ public partial class View : ComponentBase
 
     private UnreadGroup? Unread { get; set; } = null;
 
-    protected override void OnInitialized() => Unread = Service.GetUnreadGroup(Group);
+    protected override void OnInitialized() => Unread = Service.GetUnreadGroupAsync(Group);
 
     private void ArticleRemoved(UnreadItem article)
     {

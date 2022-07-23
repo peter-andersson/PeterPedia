@@ -13,7 +13,7 @@ public partial class Index : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        UnreadArticles = await Service.UnreadArticles();
+        UnreadArticles = await Service.UnreadArticlesAsync();
 
         Loading = false;
     }  
