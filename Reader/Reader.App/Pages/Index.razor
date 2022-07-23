@@ -1,49 +1,34 @@
 ﻿@page "/"
 @attribute [Authorize(Roles = "admin")]
 
-<h4 class="mt-2">Unread</h4>
+<Title Text="Unread articles" />
 
 @if (Loading)
 {
-    <Spinner Text="Loading..." />
+    <LoadingIndicator Text="Loading..." />
 }
 else
 {
-    @if (Unread != null)
+    if (UnreadArticles.Length > 0)
     {
-        <h3>@Unread.Group - @Unread.Items.Count</h3>
-        <div class="col-12 d-flex mt-2 mb-2 align-items-center">
-            <button class="btn btn-primary" @onclick="() => Load(null)">Return to list</button>
-        </div>
-
-        <hr />
-        <div class="col-12">
-            @foreach (var article in Unread.Items)
+        <ul class="mt-2 text-black">
+            @foreach (var unread in UnreadArticles)
             {
-                <ArticleView Article="article" OnArticleRemove="@ArticleRemoved"></ArticleView>
-            }
-        </div>
-    }
-    else if (UnreadArticles.Length > 0)
-    {
-        <div class="col-12">
-            <div class="list-group list-group-flush">
-                @foreach (var unread in UnreadArticles)
+                if (unread.Items.Count > 0)
                 {
-                    if (unread.Items.Count > 0)
-                    {
-                        <button class="list-group-item d-flex justify-content-between align-items-start" @onclick="() => Load(unread)">
-                            <div class="ms-2 me-auto">@unread.Group</div>
-                            <span class="badge bg-primary rounded-pill">@unread.Items.Count</span>
-                        </button>
-                    }
+                  <li class="bg-slate-400 mb-2 rounded-lg">
+                    <a href="/view/@unread.Group" class="p-2 flex justify-between">
+                      <span>@unread.Group</span>
+                      <span class="bg-blue-700 px-2 rounded text-white">@unread.Items.Count</span>
+                    </a>
+                  </li>
                 }
-            </div>
-        </div>
+            }
+        </ul>
     }
     else
     {
-        <div class="col-12">
+        <div class="text-lg">
             No more items to read
         </div>
     }
