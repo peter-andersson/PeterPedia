@@ -22,6 +22,9 @@ public partial class ArticleView
             return;
         }
 
+        // Without this delay the next url sometimes was opened in the browser.
+        await Task.Delay(100);
+
         await OnArticleRemove.InvokeAsync(Article);
     }
 

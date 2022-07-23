@@ -26,24 +26,24 @@
                 <AuthorizeView Roles="admin">
                     <Authorized>
                         <li>
-                            <NavLink class="block md:ml-1 py-2 pr-4 pl-3 hover:border-b-2 hover:border-indigo-500" href="/" Match="NavLinkMatch.All">Unread</NavLink>
+                            <NavLink class="block md:ml-1 pr-4 pl-3 hover:underline" href="/" Match="NavLinkMatch.All">Unread</NavLink>
                         </li>
                         <li>
-                            <NavLink class="block md:ml-1 py-2 pr-4 pl-3 hover:border-b-2 hover:border-indigo-500" href="/history" Match="NavLinkMatch.All">History</NavLink>
+                            <NavLink class="block md:ml-1 pr-4 pl-3 hover:underline" href="/history" Match="NavLinkMatch.All">History</NavLink>
                         </li>
                         <li>
-                            <NavLink class="block md:ml-1 py-2 pr-4 pl-3 hover:border-b-2 hover:border-indigo-500" href="/add" Match="NavLinkMatch.All">Add</NavLink>
+                            <NavLink class="block md:ml-1 pr-4 pl-3 hover:underline" href="/add" Match="NavLinkMatch.All">Add</NavLink>
                         </li>
                         <li>
-                            <NavLink class="block md:ml-1 py-2 pr-4 pl-3 hover:border-b-2 hover:border-indigo-500" href="/subscriptions" Match="NavLinkMatch.Prefix">Subscriptions</NavLink>
+                            <NavLink class="block md:ml-1 pr-4 pl-3 hover:underline" href="/subscriptions" Match="NavLinkMatch.Prefix">Subscriptions</NavLink>
                         </li>
                         <li>
-                            <a class="block py-2 pr-4 pl-3 hover:border-b-2 hover:border-indigo-500" href="/.auth/logout">Log out</a>
+                            <a class="block pr-4 pl-3 hover:underline" href="/.auth/logout">Log out</a>
                         </li>
                     </Authorized>
                     <NotAuthorized>
                         <li>
-                            <a class="block py-2 pr-4 pl-3 hover:border-b-2 hover:border-indigo-500" href="/.auth/logout">Log out</a>
+                            <a class="block pr-4 pl-3 hover:underline" href="/.auth/logout">Log out</a>
                         </li>
                     </NotAuthorized>
                 </AuthorizeView>

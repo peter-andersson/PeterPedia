@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reader.App.Services;
 
@@ -14,6 +9,8 @@ public class ReaderService : IReaderService
     private UnreadGroup[] _unreadData = Array.Empty<UnreadGroup>();
 
     public ReaderService(HttpClient httpClient) => _httpClient = httpClient;
+
+    public UnreadGroup? GetUnreadGroup(string group) => _unreadData.Where(u => u.Group == group).FirstOrDefault();
 
     public async Task<UnreadGroup[]> UnreadArticles()
     {

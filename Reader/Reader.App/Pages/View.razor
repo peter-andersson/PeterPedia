@@ -1,0 +1,33 @@
+﻿@page "/view/{group}"
+@attribute [Authorize(Roles = "admin")]
+
+@if (Unread != null)
+{
+    <Title Text="@($"{Unread.Group} - {Unread.Items.Count} articles")" />
+
+    @if (Unread.Items.Count > 0)
+    {
+        <div class="mt-1 flex flex-col gap-2">
+            @foreach (var article in Unread.Items)
+            {
+                <ArticleView Article="article" OnArticleRemove="@ArticleRemoved"></ArticleView>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="mt-4">
+            <a href="/" class="btn btn-primary">Load more articles</a>
+        </div>
+    }
+}
+else
+{
+    <div class="text-lg">
+        Nothing to view
+    </div>
+
+    <div class="mt-4">
+        <a href="/" class="btn btn-primary">Load more articles</a>
+    </div>
+}
