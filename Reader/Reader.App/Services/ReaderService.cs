@@ -8,6 +8,7 @@ public class ReaderService : IReaderService
     private readonly HttpClient _httpClient;
 
     private UnreadGroup[] _unreadData = Array.Empty<UnreadGroup>();
+    private Subscription[] _subscriptions = Array.Empty<Subscription>();
 
     public ReaderService(HttpClient httpClient) => _httpClient = httpClient;
 
@@ -63,12 +64,70 @@ public class ReaderService : IReaderService
         return result;
     }
 
-    public UnreadGroup? GetUnreadGroupAsync(string group) => _unreadData.Where(u => u.Group == group).FirstOrDefault();
+    public async Task<bool> Delete(Subscription subscription)
+    {
+        try
+        {
+            HttpResponseMessage response = await _httpClient.DeleteAsync($"/api/delete/{subscription.Id}");
+
+            return response.IsSuccessStatusCode;            
+        }
+        catch
+        {
+        }
+
+        return false;
+    }
+
+    public async Task<HistoryArticle[]> GetHistoryAsync()
+    {
+        try
+        {
+            return await _httpClient.GetFromJsonAsync<HistoryArticle[]>("/api/history") ?? Array.Empty<HistoryArticle>();
+        }
+        catch
+        {
+            return Array.Empty<HistoryArticle>();
+        }
+    }
+
+    public Subscription? GetSubscription(string id) => _subscriptions.Where(s => s.Id == id).FirstOrDefault();
+
+    public async Task<Subscription[]> GetSubscriptionsAsync()
+    {
+        try
+        {
+            _subscriptions = await _httpClient.GetFromJsonAsync<Subscription[]>("/api/all") ?? Array.Empty<Subscription>();
+        }
+        catch
+        {
+            _subscriptions = Array.Empty<Subscription>();
+        }
+
+        return _subscriptions;
+    }
+
+    public UnreadGroup? GetUnreadGroup(string group) => _unreadData.Where(u => u.Group == group).FirstOrDefault();
 
     public async Task<UnreadGroup[]> UnreadArticlesAsync()
     {
         _unreadData = await _httpClient.GetFromJsonAsync<UnreadGroup[]>("/api/unread") ?? Array.Empty<UnreadGroup>();
 
         return _unreadData;
+    }
+
+    public async Task<bool> UpdateSubscriptionAsync(Subscription subscription)
+    {
+        try
+        {
+            HttpResponseMessage response = await _httpClient.PostAsJsonAsync("/api/update", subscription);
+
+            return response.IsSuccessStatusCode;
+        }
+        catch
+        {
+        }
+
+        return false;
     }
 }
