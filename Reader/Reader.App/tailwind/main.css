@@ -14,10 +14,20 @@
     .btn-danger {
         @apply text-white bg-red-700 hover:bg-red-800;
     }
+
+    .btn-success {
+        @apply text-white bg-lime-700 hover:bg-lime-800;
+    }
 }
 
-@layer utilities {
-    .active {
-        @apply font-bold underline;
-    }
+.active {
+    @apply font-bold underline;
+}
+
+.validation-message {
+    @apply text-red-600;
+}
+
+input.modified.invalid {
+    @apply bg-red-600;
 }

@@ -3,9 +3,14 @@
 
 <Title Text="Add subscription" />
 
-<EditForm Model="@NewSubscription" OnValidSubmit="@AddAsync" class="flex flex-col gap-2">
-    <label for="url">URL to subscription</label>
-    <InputText id="url" @ref="Input" class="form-input bg-black rounded-lg" type="text" @bind-Value="@NewSubscription.Url" bind-Value:event="OnInput"></InputText>
+<EditForm Model="@AddModel" OnValidSubmit="@AddAsync" class="flex flex-col gap-2">
+    <DataAnnotationsValidator />
+
+    <div class="flex flex-col">
+        <label for="url">URL to subscription</label>
+        <InputText id="url" @ref="Input" class="bg-black rounded-lg" type="text" @bind-Value="@AddModel.Url" bind-Value:event="OnInput"></InputText>
+        <ValidationMessage For="() => AddModel.Url" />
+    </div>
 
     <button Type="submit" Class="btn btn-primary md:w-36" disabled="@IsTaskRunning">
         @if (IsTaskRunning)

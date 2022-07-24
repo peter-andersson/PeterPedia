@@ -13,7 +13,7 @@ public partial class Add : ComponentBase
 
     private bool IsTaskRunning { get; set; } = false;
 
-    private NewSubscription NewSubscription { get; set; } = new();
+    private AddModel AddModel { get; set; } = new();
 
     private List<string> Urls { get; set; } = new List<string>();
 
@@ -32,7 +32,7 @@ public partial class Add : ComponentBase
 
     public async Task AddAsync()
     {
-        if (string.IsNullOrEmpty(NewSubscription.Url))
+        if (string.IsNullOrWhiteSpace(AddModel.Url))
         {
             return;
         }
@@ -40,12 +40,17 @@ public partial class Add : ComponentBase
         Urls.Clear();
         IsTaskRunning = true;
 
-        AddResult result = await Service.AddAsync(NewSubscription);
+        var newSubscription = new NewSubscription()
+        {
+            Url = AddModel.Url
+        };
+
+        AddResult result = await Service.AddAsync(newSubscription);
 
         if (string.IsNullOrWhiteSpace(result.ErrorMessage) && result.Urls.Count == 0)
         {
             ToastService.ShowSuccess("Subscription added");
-            NewSubscription.Url = string.Empty;
+            AddModel.Url = string.Empty;
         }
         else if (result.Urls.Count > 0)
         {
