@@ -1,4 +1,3 @@
-using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components;
 
 namespace Reader.App.Pages;
@@ -6,7 +5,7 @@ namespace Reader.App.Pages;
 public partial class History : ComponentBase
 {
     [Inject]
-    private HttpClient Http { get; set; } = null!;
+    private IReaderService Service { get; set; } = null!;
 
     private HistoryArticle[] Articles { get; set; } = Array.Empty<HistoryArticle>();
 
@@ -16,7 +15,7 @@ public partial class History : ComponentBase
     {
         Loading = true;
 
-        Articles = await Http.GetFromJsonAsync<HistoryArticle[]>("/api/history") ?? Array.Empty<HistoryArticle>();
+        Articles = await Service.GetHistoryAsync();
 
         Loading = false;
     }

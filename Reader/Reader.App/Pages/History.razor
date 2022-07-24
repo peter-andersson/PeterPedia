@@ -1,20 +1,18 @@
 ﻿@page "/history"
 @attribute [Authorize(Roles = "admin")]
 
-<h4 class="mt-2">History</h4>
+<Title Text="History" />
 
 @if (Loading)
 {
-    <Spinner Text="Loading..." />
+    <LoadingIndicator Text="Loading..." />
 }
 else
 {
-    <div class="row mt-2">
-        <div class="list-group">
-            @foreach (HistoryArticle article in Articles)
-            {
-                <a href="@article.Url" class="list-group-item list-group-item-action">@article.Title - @article.ReadDate.ToString("d MMM yyyy HH:mm:ss")</a>
-            }
-        </div>
+    <div class="flex flex-col gap-2 mt-2">
+        @foreach (HistoryArticle article in Articles)
+        {
+            <a href="@article.Url" class="underline">@article.Title - @article.ReadDate.ToString("d MMM yyyy HH:mm:ss")</a>
+        }
     </div>
 }
