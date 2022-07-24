@@ -1,4 +1,3 @@
-using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components;
 
 namespace Reader.App.Pages;
@@ -6,7 +5,7 @@ namespace Reader.App.Pages;
 public partial class Subscriptions : ComponentBase
 {
     [Inject]
-    private HttpClient Http { get; set; } = null!;
+    private IReaderService Service { get; set; } = null!;
 
     private Subscription[] SubscriptionList { get; set; } = Array.Empty<Subscription>();
 
@@ -16,7 +15,7 @@ public partial class Subscriptions : ComponentBase
     {
         Loading = true;
 
-        SubscriptionList = await Http.GetFromJsonAsync<Subscription[]>("/api/all") ?? Array.Empty<Subscription>();
+        SubscriptionList = await Service.GetSubscriptionsAsync();
 
         Loading = false;
     }
