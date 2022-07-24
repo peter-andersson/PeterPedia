@@ -1,59 +1,59 @@
-﻿@page "/edit/{id}"
+﻿@page "/subscriptions/edit/{id}"
 @attribute [Authorize(Roles = "admin")]
 
-<h4 class="mt-2">Edit subscription</h4>
+<Title Text="Edit subscription" />
 
 @if (Loading)
 {
-    <Spinner Text="Loading..." />
+    <LoadingIndicator Text="Loading..." />
 }
 else if (Subscription is not null)
-{
-    <EditForm class="form" Model="@Subscription" OnValidSubmit="@SaveAsync">
-        <div class="row">
-            <div class="col-12 mb-2">
-                <div class="form-floating">
-                    <InputText id="title" class="form-control" @bind-Value="Subscription.Title"></InputText>
-                    <label for="title">Title</label>
-                </div>
-            </div>
-            <div class="col-12 mb-2">
-                <div class="form-floating">
-                    <InputText id="group" class="form-control" @bind-Value="Subscription.Group" />
-                    <label for="group">Group</label>
-                </div>
-            </div>
-            <div class="col-12 mb-2">
-                <div class="form-floating">
-                    <InputNumber id="update-interval" class="form-control" @bind-Value="Subscription.UpdateIntervalMinute" />
-                    <label for="update-interval">Update interval in minutes</label>
-                </div>
-            </div>
-            <div class="col-12 mb-2">
-                <div class="form-floating">
-                    <InputText id="url" class="form-control" @bind-Value="Subscription.Url" />
-                    <label for="url">Url</label>
-                </div>
-            </div>
+{    
+    <EditForm class="mt-2 flex flex-col gap-2" Model="@EditModel" OnValidSubmit="@SaveAsync">
+        <DataAnnotationsValidator />
+
+        <div class="flex flex-col">
+            <label for="title">Title</label>
+            <InputText id="title" class="form-input bg-black rounded-lg" @bind-Value="EditModel.Title"></InputText>
+            <ValidationMessage For="() => EditModel.Title" />
         </div>
-        <div class="row">
-            <div class="d-flex">
-                <SpinnerButton Type="submit" Class="btn btn-success" IsTaskRunning="@IsSaveTaskRunning" Text="Save" ActionText="Saving..." />
-                <SpinnerButton Type="button" Class="btn btn-danger ms-2" IsTaskRunning="@IsDeleteTaskRunning" Text="Delete" ActionText="Deleting..." OnClickCallback="@DeleteAsync" />
-                <button type="button" class="btn btn-secondary ms-2" @onclick="Close">Cancel</button>
-            </div>
+
+        <div class="flex flex-col">
+            <label for="group">Group</label>
+            <InputText id="group" class="form-input bg-black rounded-lg" @bind-Value="EditModel.Group" />
+            <ValidationMessage For="() => EditModel.Group" />
+        </div>
+
+        <div class="flex flex-col">
+            <label for="update-interval">Update interval in minutes</label>
+            <InputNumber id="update-interval" class="form-input bg-black rounded-lg" @bind-Value="EditModel.UpdateIntervalMinute" />
+            <ValidationMessage For="() => EditModel.UpdateIntervalMinute" />
+        </div>
+
+        <div class="flex flex-col">
+            <label for="update-at">Update at</label>
+            <InputText id="update-at" class="form-input bg-black rounded-lg" @bind-Value="EditModel.UpdateAt" />
+            <ValidationMessage For="() => EditModel.UpdateAt" />
+        </div>
+
+        <div class="flex flex-col">
+            <label for="url">Url</label>
+            <InputText id="url" class="form-input bg-black rounded-lg" @bind-Value="EditModel.Url" />
+            <ValidationMessage For="() => EditModel.Url" />
+        </div>
+
+        <span>Last updated: @Subscription.LastUpdated?.ToString("d MMM yyyy HH:mm")</span>
+
+        <div class="mt-2">
+            <SpinnerButton Type="submit" Class="btn btn-success" IsTaskRunning="@IsSaveTaskRunning" Text="Save" ActionText="Saving..." />
+            <SpinnerButton Type="button" Class="btn btn-danger ms-2" IsTaskRunning="@IsDeleteTaskRunning" Text="Delete" ActionText="Deleting..." OnClickCallback="@DeleteAsync" />
+            <button type="button" class="btn btn-primary ms-2" @onclick="Close">Cancel</button>
         </div>
     </EditForm>
-
-
-    @if (!string.IsNullOrWhiteSpace(ErrorMessage))
-    {
-        <div class="alert alert-danger" role="alert">
-            @ErrorMessage
-        </div>
-    }
 }
 else
 {
-    <h5>Subscription not found!</h5>
+    <div class="text-lg">
+        Subscription not found!
+    </div>
 }

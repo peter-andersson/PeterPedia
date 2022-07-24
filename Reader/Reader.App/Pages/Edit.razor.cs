@@ -1,4 +1,3 @@
-using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components;
 
 namespace Reader.App.Pages;
@@ -6,13 +5,18 @@ namespace Reader.App.Pages;
 public partial class Edit : ComponentBase
 {
     [Inject]
-    private HttpClient Http { get; set; } = null!;
+    private IReaderService Service { get; set; } = null!;
+
+    [Inject]
+    private IToastService ToastService { get; set; } = null!;
 
     [Inject]
     private Navigation Navigation { get; set; } = null!;
 
     [Parameter]
     public string Id { get; set; } = string.Empty;
+
+    private EditModel EditModel { get; set; } = new();
 
     private Subscription? Subscription { get; set; }
 
@@ -22,15 +26,22 @@ public partial class Edit : ComponentBase
 
     private bool Loading { get; set; } = true;
 
-    private string ErrorMessage { get; set; } = string.Empty;
-
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         IsSaveTaskRunning = false;
         IsDeleteTaskRunning = false;
         Loading = true;
 
-        Subscription = await Http.GetFromJsonAsync<Subscription?>($"/api/get/{Id}");
+        Subscription = Service.GetSubscription(Id);
+
+        if (Subscription is not null)
+        {
+            EditModel.Title = Subscription.Title;
+            EditModel.Group = Subscription.Group;
+            EditModel.UpdateIntervalMinute = Subscription.UpdateIntervalMinute;
+            EditModel.UpdateAt = Subscription.UpdateAt;
+            EditModel.Url = Subscription.Url;
+        }
 
         Loading = false;
     }
@@ -42,65 +53,69 @@ public partial class Edit : ComponentBase
             return;
         }
 
+        if (string.IsNullOrWhiteSpace(EditModel.Title))
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(EditModel.Url))
+        {
+            return;
+        }
+
+        Subscription.Title = EditModel.Title;
+        Subscription.Group = EditModel.Group;
+        Subscription.UpdateIntervalMinute = EditModel.UpdateIntervalMinute;
+        Subscription.UpdateAt = EditModel.UpdateAt;
+        Subscription.Url = EditModel.Url;
+
         IsSaveTaskRunning = true;
-        ErrorMessage = string.Empty;
 
-        try
-        {            
-            HttpResponseMessage response = await Http.PostAsJsonAsync("/api/update", Subscription);
-
-            if (response.IsSuccessStatusCode)
-            {
-                Navigation.NavigateBack();
-            }
-            else
-            {
-                ErrorMessage = "Failed to update subscription.";
-            }
-        }
-        catch
+        if (await Service.UpdateSubscriptionAsync(Subscription))
         {
-            Subscription = null;
+            ToastService.ShowSuccess("Subscription saved");
         }
-        finally
+        else
         {
-            IsSaveTaskRunning = false;
+            ToastService.ShowError("Failed to save subscription");
         }
+        
+        IsSaveTaskRunning = false;
     }
 
     private async Task DeleteAsync()
     {
-        ErrorMessage = string.Empty;
-
         if (Subscription is null)
         {
             return;
         }
 
-        try
-        {
-            IsDeleteTaskRunning = true;
+        IsDeleteTaskRunning = true;
 
-            HttpResponseMessage response = await Http.DeleteAsync($"/api/delete/{Subscription.Id}");
+        if (await Service.UpdateSubscriptionAsync(Subscription))
+        {
+            NavigateBack();
+        }
+        else
+        {
+            ToastService.ShowError("Failed to delete subscription");
+        }
 
-            if (response.IsSuccessStatusCode)
-            {
-                Navigation.NavigateBack();
-            }
-            else
-            {
-                ErrorMessage = "Failed to delete subscription.";
-            }
-        }
-        catch
-        {
-            ErrorMessage = "Failed to delete subscription.";
-        }
-        finally
-        {
-            IsDeleteTaskRunning = false;
-        }
+        IsDeleteTaskRunning = false;
     }
 
-    private void Close() => Navigation.NavigateBack();
+    private void Close() => NavigateBack();
+
+
+    private void NavigateBack()
+    {
+        if (Navigation.CanNavigateBack)
+        {
+            Navigation.NavigateBack();
+        }
+        else
+        {
+            Navigation.NavigateTo("/subscriptions");
+        }
+    }
 }
