@@ -46,6 +46,7 @@ public class Update
         existing.NextUpdate = DateTime.UtcNow.AddMinutes(-1);
         existing.Url = subscription.Url;
         existing.Group = subscription.Group;
+        existing.UpdateAt = subscription.UpdateAt;
 
         try
         {            

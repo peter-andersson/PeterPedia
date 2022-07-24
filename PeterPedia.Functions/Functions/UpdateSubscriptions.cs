@@ -1,4 +1,3 @@
-using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
@@ -35,7 +34,7 @@ public class UpdateSubscriptions
     {
         _log.LogDebug(myTimer.FormatNextOccurrences(1));
 
-        var query = new QueryDefinition(query: "SELECT * FROM c WHERE c.Type = 'subscription' AND c.NextUpdate < GetCurrentDateTime() ORDER BY c.NextUpdate OFFSET 0 LIMIT 20");
+        var query = new QueryDefinition(query: "SELECT * FROM c WHERE c.Type = 'subscription' AND c.NextUpdate < GetCurrentDateTime() ORDER BY c.NextUpdate");
 
         List<SubscriptionEntity> entities = await _repository.QueryAsync<SubscriptionEntity>(_containerId, query);
 
@@ -43,10 +42,23 @@ public class UpdateSubscriptions
         {
             await ReadFeedAsync(subscription);
 
-            subscription.NextUpdate = DateTime.UtcNow.AddMinutes(subscription.UpdateIntervalMinute);
+            subscription.NextUpdate = GetNextUpdate(subscription);
 
             await _repository.UpdateAsync(_containerId, subscription);
         }
+    }
+
+    private static DateTime GetNextUpdate(SubscriptionEntity subscription)
+    {
+        if (!string.IsNullOrWhiteSpace(subscription.UpdateAt))
+        {
+            if (TimeSpan.TryParse(subscription.UpdateAt, out TimeSpan timeSpan))
+            {
+                return DateTime.UtcNow.Date.Add(timeSpan);
+            }
+        }
+
+        return DateTime.UtcNow.AddMinutes(subscription.UpdateIntervalMinute);
     }
 
     private async Task ReadFeedAsync(SubscriptionEntity subscription)
@@ -91,6 +103,7 @@ public class UpdateSubscriptions
 
                 if (entities.Count == 0)
                 {
+                    subscription.LastUpdated = article.PublishDate;
                     await _repository.AddAsync(_containerId, article);
                 }
             }

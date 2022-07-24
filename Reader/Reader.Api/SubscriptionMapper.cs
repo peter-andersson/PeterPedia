@@ -9,6 +9,9 @@ public static class SubscriptionMapper
             Title = entity.Title,
             Url = entity.Url,
             UpdateIntervalMinute = entity.UpdateIntervalMinute,
-            Group = entity.Group
+            Group = entity.Group,
+            LastUpdated = entity.LastUpdated,
+            UpdateAt = entity.UpdateAt,
+            NextUpdate = entity.NextUpdate,
         };
 }

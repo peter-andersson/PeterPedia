@@ -11,4 +11,10 @@ public class Subscription
     public int UpdateIntervalMinute { get; set; }
 
     public string? Group { get; set; }
+
+    public DateTime? LastUpdated { get; set; }
+
+    public string? UpdateAt { get; set; }
+
+    public DateTime NextUpdate { get; set; }
 }
