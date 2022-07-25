@@ -15,8 +15,7 @@
                 </svg>
             </button>
             <div class="bg-slate-400 rounded-lg w-full text-black">
-              <a href="https://www.google.com/?q=@(Article.Id)" class="p-2 flex justify-between" @onclick="async () => await OpenAsync()">
-              @*<a href="/api/open/@(Article.Id)" class="p-2 flex justify-between" @onclick="async () => await OpenAsync()">*@
+                <a href="/api/open/@(Article.Id)" class="p-2 flex justify-between" @onclick="async () => await OpenAsync()">
                 <span>@Article.Title</span>
                 <span>[@Article.Subscription]</span>
               </a>
