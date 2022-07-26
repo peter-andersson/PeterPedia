@@ -1,34 +1,33 @@
 ﻿@page "/search"
 @attribute [Authorize(Roles = "admin")]
 
-<h4 class="mt-2">Search</h4>
+<Title Text="Search" />
 
-<div class="mb-3">
-    <label for="search" class="form-label">Search tv shows by title, can use wildcards using % like, %love%.</label>
-    <input id="search" type="text" @ref="Input" class="form-control" @bind="Filter" @bind:event="oninput" @onkeydown="InputKeyDownAsync" placeholder="Filter">
+<div class="flex flex-col">
+    <label for="search">Search tv shows by title, can use wildcards using % like, %love%.</label>
+    <input id="search" type="text" @ref="Input" class="form-input bg-black rounded-lg" @bind="Filter" @bind:event="oninput" @onkeydown="InputKeyDownAsync" placeholder="Filter">
 </div>
-
 
 @if (Searching)
 {
-    <Spinner Text="Searching..." />
+    <LoadingIndicator Text="Searching..." />
 }
 else
 {
     if (ShowList.Length == 0)
     {
-        <h5>No tv show found!</h5>
+        <div class="mt-2 text-lg">No tv show found!</div>
     }
     else
     {
-        <ul class="list-group">
+        <div class="mt-2 flex flex-col gap-2">
             @foreach (TVShow show in ShowList)
             {
-                <li class="list-group-item" role="button" @onclick="() => OpenShow(show)">
-                    @show.Title - @show.Status - @show.UnwatchedEpisodeCount of @show.EpisodeCount
-                </li>
+                <div class="bg-slate-400 mb-2 rounded-lg text-black">
+                    <a href="/edit/@show.Id" class="p-2">@show.Title - @show.Status - @show.UnwatchedEpisodeCount of @show.EpisodeCount</a>
+                </div>
             }
-        </ul>
+        </div>
     }
 }
 

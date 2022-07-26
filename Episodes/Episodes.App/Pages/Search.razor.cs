@@ -9,9 +9,6 @@ public partial class Search : ComponentBase
     [Inject]
     private HttpClient Http { get; set; } = null!;
 
-    [Inject]
-    private Navigation Navigation { get; set; } = null!;
-
     private TVShow[] ShowList { get; set; } = Array.Empty<TVShow>();
 
     private string Filter { get; set; } = string.Empty;
@@ -68,6 +65,4 @@ public partial class Search : ComponentBase
             Searching = false;
         }
     }
-
-    public void OpenShow(TVShow show) => Navigation.NavigateTo($"/edit/{show.Id}");
 }
