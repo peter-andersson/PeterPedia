@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .btn {
+        @apply px-5 py-2.5 rounded-lg;
+    }
+
+    .btn-primary {
+        @apply text-white bg-blue-700 hover:bg-blue-800;
+    }
+
+    .btn-danger {
+        @apply text-white bg-red-700 hover:bg-red-800;
+    }
+
+    .btn-success {
+        @apply text-white bg-lime-700 hover:bg-lime-800;
+    }
+}
+
+.active {
+    @apply font-bold underline;
+}
+
+.validation-message {
+    @apply text-red-600;
+}
+
+input.modified.invalid {
+    @apply bg-red-600;
+}
