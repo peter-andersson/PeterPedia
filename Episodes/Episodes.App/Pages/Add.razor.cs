@@ -1,6 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using System.Net;
-using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 
@@ -54,31 +51,5 @@ public partial class Add : ComponentBase
                 await Input.Element.Value.FocusAsync();
             }
         }
-    }
-
-    public class TVUrl
-    {
-        [Required]
-        public string? Url { get; set; }
-
-        public int? Id
-        {
-            get
-            {
-                var movieRegex = new Regex("^https://www.themoviedb.org/tv/(\\d+)");
-
-                if (movieRegex.IsMatch(Url ?? string.Empty))
-                {
-                    Match? matches = movieRegex.Match(Url ?? string.Empty);
-
-                    if (int.TryParse(matches.Groups[1].Value, out var movieId))
-                    {
-                        return movieId;
-                    }
-                }
-
-                return null;
-            }
-        }
-    }
+    }    
 }
