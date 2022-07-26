@@ -1,13 +1,7 @@
-using Newtonsoft.Json;
-using PeterPedia.Data.Interface;
-
 namespace PeterPedia.Data.Models;
 
-public class SubscriptionEntity : IEntity
+public class SubscriptionEntity : BaseEntity
 {
-    [JsonProperty(PropertyName = "id")]
-    public string Id { get; set; } = string.Empty;
-
 #pragma warning disable CA1822 // Mark members as static
     public string Type => "subscription";
 #pragma warning restore CA1822 // Mark members as static

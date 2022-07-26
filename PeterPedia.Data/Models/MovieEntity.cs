@@ -1,13 +1,7 @@
-using Newtonsoft.Json;
-using PeterPedia.Data.Interface;
-
 namespace PeterPedia.Data.Models;
 
-public class MovieEntity : IEntity
+public class MovieEntity : BaseEntity
 {
-    [JsonProperty(PropertyName = "id")]
-    public string Id { get; set; } = string.Empty;
-
     public string ImdbId { get; set; } = string.Empty;
 
     public string OriginalTitle { get; set; } = string.Empty;
