@@ -1,21 +1,29 @@
 ﻿@page "/"
 @attribute [Authorize(Roles = "admin")]
 
-<h4 class="mt-2">Episodes</h4>
+<Title Text="Episodes" />
 
 @if (Loading)
 {
-    <Spinner Text="Loading..." />
+    <LoadingIndicator Text="Loading..." />
 }
 else
 {
-    <div class="row row-cols-1 row-cols-md-4 g-4 mb-2">
+    <div class="mt-2 flex flex-wrap gap-4">
         @foreach (TVShow show in ShowList)
         {
-      <div class="show me-2 position-relative" role="button" @onclick="() => OpenShow(show)">
-        <span class="badge rounded-pill bg-primary position-absolute episode-count">@show.UnwatchedEpisodeCount</span>
-        <img src="/api/image/@($"{show.Id}.jpg")" class="show-poster" alt="@show.Title">
-      </div>
+            <div class="md:w-[185px] w-full flex flex-col items-center">
+                <a href="/edit/@show.Id" class="w-full flex flex-col items-center md:items-start">
+                    <img src="/api/image/@($"{show.Id}.jpg")" class="mx-auto w-[185px] h-[278px] rounded-lg" alt="@show.Title">
+                    <div class="md:w-[185px] inline-flex flex-col">
+                        <span class="font-bold truncate hover:whitespace-normal">
+                            @show.Title
+                        </span>
+                        <span class="font-thin text-sm">@show.UnwatchedEpisodeCount episodes</span>
+                    </div>
+
+                </a>
+            </div>
         }
     </div>
 }
