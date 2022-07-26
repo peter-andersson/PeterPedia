@@ -21,41 +21,28 @@ public partial class SeasonView : ComponentBase
 
     private bool IsTaskRunning { get; set; } = false;
 
-    private async Task WatchAsync()
+    private async Task ToggleStateAsync()
     {
         IsTaskRunning = true;
 
+        bool state = !Season.IsAllWatched;
+
         foreach (Episode episode in Season.Episodes)
         {
-            episode.Watched = true;
+            episode.Watched = state;
         }
 
         Result result = await Service.UpdateAsync(TVShow);
         if (result.Success)
         {
-            ToastService.ShowSuccess("Season marked as watched.");
-        }
-        else
-        {
-            ToastService.ShowError(result.ErrorMessage);
-        }
-
-        IsTaskRunning = false;
-    }
-
-    private async Task UnwatchAsync()
-    {
-        IsTaskRunning = true;
-
-        foreach (Episode episode in Season.Episodes)
-        {
-            episode.Watched = false;
-        }
-
-        Result result = await Service.UpdateAsync(TVShow);
-        if (result.Success)
-        {
-            ToastService.ShowSuccess("Season marked as unwatched.");
+            if (state)
+            {
+                ToastService.ShowSuccess("Season marked as watched.");
+            }
+            else
+            {
+                ToastService.ShowSuccess("Season marked as unwatched.");
+            }
         }
         else
         {

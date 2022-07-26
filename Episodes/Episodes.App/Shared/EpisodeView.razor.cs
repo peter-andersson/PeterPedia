@@ -18,35 +18,23 @@ public partial class EpisodeView : ComponentBase
 
     private bool IsTaskRunning { get; set; } = false;
 
-    private async Task WatchAsync()
+    private async Task ToggleStateAsync()
     {
         IsTaskRunning = true;
 
-        Episode.Watched = true;
+        Episode.Watched = !Episode.Watched;
 
         Result result = await Service.UpdateAsync(TVShow);
         if (result.Success)
         {
-            ToastService.ShowSuccess("Episode marked as watched.");
-        }
-        else
-        {
-            ToastService.ShowError(result.ErrorMessage);
-        }
-
-        IsTaskRunning = false;
-    }
-
-    private async Task UnwatchAsync()
-    {
-        IsTaskRunning = true;
-
-        Episode.Watched = false;
-
-        Result result = await Service.UpdateAsync(TVShow);
-        if (result.Success)
-        {
-            ToastService.ShowSuccess("Episode marked as unwatched.");
+            if (Episode.Watched)
+            {
+                ToastService.ShowSuccess("Episode marked as watched.");
+            }
+            else
+            {
+                ToastService.ShowSuccess("Episode marked as unwatched.");
+            }
         }
         else
         {

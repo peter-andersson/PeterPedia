@@ -1,87 +1,104 @@
 ﻿@page "/edit/{id}"
 @attribute [Authorize(Roles = "admin")]
 
-<h4 class="mt-2">TV Show information</h4>
+<Title Text="TV Show information" />
 
 @if (Loading)
 {
-    <Spinner Text="Loading..." />
+    <LoadingIndicator Text="Loading..." />
 }
-else if (Show is not null)
+else if (EditModel.Show is not null)
 {
-    <div class="row">
-        <EditForm class="form" Model="@Show" OnValidSubmit="@SaveAsync">
-            <div class="row">
-                <div class="col-12 mb-2">
-                    <div class="form-floating">
-                        <InputText id="show-title" class="form-control" type="text" @bind-Value="Show.Title"></InputText>
-                        <label for="show-title">Title</label>
-                    </div>
+    <EditForm Model="@EditModel" OnValidSubmit="@SaveAsync">
+        <DataAnnotationsValidator />
+
+        <div class="flex flex-col gap-2">
+            <label for="title">Title</label>
+            <InputText id="title" class="form-input bg-black rounded-lg" type="text" @bind-Value="EditModel.Title"></InputText>
+            <ValidationMessage For="() => EditModel.Title" />
+
+            <label for="original-title">Original title</label>
+            <input id="original-title" class="form-input bg-gray-500 text-black rounded-lg" type="text" value="@EditModel.Show.OriginalTitle" disabled />
+
+            <label for="source">Source</label>
+            <InputText id="source" class="form-input bg-black rounded-lg" type="text" @bind-Value="EditModel.Source"></InputText>
+
+            <div class="flex items-center">
+                <InputCheckbox id="refresh" class="w-4 h-4 text-blue-600 bg-black rounded ring-offset-inherit ring-offset-0" type="text" @bind-Value="EditModel.Refresh"></InputCheckbox>
+                <label for="refresh" class="ml-2 text-sm font-medium">Refresh</label>
+            </div>
+
+            <div class="flex gap-2">
+                <div class="flex flex-col gap-2">
+                    <label for="show-status">Status</label>
+                    <input id="show-status" class="form-input bg-gray-500 text-black rounded-lg" type="text" value="@EditModel.Show.Status" disabled />                    
                 </div>
-                <div class="col-12 mb-2">
-                    <div class="form-floating">
-                        <input id="show-original-title" class="form-control" type="text" value="@Show.OriginalTitle" disabled />
-                        <label for="show-original-title">Original title</label>
-                    </div>
+                <div class="flex flex-col gap-2">
+                    <label for="show-seasons">Seasons</label>
+                    <input id="show-seasons" class="form-input bg-gray-500 text-black rounded-lg" type="text" value="@EditModel.Show.SeasonCount" disabled />                    
                 </div>
-                <div class="col-12 mb-2">
-                    <div class="form-floating">
-                        <InputText id="show-title" class="form-control" type="text" @bind-Value="Show.Source"></InputText>
-                        <label for="show-title">Source</label>
-                    </div>
-                </div>
-                <div class="col-12 mb-2">
-                    <div class="form-check">
-                        <InputCheckbox id="show-refresh" class="form-check-input" type="text" @bind-Value="Show.Refresh"></InputCheckbox>
-                        <label for="show-refresh" class="form-check-label">Refresh</label>
-                    </div>
-                </div>
-                <div class="col-4 mb-2">
-                    <div class="form-floating">
-                        <input id="show-status" class="form-control" type="text" value="@Show.Status" disabled />
-                        <label for="show-status">Status</label>
-                    </div>
-                </div>
-                <div class="col-4 mb-2">
-                    <div class="form-floating">
-                        <input id="show-seasons" class="form-control" type="text" value="@Show.SeasonCount" disabled />
-                        <label for="show-seasons">Seasons</label>
-                    </div>
-                </div>
-                <div class="col-4 mb-2">
-                    <div class="form-floating">
-                        <input id="show-episodes" class="form-control" type="text" value="@Show.EpisodeCount" disabled />
-                        <label for="show-episodes">Episodes</label>
-                    </div>
+                <div class="flex flex-col gap-2">
+                    <label for="show-episodes">Episodes</label>
+                    <input id="show-episodes" class="form-input bg-gray-500 text-black rounded-lg" type="text" value="@EditModel.Show.EpisodeCount" disabled />                    
                 </div>
             </div>
-            <div class="row">
-                <p class="mt-2">
-                    <a href="@Show.TheMovieDbUrl.ToString()" target="_blank">View on TMDb</a>
-                </p>
+
+            <a class="underline" href="@EditModel.Show.TheMovieDbUrl.ToString()" target="_blank">View on TMDb</a>
+
+            <div class="mt-2">
+                <button Type="submit" class="btn btn-success" disabled="@IsSaveTaskRunning">
+                    @if (IsSaveTaskRunning)
+                    {
+                        <div class="flex items-center gap-2">
+                            <svg class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z" />
+                                <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z" />
+                            </svg>
+                            <span>Saving...</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <span>Save</span>
+                    }
+                </button>
+                <button type="button" class="btn btn-danger" disabled="@IsDeleteTaskRunning" @onclick="async () => await DeleteAsync()">
+                    @if (IsDeleteTaskRunning)
+                    {
+                        <div class="flex items-center gap-2">
+                            <svg class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z" />
+                                <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z" />
+                            </svg>
+                            <span>Deleting...</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <span>Delete</span>
+                    }
+                </button>
+                <button type="button" class="btn btn-primary" @onclick="Close">Cancel</button>
             </div>
-            <div class="row">
-                <div class="d-flex">
-                    <SpinnerButton Type="submit" Class="btn btn-success" IsTaskRunning="@IsSaveTaskRunning" Text="Save" ActionText="Saving..." />
-                    <SpinnerButton Type="button" Class="btn btn-danger ms-2" IsTaskRunning="@IsDeleteTaskRunning" Text="Delete" ActionText="Deleting..." OnClickCallback="@DeleteAsync" />
-                    <button type="button" class="btn btn-secondary ms-2" @onclick="Close">Cancel</button>
-                </div>
-            </div>
-        </EditForm>
-        <div class="row overflow-scroll">
-            <div class="form-check form-switch mt-2">
-                <input checked="@ShowAll" class="form-check-input" type="checkbox" role="switch" id="switch-showall" @onchange="ToggleShowAll">
-                <label class="form-check-label" for="switch-showall">Show all episodes</label>
-            </div>
-            @foreach (var season in Show.Seasons.OrderBy(s => s.SeasonNumber))
-            {
-                <SeasonView TVShow="Show" Season="season" ShowAll="ShowAll" />
-            }
         </div>
+    </EditForm>
+
+    <div class="mt-4">
+
+        <label for="checked-toggle" class="inline-flex relative items-center cursor-pointer">
+            <input type="checkbox" value="" id="checked-toggle" class="sr-only peer" @onchange="ToggleShowAll">
+            <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+            <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Show all episodes</span>
+        </label>
+
+        @foreach (var season in EditModel.Show.Seasons.OrderBy(s => s.SeasonNumber))
+        {
+            <SeasonView TVShow="EditModel.Show" Season="season" ShowAll="ShowAll" />
+        }
     </div>
 }
 else
 {
-    <h5>No tv show found!</h5>
+    <div class="mt-2 text-lg">No tv show found!</div>
 }
 

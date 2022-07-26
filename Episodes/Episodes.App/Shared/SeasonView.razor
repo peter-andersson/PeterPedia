@@ -1,24 +1,41 @@
 ﻿@if (ShowAll || !Season.IsAllWatched)
 {
-    <div class="col-12">
-        <h3 class="mb-3">
-            Season @Season.SeasonNumber
-            @if (Season.IsAllWatched)
-            {
-                <SpinnerButton Type="button" Class="btn btn-primary float-end" IsTaskRunning="@IsTaskRunning" Text="Not watched" ActionText="Updating..." OnClickCallback="@(async () => await UnwatchAsync())" />
-            }
-            else
-            {
-                <SpinnerButton Type="button" Class="btn btn-primary float-end" IsTaskRunning="@IsTaskRunning" Text="Watched" ActionText="Updating..." OnClickCallback="@(async () => await WatchAsync())" />
-            }
-        </h3>
-        <ul class="list-group list-group-flush mb-3">
-            @if (IsTaskRunning)
-            {
-                <li class="list-group-item">Processing season...</li>
-            }
-            else
-            {
+    <div class="mb-2 pb-2">
+        <div class="flex items-center justify-between">
+            <span>Season @Season.SeasonNumber</span>
+
+            <button type="button" class="btn btn-success" disabled="@IsTaskRunning" @onclick="async () => await ToggleStateAsync()">
+                @if (IsTaskRunning)
+                {
+                    <div class="flex items-center gap-2">
+                        <svg class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z" />
+                            <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z" />
+                        </svg>
+                        <span>Updating...</span>
+                    </div>
+                }
+                else
+                {
+                    @if (Season.IsAllWatched)
+                    {
+                        <span>Not watched</span>
+                    }
+                    else
+                    {
+                        <span>Watched</span>
+                    }
+                }
+            </button>
+        </div>
+
+        @if (IsTaskRunning)
+        {
+            <div class="text-lg mt-2">Processing season...</div>
+        }
+        else
+        {
+            <div class="mt-2 flex flex-col gap-2">
                 @foreach (var episode in Season.Episodes.OrderBy(e => e.EpisodeNumber))
                 {
                     @if (ShowAll)
@@ -30,7 +47,7 @@
                         <EpisodeView TVShow="TVShow" Episode="episode" />
                     }
                 }
-            }
-        </ul>
+            </div>
+        }
     </div>
 }

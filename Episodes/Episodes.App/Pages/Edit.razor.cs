@@ -1,4 +1,3 @@
-using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components;
 
 namespace Episodes.App.Pages;
@@ -17,7 +16,7 @@ public partial class Edit : ComponentBase, IDisposable
     [Parameter]
     public string Id { get; set; } = null!;
 
-    private TVShow? Show { get; set; }
+    private EditModel EditModel { get; set; } = new();
 
     private bool IsSaveTaskRunning { get; set; }
 
@@ -36,7 +35,11 @@ public partial class Edit : ComponentBase, IDisposable
 
         Service.OnChange += StateHasChanged;
 
-        Show = await Service.GetAsync(Id);
+        TVShow? show = await Service.GetAsync(Id);
+        if (show is not null)
+        {
+            EditModel = new EditModel(show);
+        }
 
         Loading = false;
     }
@@ -45,14 +48,16 @@ public partial class Edit : ComponentBase, IDisposable
 
     private async Task SaveAsync()
     {
-        if (Show is null)
+        if (EditModel.Show is null)
         {
             return;
         }
 
+        EditModel.SaveProperties();
+
         IsSaveTaskRunning = true;
 
-        Result result = await Service.UpdateAsync(Show);
+        Result result = await Service.UpdateAsync(EditModel.Show);
 
         if (result.Success)
         {
@@ -68,14 +73,14 @@ public partial class Edit : ComponentBase, IDisposable
 
     private async Task DeleteAsync()
     {
-        if (Show is null)
+        if (EditModel.Show is null)
         {
             return;
         }
 
         IsDeleteTaskRunning = true;
 
-        Result result = await Service.DeleteAsync(Show);
+        Result result = await Service.DeleteAsync(EditModel.Show);
 
         if (result.Success)
         {
@@ -107,7 +112,7 @@ public partial class Edit : ComponentBase, IDisposable
         if (disposing)
         {
             Service.OnChange -= StateHasChanged;
-            Show = null;
+            EditModel = new();
         }
 
         _disposed = true;
