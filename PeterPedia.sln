@@ -33,6 +33,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Shared", "Library\Library.Shared\Library.Shared.csproj", "{018D97B4-3E98-4B13-842B-393605ED2542}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Episodes", "Episodes", "{3B63049E-1FEB-45B6-BCC3-A51F302A8D01}"
+	ProjectSection(SolutionItems) = preProject
+		Episodes\README.md = Episodes\README.md
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Episodes.Api", "Episodes\Episodes.Api\Episodes.Api.csproj", "{C297D2A9-3203-4DC8-AA91-25D8DEC240B4}"
 EndProject
