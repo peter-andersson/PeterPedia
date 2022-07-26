@@ -7,9 +7,6 @@ public partial class Index : ComponentBase
     [Inject]
     private ITVService Service { get; set; } = null!;
 
-    [Inject]
-    private Navigation Navigation { get; set; } = null!;
-
     private TVShow[] ShowList { get; set; } = Array.Empty<TVShow>();
 
     private bool Loading { get; set; } = true;
@@ -20,6 +17,4 @@ public partial class Index : ComponentBase
 
         Loading = false;
     }
-
-    public void OpenShow(TVShow show) => Navigation.NavigateTo($"/edit/{show.Id}");
 }
