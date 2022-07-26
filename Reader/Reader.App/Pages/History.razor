@@ -9,10 +9,12 @@
 }
 else
 {
-    <div class="flex flex-col gap-2 mt-2">
+    <div class="mt-2 flex flex-col">
         @foreach (HistoryArticle article in Articles)
         {
-            <a href="@article.Url" class="underline">@article.Title - @article.ReadDate.ToString("d MMM yyyy HH:mm:ss")</a>
+            <div class="bg-slate-400 mb-2 rounded-lg text-black">
+                <a href="@article.Url" class="p-2">@article.Title - @article.ReadDate.ToString("d MMM yyyy HH:mm:ss")</a>
+            </div>
         }
     </div>
 }

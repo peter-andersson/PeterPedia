@@ -11,20 +11,20 @@ else
 {
     if (UnreadArticles.Length > 0)
     {
-        <ul class="mt-2 text-black">
+        <div class="mt-2 flex flex-col">
             @foreach (var unread in UnreadArticles)
             {
                 if (unread.Items.Count > 0)
                 {
-                  <li class="bg-slate-400 mb-2 rounded-lg">
+                  <div class="bg-slate-400 mb-2 rounded-lg text-black">
                     <a href="/view/@unread.Group" class="p-2 flex justify-between">
                       <span>@unread.Group</span>
                       <span class="bg-blue-700 px-2 rounded text-white">@unread.Items.Count</span>
                     </a>
-                  </li>
+                  </div>
                 }
             }
-        </ul>
+        </div>
     }
     else
     {
