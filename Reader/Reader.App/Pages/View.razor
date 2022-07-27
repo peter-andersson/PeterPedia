@@ -3,7 +3,7 @@
 
 @if (Unread != null)
 {
-    <Title Text="@($"{Unread.Group} - {Unread.Items.Count} articles")" />
+    <ReaderTitle Text="@($"{Unread.Group} - {Unread.Items.Count} articles")" />
 
     @if (Unread.Items.Count > 0)
     {

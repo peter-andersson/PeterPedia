@@ -1,7 +1,7 @@
 ﻿@page "/add"
 @attribute [Authorize(Roles = "admin")]
 
-<Title Text="Add subscription" />
+<ReaderTitle Text="Add subscription" />
 
 <EditForm Model="@AddModel" OnValidSubmit="@AddAsync" class="flex flex-col gap-2">
     <DataAnnotationsValidator />
