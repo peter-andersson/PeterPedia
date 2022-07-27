@@ -1,16 +1,19 @@
 using System.Net.Http.Json;
 using System.Text.Json;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Reader.App.Services;
 
 public class ReaderService : IReaderService
 {
     private readonly HttpClient _httpClient;
+    private readonly IMemoryCache _cache;
 
-    private UnreadGroup[] _unreadData = Array.Empty<UnreadGroup>();
-    private Subscription[] _subscriptions = Array.Empty<Subscription>();
-
-    public ReaderService(HttpClient httpClient) => _httpClient = httpClient;
+    public ReaderService(HttpClient httpClient, IMemoryCache cache)
+    {
+        _httpClient = httpClient;
+        _cache = cache;
+    }
 
     public async Task<AddResult> AddAsync(NewSubscription subscription)
     {
@@ -91,29 +94,59 @@ public class ReaderService : IReaderService
         }
     }
 
-    public Subscription? GetSubscription(string id) => _subscriptions.Where(s => s.Id == id).FirstOrDefault();
+    public async Task<Subscription?> GetSubscriptionAsync(string id)
+    {
+        Subscription[] subscriptions = await GetSubscriptionsAsync();
+
+        return subscriptions.Where(s => s.Id == id).FirstOrDefault();
+    }
 
     public async Task<Subscription[]> GetSubscriptionsAsync()
     {
         try
         {
-            _subscriptions = await _httpClient.GetFromJsonAsync<Subscription[]>("/api/all") ?? Array.Empty<Subscription>();
+            return await _cache.GetOrCreateAsync(
+                "Subscriptions",
+                async cacheEntry =>
+                {
+                    cacheEntry.SlidingExpiration = TimeSpan.FromMinutes(10);
+                    cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(20);
+
+                    return await _httpClient.GetFromJsonAsync<Subscription[]>("/api/all") ?? Array.Empty<Subscription>();
+                });
         }
         catch
         {
-            _subscriptions = Array.Empty<Subscription>();
+            return Array.Empty<Subscription>();
         }
-
-        return _subscriptions;
     }
 
-    public UnreadGroup? GetUnreadGroup(string group) => _unreadData.Where(u => u.Group == group).FirstOrDefault();
+    public async Task<UnreadGroup?> GetUnreadGroupAsync(string group)
+    {
+        UnreadGroup[] data = await UnreadArticlesAsync();
+
+        return data.Where(u => u.Group == group).FirstOrDefault();
+    }
+    
 
     public async Task<UnreadGroup[]> UnreadArticlesAsync()
     {
-        _unreadData = await _httpClient.GetFromJsonAsync<UnreadGroup[]>("/api/unread") ?? Array.Empty<UnreadGroup>();
+        try
+        {
+            return await _cache.GetOrCreateAsync(
+                "Unread",
+                async cacheEntry =>
+                {
+                    cacheEntry.SlidingExpiration = TimeSpan.FromMinutes(10);
+                    cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(20);
 
-        return _unreadData;
+                    return await _httpClient.GetFromJsonAsync<UnreadGroup[]>("/api/unread") ?? Array.Empty<UnreadGroup>();
+                });
+        }
+        catch
+        {
+            return Array.Empty<UnreadGroup>();
+        }
     }
 
     public async Task<bool> UpdateSubscriptionAsync(Subscription subscription)

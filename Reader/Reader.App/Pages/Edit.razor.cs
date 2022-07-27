@@ -26,13 +26,13 @@ public partial class Edit : ComponentBase
 
     private bool Loading { get; set; } = true;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         IsSaveTaskRunning = false;
         IsDeleteTaskRunning = false;
         Loading = true;
 
-        Subscription = Service.GetSubscription(Id);
+        Subscription = await Service.GetSubscriptionAsync(Id);
 
         if (Subscription is not null)
         {

@@ -7,10 +7,10 @@ public interface IReaderService
     Task<bool> Delete(Subscription subscription);
 
     Task<HistoryArticle[]> GetHistoryAsync();
+
+    Task<UnreadGroup?> GetUnreadGroupAsync(string group);
     
-    UnreadGroup? GetUnreadGroup(string group);
-    
-    Subscription? GetSubscription(string id);
+    Task<Subscription?> GetSubscriptionAsync(string id);
 
     Task<Subscription[]> GetSubscriptionsAsync();
 
