@@ -1,18 +1,20 @@
 ﻿@page "/add"
 @attribute [Authorize(Roles = "admin")]
 
-<Title Text="Add tv show" />
+<EpisodesTitle Text="Add tv show" />
 
 <EditForm Model="@TVShow" OnValidSubmit="@AddAsync" class="flex flex-col gap-2">
     <DataAnnotationsValidator />
 
     <div class="flex flex-col">
         <label for="add">TheMovieDb url</label>
-        <InputText id="add" @ref="Input" class="form-input bg-black rounded-lg" @bind-Value="@TVShow.Url" bind-Value:event="OnInput"></InputText>        
-        <ValidationMessage For="() => TVShow.Url" />
+        <InputText id="add" @ref="Input" class="form-control" @bind-Value="@TVShow.Url" bind-Value:event="OnInput"></InputText>
+        <div class="text-red-500">
+            <ValidationMessage For="() => TVShow.Url" />
+        </div>
     </div>
     <div class="mt-2 mb-3">
-        <button Type="submit" Class="btn btn-primary md:w-36" disabled="@IsTaskRunning">
+        <button type="submit" class="btn btn-primary md:w-36" disabled="@IsTaskRunning">
             @if (IsTaskRunning)
             {
                 <div class="flex items-center gap-2">

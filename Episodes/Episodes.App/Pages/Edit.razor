@@ -1,7 +1,7 @@
 ﻿@page "/edit/{id}"
 @attribute [Authorize(Roles = "admin")]
 
-<Title Text="TV Show information" />
+<EpisodesTitle Text="TV Show information" />
 
 @if (Loading)
 {
@@ -14,14 +14,16 @@ else if (EditModel.Show is not null)
 
         <div class="flex flex-col gap-2">
             <label for="title">Title</label>
-            <InputText id="title" class="form-input bg-black rounded-lg" type="text" @bind-Value="EditModel.Title"></InputText>
-            <ValidationMessage For="() => EditModel.Title" />
+            <InputText id="title" class="form-control" type="text" @bind-Value="EditModel.Title"></InputText>
+            <div class="text-red-500">
+                <ValidationMessage For="() => EditModel.Title" />
+            </div>
 
             <label for="original-title">Original title</label>
-            <input id="original-title" class="form-input bg-gray-500 text-black rounded-lg" type="text" value="@EditModel.Show.OriginalTitle" disabled />
+            <input id="original-title" class="form-control" type="text" value="@EditModel.Show.OriginalTitle" disabled />
 
             <label for="source">Source</label>
-            <InputText id="source" class="form-input bg-black rounded-lg" type="text" @bind-Value="EditModel.Source"></InputText>
+            <InputText id="source" class="form-control" type="text" @bind-Value="EditModel.Source"></InputText>
 
             <div class="flex items-center">
                 <InputCheckbox id="refresh" class="w-4 h-4 text-blue-600 bg-black rounded ring-offset-inherit ring-offset-0" type="text" @bind-Value="EditModel.Refresh"></InputCheckbox>
@@ -31,15 +33,15 @@ else if (EditModel.Show is not null)
             <div class="flex gap-2">
                 <div class="flex flex-col gap-2">
                     <label for="show-status">Status</label>
-                    <input id="show-status" class="form-input bg-gray-500 text-black rounded-lg" type="text" value="@EditModel.Show.Status" disabled />                    
+                    <input id="show-status" class="form-control" type="text" value="@EditModel.Show.Status" disabled />
                 </div>
                 <div class="flex flex-col gap-2">
                     <label for="show-seasons">Seasons</label>
-                    <input id="show-seasons" class="form-input bg-gray-500 text-black rounded-lg" type="text" value="@EditModel.Show.SeasonCount" disabled />                    
+                    <input id="show-seasons" class="form-control" type="text" value="@EditModel.Show.SeasonCount" disabled />
                 </div>
                 <div class="flex flex-col gap-2">
                     <label for="show-episodes">Episodes</label>
-                    <input id="show-episodes" class="form-input bg-gray-500 text-black rounded-lg" type="text" value="@EditModel.Show.EpisodeCount" disabled />                    
+                    <input id="show-episodes" class="form-control" type="text" value="@EditModel.Show.EpisodeCount" disabled />
                 </div>
             </div>
 
@@ -87,7 +89,7 @@ else if (EditModel.Show is not null)
 
         <label for="checked-toggle" class="inline-flex relative items-center cursor-pointer">
             <input type="checkbox" value="" id="checked-toggle" class="sr-only peer" @onchange="ToggleShowAll">
-            <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+            <span class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></span>
             <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Show all episodes</span>
         </label>
 
