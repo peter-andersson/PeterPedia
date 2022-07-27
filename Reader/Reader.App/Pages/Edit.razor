@@ -14,70 +14,50 @@ else if (Subscription is not null)
 
         <div class="flex flex-col">
             <label for="title">Title</label>
-            <InputText id="title" class="form-input bg-black rounded-lg" @bind-Value="EditModel.Title"></InputText>
-            <ValidationMessage For="() => EditModel.Title" />
+            <InputText id="title" class="form-control" @bind-Value="EditModel.Title"></InputText>
+            <div class="text-red-500">
+                <ValidationMessage For="() => EditModel.Title" />
+            </div>
         </div>
 
         <div class="flex flex-col">
             <label for="group">Group</label>
-            <InputText id="group" class="form-input bg-black rounded-lg" @bind-Value="EditModel.Group" />
-            <ValidationMessage For="() => EditModel.Group" />
+            <InputText id="group" class="form-control" @bind-Value="EditModel.Group" />
         </div>
 
         <div class="flex flex-col">
             <label for="update-interval">Update interval in minutes</label>
-            <InputNumber id="update-interval" class="form-input bg-black rounded-lg" @bind-Value="EditModel.UpdateIntervalMinute" />
-            <ValidationMessage For="() => EditModel.UpdateIntervalMinute" />
+            <InputNumber id="update-interval" class="form-control" @bind-Value="EditModel.UpdateIntervalMinute" />
+            <div class="text-red-500">
+                <ValidationMessage For="() => EditModel.UpdateIntervalMinute" />
+            </div>
         </div>
 
         <div class="flex flex-col">
             <label for="update-at">Update at</label>
-            <InputText id="update-at" class="form-input bg-black rounded-lg" @bind-Value="EditModel.UpdateAt" />
-            <ValidationMessage For="() => EditModel.UpdateAt" />
+            <InputText id="update-at" class="form-control" @bind-Value="EditModel.UpdateAt" />
+            <div class="text-red-500">
+                <ValidationMessage For="() => EditModel.UpdateAt" />
+            </div>
         </div>
 
         <div class="flex flex-col">
             <label for="url">Url</label>
-            <InputText id="url" class="form-input bg-black rounded-lg" @bind-Value="EditModel.Url" />
-            <ValidationMessage For="() => EditModel.Url" />
+            <InputText id="url" class="form-control" @bind-Value="EditModel.Url" />
+            <div class="text-red-500">
+                <ValidationMessage For="() => EditModel.Url" />
+            </div>
         </div>
 
-        <span>Last updated: @Subscription.LastUpdated?.ToString("d MMM yyyy HH:mm")</span>
+        <div class="flex flex-col">
+            <label for="last">Last updated</label>
+            <input id="last" class="form-control" value="@Subscription.LastUpdated?.ToString("d MMM yyyy HH:mm")" disabled />
+        </div>
 
-        <div class="mt-2">
-            <button Type="submit" class="btn btn-success" disabled="@IsSaveTaskRunning">
-                @if (IsSaveTaskRunning)
-                {
-                    <div class="flex items-center gap-2">
-                        <svg class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z" />
-                            <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z" />
-                        </svg>
-                        <span>Saving...</span>
-                    </div>
-                }
-                else
-                {
-                    <span>Save</span>
-                }
-            </button>
-            <button type="button" class="btn btn-danger ms-2" disabled="@IsDeleteTaskRunning" @onclick="async () => await DeleteAsync()">
-                @if (IsDeleteTaskRunning)
-                {
-                    <div class="flex items-center gap-2">
-                        <svg class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z" />
-                            <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z" />
-                        </svg>
-                        <span>Deleting...</span>
-                    </div>
-                }
-                else
-                {
-                    <span>Delete</span>
-                }
-            </button>
-            <button type="button" class="btn btn-primary ms-2" @onclick="Close">Cancel</button>
+        <div>
+            <ReaderButton Type="ButtonType.Submit" Classes="btn-success" IsTaskRunning="@IsSaveTaskRunning" Text="Save" ActionText="Saving" />
+            <ReaderButton Classes="btn-danger" IsTaskRunning="@IsDeleteTaskRunning" OnClickCallback="async () => await DeleteAsync()" Text="Delete" ActionText="Deleting" />
+            <ReaderButton Classes="btn-other" OnClickCallback="Close" Text="Cancel" />
         </div>
     </EditForm>
 }

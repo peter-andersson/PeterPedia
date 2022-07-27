@@ -3,31 +3,43 @@
 @tailwind utilities;
 
 @layer components {
-    .btn {
-        @apply px-5 py-2.5 rounded-lg;
+    .btn-success {
+        @apply text-white bg-green-600 hover:bg-green-800;
     }
 
-    .btn-primary {
-        @apply text-white bg-blue-700 hover:bg-blue-800;
+    .btn-other {
+        @apply text-white bg-indigo-600 hover:bg-indigo-800;
     }
 
     .btn-danger {
-        @apply text-white bg-red-700 hover:bg-red-800;
+        @apply text-white bg-red-600 hover:bg-red-800;
     }
 
-    .btn-success {
-        @apply text-white bg-lime-700 hover:bg-lime-800;
+    .btn-primary {
+        @apply text-white bg-sky-600 hover:bg-sky-800;
     }
+
+    .form-control {
+        @apply p-2 bg-black rounded-lg border border-slate-500;
+    }
+
+        .form-control:focus {
+            @apply outline-none border-white;
+        }
+
+        .form-control.invalid {
+            @apply border-red-500;
+        }
+
+            .form-control.invalid:focus {
+                @apply border-white;
+            }
+
+        .form-control:disabled {
+            @apply border-none bg-stone-800;
+        }
 }
 
 .active {
     @apply font-bold underline;
-}
-
-.validation-message {
-    @apply text-red-600;
-}
-
-input.modified.invalid {
-    @apply bg-red-600;
 }
