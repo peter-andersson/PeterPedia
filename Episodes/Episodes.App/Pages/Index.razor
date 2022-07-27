@@ -12,18 +12,21 @@ else
     <div class="mt-2 flex flex-wrap gap-4">
         @foreach (TVShow show in ShowList)
         {
-            <div class="md:w-[185px] w-full flex flex-col items-center">
-                <a href="/edit/@show.Id" class="w-full flex flex-col items-center md:items-start">
-                    <img src="/api/image/@($"{show.Id}.jpg")" class="mx-auto w-[185px] h-[278px] rounded-lg" alt="@show.Title">
-                    <div class="md:w-[185px] inline-flex flex-col">
-                        <span class="font-bold truncate hover:whitespace-normal">
-                            @show.Title
-                        </span>
-                        <span class="font-thin text-sm">@show.UnwatchedEpisodeCount episodes</span>
-                    </div>
+            if (show.UnwatchedEpisodeCount > 0)
+            {
+                <div class="md:w-[185px] w-full flex flex-col items-center">
+                    <a href="/edit/@show.Id" class="w-full flex flex-col items-center md:items-start">
+                        <img src="/api/image/@($"{show.Id}.jpg")" class="mx-auto w-[185px] h-[278px] rounded-lg" alt="@show.Title">
+                        <div class="md:w-[185px] inline-flex flex-col">
+                            <span class="font-bold truncate hover:whitespace-normal">
+                                @show.Title
+                            </span>
+                            <span class="font-thin text-sm">@show.UnwatchedEpisodeCount episodes</span>
+                        </div>
 
-                </a>
-            </div>
+                    </a>
+                </div>
+            }
         }
     </div>
 }

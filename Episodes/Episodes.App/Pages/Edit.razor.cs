@@ -93,8 +93,18 @@ public partial class Edit : ComponentBase, IDisposable
 
         IsDeleteTaskRunning = false;
     }
-    
-    private void Close() => Navigation.NavigateBack();
+
+    private void Close()
+    {
+        if (Navigation.CanNavigateBack)
+        {
+            Navigation.NavigateBack();
+        }
+        else
+        {
+            Navigation.NavigateTo("/");
+        }
+    }
 
     public void Dispose()
     {
