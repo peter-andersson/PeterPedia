@@ -3,14 +3,20 @@
 
 <EpisodesTitle Text="Search" />
 
-<div class="flex flex-col">
-    <label for="search">Search tv shows by title, can use wildcards using % like, %love%.</label>
-    <input id="search" type="text" @ref="Input" class="form-input bg-black rounded-lg" @bind="Filter" @bind:event="oninput" @onkeydown="InputKeyDownAsync" placeholder="Filter">
-</div>
+<EditForm Model="@EditModel" OnValidSubmit="@SearchAsync" class="flex flex-col mt-2 gap-2">
+    <div class="flex flex-col gap-2">
+        <label for="add">Search tv show by title or original title. Empty field fetches all.</label>
+        <InputText id="add" @ref="Input" class="form-control" @bind-Value="@EditModel.Search" bind-Value:event="OnInput"></InputText>
+    </div>
+    <div>
+        <EpisodesButton Classes="btn-success" Type="ButtonType.Submit" IsTaskRunning=@Searching Text="Search" ActionText="Searching..." />
+    </div>
+</EditForm>
 
-@if (Searching)
+
+@if (Loading)
 {
-    <LoadingIndicator Text="Searching..." />
+    <LoadingIndicator Text="Loading..." />
 }
 else
 {
@@ -20,14 +26,24 @@ else
     }
     else
     {
-        <div class="mt-2 flex flex-col gap-2">
-            @foreach (TVShow show in ShowList)
+        <div class="mt-2">
+            @if (Query.Page > 0)
             {
-                <div class="bg-slate-400 mb-2 rounded-lg text-black">
-                    <a href="/edit/@show.Id" class="p-2">@show.Title - @show.Status - @show.UnwatchedEpisodeCount of @show.EpisodeCount</a>
-                </div>
+                <EpisodesButton Classes="btn-other" Text="Show previous page" OnClickCallback="async () => await ChangePageAsync(Query.Page - 1)" />
+            }
+            <div class="mt-2 flex flex-col gap-2">
+                @foreach (TVShow show in ShowList)
+                {
+                    <div class="bg-slate-400 mb-2 rounded-lg text-black">
+                        <a href="/edit/@show.Id" class="p-2">@show.Title - @show.Status - @show.UnwatchedEpisodeCount of @show.EpisodeCount</a>
+                    </div>
+                }
+            </div>
+
+            @if (ShowList.Length >= Query.PageSize)
+            {
+                <EpisodesButton Classes="btn-other" Text="Show next page" OnClickCallback="async () => await ChangePageAsync(Query.Page + 1)" />
             }
         </div>
     }
 }
-

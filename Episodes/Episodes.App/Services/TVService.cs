@@ -69,6 +69,24 @@ public class TVService : ITVService
         return await _httpClient.GetFromJsonAsync<TVShow>($"/api/get/{id}");
     }
 
+    public async Task<TVShow[]> GetAsync(QueryData query)
+    {
+        try
+        {
+            HttpResponseMessage response = await _httpClient.PostAsJsonAsync("/api/query", query);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<TVShow[]>() ?? Array.Empty<TVShow>();
+            }
+        }
+        catch
+        {
+        }
+
+        return Array.Empty<TVShow>();
+    }
+
     public async Task<TVShow[]> GetWatchListAsync()
     {
         if (_shows.Length == 0)

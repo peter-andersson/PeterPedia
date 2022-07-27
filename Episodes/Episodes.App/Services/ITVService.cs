@@ -10,6 +10,8 @@ public interface ITVService
 
     Task<TVShow?> GetAsync(string id);
 
+    Task<TVShow[]> GetAsync(QueryData query);
+
     Task<TVShow[]> GetWatchListAsync();
 
     Task<Result> UpdateAsync(TVShow show);

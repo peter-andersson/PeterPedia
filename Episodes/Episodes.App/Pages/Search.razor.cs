@@ -1,68 +1,57 @@
-using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace Episodes.App.Pages;
 
 public partial class Search : ComponentBase
 {
     [Inject]
-    private HttpClient Http { get; set; } = null!;
+    private ITVService Service { get; set; } = null!;
 
     private TVShow[] ShowList { get; set; } = Array.Empty<TVShow>();
 
-    private string Filter { get; set; } = string.Empty;
+    private SearchModel EditModel { get; set; } = new();
 
     private bool Searching { get; set; } = false;
 
-    private ElementReference? Input { get; set; }
+    private bool Loading { get; set; } = false;
 
-    public async Task InputKeyDownAsync(KeyboardEventArgs e)
-    {
-        if (e.Code == "Enter" || e.Code == "NumpadEnter")
-        {
-            await QueryAsync();
-        }
-    }
+    private InputText? Input { get; set; }
+
+    private QueryData Query { get; } = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            if (Input is not null)
+            if (Input?.Element != null)
             {
-                await Input.Value.FocusAsync();
+                await Input.Element.Value.FocusAsync();
             }
         }
     }
 
-    private async Task QueryAsync()
+    private async Task SearchAsync()
     {
         Searching = true;
 
-        var query = new QueryData()
-        {
-            Search = Filter,
-            Page = 0,
-            PageSize = 50
-        };
-        
-        try
-        {
-            HttpResponseMessage response = await Http.PostAsJsonAsync("/api/query", query);
+        Query.Page = 0;
+        Query.PageSize = 20;
 
-            if (response.IsSuccessStatusCode)
-            {
-                ShowList = await response.Content.ReadFromJsonAsync<TVShow[]>() ?? Array.Empty<TVShow>();
-            }
-        }
-        catch
-        {
-            ShowList = Array.Empty<TVShow>();
-        }
-        finally
-        {
-            Searching = false;
-        }
+        Query.Search = string.IsNullOrWhiteSpace(EditModel.Search) ? "%" : $"%{EditModel.Search}%";
+
+        ShowList = await Service.GetAsync(Query);
+        Searching = false;
+    }
+
+    private async Task ChangePageAsync(int page)
+    {
+        Loading = true;
+
+        Query.Page = page;
+        Query.PageSize = 20;
+
+        ShowList = await Service.GetAsync(Query);
+        Loading = false;
     }
 }
