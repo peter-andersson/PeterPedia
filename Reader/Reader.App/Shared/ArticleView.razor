@@ -14,7 +14,7 @@
             </svg>
         </button>
         <div class="bg-slate-400 rounded-lg w-full text-black">
-            <a href="/api/open/@(Article.Id)" class="p-2 flex justify-between" @onclick="async () => await OpenAsync()">
+            <a href="/api/open/@(Article.Id)" class="p-2 flex justify-between" target="_blank" @onclick="async () => await OpenAsync()">
                 <span class="truncate">@Article.Title</span>
                 <span class="hidden md:block truncate">[@Article.Subscription]</span>
             </a>
